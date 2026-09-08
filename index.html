@@ -134,6 +134,16 @@
   .actions .btn{ flex:1; }
   .hint{ font-size:10.5px; color:var(--mute); }
 
+  /* 長押しドラッグでつなぐ */
+  .tile, .mini{ -webkit-touch-callout:none; user-select:none; -webkit-user-select:none; }
+  .tile.lift{ transform:scale(1.03); box-shadow:0 10px 24px rgba(17,24,39,.22); border-color:var(--outflow); position:relative; z-index:5; }
+  .tile.target, .mini.target{ outline:3px solid var(--outflow); outline-offset:1px; }
+  body.dragging{ overflow:hidden; }
+  #dragline{ position:fixed; inset:0; width:100vw; height:100vh; pointer-events:none; z-index:25; display:none; }
+  #dragline.on{ display:block; }
+  .draghint{ position:fixed; left:50%; top:calc(12px + env(safe-area-inset-top)); transform:translateX(-50%); background:var(--ink); color:#fff; font-size:12px; padding:7px 14px; border-radius:999px; z-index:26; display:none; white-space:nowrap; }
+  .draghint.on{ display:block; }
+
   @media print{
     body{ background:#fff; } .tabs, .fab, .banner, .toast, .scrim, .sheet{ display:none !important; }
     #app{ max-width:none; } .body{ padding:0; }
@@ -425,6 +435,59 @@
   document.getElementById("fab").addEventListener("click", ()=>{ if(view==="debit") debitForm({id:uid("d"),day:27,amt:null,rollover:true,kind:"out"}, true); else { const [av,col,sq]=TYPE_DEFAULT.bank; nodeForm({id:uid("n"),name:"",sub:"",type:"bank",av,col,sq,hub:!S.nodes.some(n=>n.hub),ap:false,zone:false,chips:[],off:false}, true); } });
   document.body.addEventListener("click", e=>{ const t=e.target.closest("[data-edit]"); if(t){ const n=byId(t.dataset.edit); if(n){ if(S.settings.sample){ S.settings.sample=false; } nodeForm(n,false); } return; } const d=e.target.closest("[data-editd]"); if(d){ const x=S.debits.find(y=>y.id===d.dataset.editd); if(x){ S.settings.sample=false; debitForm(x,false); } } });
   const origSave = save;
+
+  // ===== 長押しドラッグでつなぐ =====
+  (function(){
+    const svg = document.createElementNS("http://www.w3.org/2000/svg","svg"); svg.id="dragline";
+    svg.innerHTML = '<line x1="0" y1="0" x2="0" y2="0" stroke="#3B6FD8" stroke-width="3" stroke-linecap="round" stroke-dasharray="6 5"/><circle r="6" fill="#3B6FD8"/>';
+    document.body.appendChild(svg);
+    const hint = document.createElement("div"); hint.className="draghint"; hint.textContent="つなぐ相手のタイルまでドラッグ"; document.body.appendChild(hint);
+    const line = svg.querySelector("line"), dotEl = svg.querySelector("circle");
+    let timer=null, src=null, srcEl=null, start=null, dragging=false, target=null, suppressClick=false;
+    const tileAt = (x,y) => { const el = document.elementFromPoint(x,y); return el ? el.closest("[data-edit]") : null; };
+    const clearTarget = () => { if(target){ target.classList.remove("target"); target=null; } };
+    const endDrag = () => { dragging=false; clearTimeout(timer); timer=null; document.body.classList.remove("dragging"); svg.classList.remove("on"); hint.classList.remove("on"); if(srcEl) srcEl.classList.remove("lift"); clearTarget(); };
+    document.addEventListener("pointerdown", e=>{
+      const el = e.target.closest("[data-edit]"); if(!el || e.button>0) return;
+      src = el.dataset.edit; srcEl = el; start = {x:e.clientX, y:e.clientY}; dragging=false;
+      clearTimeout(timer);
+      timer = setTimeout(()=>{ dragging=true; suppressClick=true; document.body.classList.add("dragging"); srcEl.classList.add("lift"); svg.classList.add("on"); hint.classList.add("on");
+        const r = srcEl.getBoundingClientRect(); const cx=r.left+r.width/2, cy=r.top+r.height/2; line.setAttribute("x1",cx); line.setAttribute("y1",cy); line.setAttribute("x2",start.x); line.setAttribute("y2",start.y); dotEl.setAttribute("cx",start.x); dotEl.setAttribute("cy",start.y);
+        if(navigator.vibrate) navigator.vibrate(15); }, 420);
+    }, {passive:true});
+    document.addEventListener("pointermove", e=>{
+      if(!srcEl) return;
+      if(!dragging){ if(start && Math.hypot(e.clientX-start.x, e.clientY-start.y) > 8){ clearTimeout(timer); timer=null; srcEl=null; } return; }
+      line.setAttribute("x2", e.clientX); line.setAttribute("y2", e.clientY); dotEl.setAttribute("cx", e.clientX); dotEl.setAttribute("cy", e.clientY);
+      const t = tileAt(e.clientX, e.clientY);
+      if(t !== target){ clearTarget(); if(t && t.dataset.edit !== src){ target=t; t.classList.add("target"); } }
+    }, {passive:true});
+    document.addEventListener("touchmove", e=>{ if(dragging) e.preventDefault(); }, {passive:false});
+    document.addEventListener("contextmenu", e=>{ if(e.target.closest("[data-edit]")) e.preventDefault(); });
+    const finish = e => {
+      if(!srcEl){ return; }
+      if(!dragging){ clearTimeout(timer); timer=null; srcEl=null; return; }
+      const to = target ? target.dataset.edit : null; const from = src;
+      endDrag(); srcEl=null;
+      if(to && to!==from) connectForm(from, to);
+      setTimeout(()=>{ suppressClick=false; }, 50);
+    };
+    document.addEventListener("pointerup", finish); document.addEventListener("pointercancel", finish);
+    document.addEventListener("click", e=>{ if(suppressClick){ e.stopPropagation(); e.preventDefault(); } }, true);
+    window.connectForm = function(from, to){
+      const a=byId(from), b=byId(to); if(!a||!b) return;
+      openSheet(`<h2>つながりを追加<button id="close" aria-label="閉じる">×</button></h2>
+        <div class="edges"><div class="e"><span><b>${esc(a.name)}</b> → <b>${esc(b.name)}</b></span><button class="btn sm" id="swap">向きを逆に</button></div></div>
+        <div class="f"><label>種類</label><select id="ckind">${opt(Object.entries(KINDS),"out")}</select></div>
+        <div class="f"><label>線のラベル（任意）</label><input type="text" id="clabel" placeholder="例: 引き落とし ／ チャージ ／ 連携"></div>
+        <div class="actions"><button class="btn pri" id="cSave">追加</button><button class="btn" id="cCancel">取り消し</button></div>`);
+      let f=from, t=to;
+      document.getElementById("close").addEventListener("click", closeSheet); document.getElementById("cCancel").addEventListener("click", closeSheet);
+      document.getElementById("swap").addEventListener("click", ()=>{ [f,t]=[t,f]; sheet.querySelector(".e span").innerHTML = `<b>${esc(byId(f).name)}</b> → <b>${esc(byId(t).name)}</b>`; });
+      document.getElementById("cSave").addEventListener("click", ()=>{ S.edges.push({id:uid("e"), from:f, to:t, kind:document.getElementById("ckind").value, label:document.getElementById("clabel").value.trim()}); S.settings.sample=false; save(); closeSheet(); renderAll(); toast(`${byId(f).name} → ${byId(t).name} をつなぎました`); });
+    };
+  })();
+
   load(); renderAll(); show("map");
 })();
 </script>
