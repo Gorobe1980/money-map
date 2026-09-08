@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>お金の流れマップ モック（サンプル）</title>
+<title>お金の流れマップ</title>
 <meta name="application-name" content="お金の流れマップ">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -15,399 +15,416 @@
 <link rel="icon" type="image/png" sizes="512x512" href="data:image/png;base64,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">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&display=swap">
 <style>
-  :root{
-    --page-bg:#EEF0F4; --page-ink:#111827; --page-mute:#5B6472; --page-rule:#D6DAE2; --page-card:#FFFFFF;
-    --bg:#F6F7F9; --tile:#FFFFFF; --edge:#E3E6EA; --ink:#111827; --text:#1F2933; --mute:#6B7280;
-    --chip:#EEF0F3; --chiptx:#4B5563; --zone:#ECEFF4; --inflow:#1F9D6A; --outflow:#3B6FD8; --link:#94A3B8;
-    --warn:#B45309; --warnbg:#FFF4E5; --ok:#1F9D6A; --okbg:#E8F6EF; --danger:#B91C1C; --dangerbg:#FDECEC;
-    --frame:#1B1F27;
-  }
-  @media (prefers-color-scheme: dark){
-    :root:not([data-theme="light"]){ --page-bg:#14171D; --page-ink:#E8EBF0; --page-mute:#9AA3B2; --page-rule:#2B313C; --page-card:#1C2029; --frame:#0B0D12; }
-  }
-  :root[data-theme="dark"]{ --page-bg:#14171D; --page-ink:#E8EBF0; --page-mute:#9AA3B2; --page-rule:#2B313C; --page-card:#1C2029; --frame:#0B0D12; }
-
-  body{ background:var(--page-bg); color:var(--page-ink); font-family:"BIZ UDPGothic","Hiragino Sans","Yu Gothic UI",system-ui,sans-serif; font-size:14px; line-height:1.6; }
-  .wrap{ max-width:1080px; margin:0 auto; padding:28px 24px 48px; }
-  header.top{ display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between; gap:12px 32px; border-bottom:1px solid var(--page-rule); padding-bottom:16px; margin-bottom:24px; }
-  header.top h1{ font-size:22px; font-weight:700; margin:0; text-wrap:balance; }
-  header.top p{ margin:4px 0 0; color:var(--page-mute); max-width:62ch; }
-  .goals{ display:flex; gap:8px; flex-wrap:wrap; }
-  .goals span{ font-size:12px; color:var(--page-mute); border:1px solid var(--page-rule); border-radius:999px; padding:3px 10px; }
-  .goals b{ color:var(--page-ink); }
-
-  .stage{ display:grid; grid-template-columns:360px 1fr; gap:28px; align-items:start; }
-  @media (max-width:760px){ .stage{ grid-template-columns:1fr; } .wrap{ padding:18px 14px 40px; } }
-  .side{ display:flex; flex-direction:column; gap:14px; }
-  .side .panel{ background:var(--page-card); border:1px solid var(--page-rule); border-radius:14px; padding:16px 18px; }
-  .side h2{ margin:0 0 6px; font-size:15px; }
-  .side p{ margin:0; color:var(--page-mute); font-size:13px; }
-  .side ul{ margin:8px 0 0; padding-left:18px; color:var(--page-mute); font-size:13px; }
-  .side ul li{ margin:3px 0; }
-  .side .try{ font-size:12px; color:var(--page-ink); background:var(--page-bg); border-radius:8px; padding:8px 10px; margin-top:10px; }
-
-  /* ---- phone ---- */
-  .phone{ width:340px; max-width:100%; height:720px; background:var(--frame); border-radius:38px; padding:10px; box-shadow:0 18px 40px rgba(0,0,0,.18); position:relative; }
-  .screen{ background:var(--bg); color:var(--text); border-radius:30px; height:100%; display:flex; flex-direction:column; overflow:hidden; font-size:12.5px; line-height:1.45; }
-  .status{ height:30px; display:flex; align-items:center; justify-content:space-between; padding:0 22px; font-size:11px; font-weight:700; color:var(--ink); }
-  .status .notch{ position:absolute; left:50%; top:18px; transform:translateX(-50%); width:96px; height:22px; background:var(--frame); border-radius:12px; }
-  .appbar{ padding:6px 16px 8px; display:flex; align-items:baseline; justify-content:space-between; gap:8px; }
-  .appbar h2{ margin:0; font-size:17px; font-weight:700; color:var(--ink); }
+  :root{ --bg:#F6F7F9; --tile:#FFFFFF; --edge:#E3E6EA; --ink:#111827; --text:#1F2933; --mute:#6B7280; --chip:#EEF0F3; --chiptx:#4B5563;
+         --zone:#ECEFF4; --inflow:#1F9D6A; --outflow:#3B6FD8; --link:#94A3B8; --warn:#B45309; --warnbg:#FFF4E5; --ok:#1F9D6A; --okbg:#E8F6EF;
+         --danger:#B91C1C; --dangerbg:#FDECEC; --sheet:#FFFFFF; }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; height:100%; }
+  body{ background:var(--bg); color:var(--text); font-family:"BIZ UDPGothic","Hiragino Sans","Yu Gothic UI",system-ui,sans-serif; font-size:13px; line-height:1.45; -webkit-text-size-adjust:100%; }
+  #app{ max-width:520px; margin:0 auto; min-height:100dvh; display:flex; flex-direction:column; background:var(--bg); padding-top:env(safe-area-inset-top); }
+  .appbar{ padding:14px 16px 8px; display:flex; align-items:baseline; justify-content:space-between; gap:8px; }
+  .appbar h1{ margin:0; font-size:19px; font-weight:700; color:var(--ink); }
   .appbar .sub{ font-size:11px; color:var(--mute); }
-  .body{ flex:1; overflow-y:auto; padding:0 12px 14px; display:flex; flex-direction:column; gap:10px; }
-  .body::-webkit-scrollbar{ width:0; }
+  .body{ flex:1; padding:0 12px 96px; display:flex; flex-direction:column; gap:10px; }
   .view[hidden]{ display:none; }
   .view{ display:flex; flex-direction:column; gap:10px; }
-  .tabs{ display:grid; grid-template-columns:repeat(4,1fr); border-top:1px solid var(--edge); background:var(--tile); padding:8px 6px 10px; }
-  .tabs button{ background:none; border:0; text-align:center; color:var(--mute); font-size:10px; display:flex; flex-direction:column; align-items:center; gap:3px; cursor:pointer; font-family:inherit; padding:2px 0; }
-  .tabs button svg{ width:20px; height:20px; stroke:currentColor; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+  .tabs{ position:fixed; left:0; right:0; bottom:0; margin:0 auto; max-width:520px; display:grid; grid-template-columns:repeat(4,1fr); border-top:1px solid var(--edge); background:var(--tile); padding:8px 6px calc(10px + env(safe-area-inset-bottom)); z-index:20; }
+  .tabs button{ background:none; border:0; color:var(--mute); font-size:10.5px; display:flex; flex-direction:column; align-items:center; gap:3px; cursor:pointer; font-family:inherit; padding:2px 0; }
+  .tabs button svg{ width:22px; height:22px; stroke:currentColor; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
   .tabs button.on{ color:var(--outflow); font-weight:700; }
-  .tabs button:focus-visible{ outline:2px solid var(--outflow); outline-offset:2px; border-radius:6px; }
+  .fab{ position:fixed; right:calc(50% - 260px + 16px); bottom:calc(74px + env(safe-area-inset-bottom)); width:52px; height:52px; border-radius:50%; background:var(--ink); color:#fff; border:0; font-size:26px; line-height:1; box-shadow:0 8px 20px rgba(0,0,0,.25); cursor:pointer; z-index:21; font-family:inherit; }
+  @media (max-width:520px){ .fab{ right:16px; } }
+  .banner{ background:var(--warnbg); color:var(--warn); border-radius:10px; padding:8px 10px; font-size:11.5px; display:flex; align-items:center; gap:8px; }
+  .banner button{ margin-left:auto; }
 
-  /* ---- components ---- */
-  .sec{ display:flex; align-items:center; gap:8px; margin-top:4px; }
+  .sec{ display:flex; align-items:center; gap:8px; margin-top:6px; }
   .sec .num{ background:var(--ink); color:#fff; font-size:10px; font-weight:700; border-radius:999px; padding:1px 7px; letter-spacing:.06em; }
-  .sec h3{ margin:0; font-size:12.5px; font-weight:700; color:var(--ink); }
+  .sec h3{ margin:0; font-size:13px; font-weight:700; color:var(--ink); }
   .sec::after{ content:""; flex:1; height:1px; background:var(--edge); }
-  .tile{ background:var(--tile); border:1px solid var(--edge); border-radius:10px; padding:8px 10px; display:flex; align-items:center; gap:9px; }
+  .tile{ background:var(--tile); border:1px solid var(--edge); border-radius:10px; padding:9px 10px; display:flex; align-items:center; gap:9px; cursor:pointer; text-align:left; width:100%; font-family:inherit; color:var(--text); }
+  .tile:active{ background:#F1F3F7; }
   .tile.hub{ border-color:var(--ink); border-width:1.5px; }
   .tile.dim{ border-style:dashed; border-color:#C9CFD8; }
-  .tile.dim .n{ color:var(--mute); }
-  .tile.off{ opacity:.45; }
-  .tile.off .n{ text-decoration:line-through; }
-  .av{ width:26px; height:26px; border-radius:50%; display:grid; place-items:center; color:#fff; font-weight:700; font-size:12px; flex:none; }
+  .tile.off{ opacity:.45; } .tile.off .n{ text-decoration:line-through; }
+  .tile.zone{ background:var(--zone); }
+  .av{ width:28px; height:28px; border-radius:50%; display:grid; place-items:center; color:#fff; font-weight:700; font-size:12px; flex:none; }
   .av.sq{ border-radius:7px; }
   .t{ display:flex; flex-direction:column; min-width:0; flex:1; }
-  .t .n{ font-weight:700; color:var(--ink); font-size:12.5px; line-height:1.3; }
+  .t .n{ font-weight:700; color:var(--ink); font-size:13px; line-height:1.3; }
   .t .s{ color:var(--mute); font-size:10.5px; }
-  .chips{ display:flex; gap:4px; flex-wrap:wrap; justify-content:flex-end; max-width:46%; }
+  .chips{ display:flex; gap:4px; flex-wrap:wrap; justify-content:flex-end; max-width:44%; }
   .chip{ background:var(--chip); color:var(--chiptx); font-size:9.5px; border-radius:999px; padding:2px 7px; white-space:nowrap; }
   .chip.ap{ background:#111111; color:#fff; font-weight:700; }
   .chip.ok{ background:var(--okbg); color:var(--ok); }
-  .chip.warn{ background:var(--warnbg); color:var(--warn); }
   .chip.off{ background:var(--dangerbg); color:var(--danger); }
-
   .flow{ display:grid; grid-template-columns:22px 1fr; column-gap:6px; row-gap:6px; }
   .flow .c{ position:relative; }
   .flow .c::before{ content:""; position:absolute; left:10px; top:-6px; bottom:-6px; width:2px; background:var(--lc,var(--outflow)); }
   .flow .c::after{ content:""; position:absolute; left:4px; top:50%; width:10px; height:2px; background:var(--lc,var(--outflow)); transform:translateY(-1px); }
-  .flow .c.end::before{ bottom:50%; }
-  .flow .c.start::before{ top:50%; }
-  .flow .c.only::before{ display:none; }
+  .flow .c.end::before{ bottom:50%; } .flow .c.start::before{ top:50%; } .flow .c.only::before{ display:none; }
   .flow .c span{ position:absolute; left:14px; top:50%; width:0; height:0; border-left:5px solid var(--lc,var(--outflow)); border-top:4px solid transparent; border-bottom:4px solid transparent; transform:translateY(-4px); }
-  .flow .in{ --lc:var(--inflow); }
-  .flow .link{ --lc:var(--link); }
-  .flow .c.off{ opacity:.35; }
-  .zone{ background:var(--zone); border-radius:10px; padding:8px; display:flex; flex-direction:column; gap:6px; }
-  .zone .zl{ font-size:10px; font-weight:700; color:var(--chiptx); letter-spacing:.04em; }
+  .flow .in{ --lc:var(--inflow); } .flow .c.off{ opacity:.35; }
+  .flow .d1{ margin-left:14px; } .flow .d2{ margin-left:28px; } .flow .d3{ margin-left:42px; }
   .row2{ display:grid; grid-template-columns:1fr 1fr; gap:6px; }
-  .mini{ background:var(--tile); border:1px solid var(--edge); border-radius:8px; padding:5px 7px; display:flex; align-items:center; gap:6px; font-size:11px; font-weight:700; color:var(--ink); }
-  .mini.dim{ border-style:dashed; color:var(--mute); }
-  .mini.off{ opacity:.45; text-decoration:line-through; }
-  .mini .av{ width:18px; height:18px; font-size:9px; }
-  .mini small{ font-weight:400; color:var(--mute); font-size:9.5px; margin-left:auto; }
+  .mini{ background:var(--tile); border:1px solid var(--edge); border-radius:8px; padding:6px 7px; display:flex; align-items:center; gap:6px; font-size:11px; font-weight:700; color:var(--ink); cursor:pointer; text-align:left; font-family:inherit; }
+  .mini.dim{ border-style:dashed; color:var(--mute); } .mini.off{ opacity:.45; text-decoration:line-through; }
+  .mini .av{ width:18px; height:18px; font-size:9px; } .mini small{ font-weight:400; color:var(--mute); font-size:9.5px; margin-left:auto; }
+  .lbl{ font-size:10.5px; color:var(--mute); margin-top:2px; }
 
   .kpi{ display:grid; grid-template-columns:repeat(3,1fr); gap:6px; }
   .kpi div{ background:var(--tile); border:1px solid var(--edge); border-radius:10px; padding:8px 6px; text-align:center; }
   .kpi b{ display:block; font-size:20px; font-variant-numeric:tabular-nums; color:var(--ink); line-height:1.1; }
-  .kpi span{ font-size:10px; color:var(--mute); }
-  .kpi .w b{ color:var(--warn); }
+  .kpi span{ font-size:10px; color:var(--mute); } .kpi .w b{ color:var(--warn); }
   .card{ background:var(--tile); border:1px solid var(--edge); border-radius:12px; padding:10px 11px; display:flex; flex-direction:column; gap:7px; }
   .card h4{ margin:0; font-size:12.5px; font-weight:700; color:var(--ink); display:flex; align-items:center; gap:6px; }
-  .card h4 .sev{ width:8px; height:8px; border-radius:50%; background:var(--warn); flex:none; }
-  .card h4 .sev.ok{ background:var(--ok); }
-  .card h4 .sev.bad{ background:var(--danger); }
+  .card h4 .sev{ width:8px; height:8px; border-radius:50%; background:var(--warn); flex:none; } .card h4 .sev.ok{ background:var(--ok); } .card h4 .sev.bad{ background:var(--danger); }
   .card p{ margin:0; color:var(--mute); font-size:11px; }
   .list{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:5px; }
-  .list li{ display:flex; align-items:center; gap:7px; font-size:11.5px; color:var(--text); }
-  .list li .av{ width:20px; height:20px; font-size:10px; }
-  .list li .r{ margin-left:auto; color:var(--mute); font-size:10.5px; white-space:nowrap; }
-  .btn{ display:inline-flex; align-items:center; justify-content:center; gap:6px; border-radius:9px; padding:8px 12px; font-size:11.5px; font-weight:700; border:1px solid var(--edge); color:var(--ink); background:var(--tile); cursor:pointer; font-family:inherit; }
-  .btn.pri{ background:var(--ink); color:#fff; border-color:var(--ink); }
-  .btn.danger{ background:var(--dangerbg); color:var(--danger); border-color:#F3C1C1; }
-  .btn.blk{ width:100%; }
-  .btn:focus-visible{ outline:2px solid var(--outflow); outline-offset:2px; }
-  select{ font-family:inherit; font-size:12px; padding:7px 9px; border-radius:9px; border:1px solid var(--edge); background:var(--tile); color:var(--ink); width:100%; }
+  .list li{ display:flex; align-items:center; gap:7px; font-size:11.5px; }
+  .list li .av{ width:20px; height:20px; font-size:10px; } .list li .r{ margin-left:auto; color:var(--mute); font-size:10.5px; white-space:nowrap; }
+  .btn{ display:inline-flex; align-items:center; justify-content:center; gap:6px; border-radius:9px; padding:9px 12px; font-size:12px; font-weight:700; border:1px solid var(--edge); color:var(--ink); background:var(--tile); cursor:pointer; font-family:inherit; }
+  .btn.pri{ background:var(--ink); color:#fff; border-color:var(--ink); } .btn.danger{ background:var(--dangerbg); color:var(--danger); border-color:#F3C1C1; } .btn.blk{ width:100%; } .btn.sm{ padding:5px 9px; font-size:11px; }
+  select, input[type=text], input[type=number], textarea{ font-family:inherit; font-size:13px; padding:8px 9px; border-radius:9px; border:1px solid var(--edge); background:var(--tile); color:var(--ink); width:100%; }
+  input[type=color]{ width:44px; height:32px; border:1px solid var(--edge); border-radius:8px; padding:2px; background:var(--tile); }
   .check{ display:flex; flex-direction:column; gap:6px; }
-  .check label{ display:flex; align-items:flex-start; gap:8px; font-size:11.5px; color:var(--text); }
-  .check input{ margin:3px 0 0; accent-color:var(--outflow); }
-  .check small{ color:var(--mute); display:block; font-size:10.5px; }
+  .check label{ display:flex; align-items:flex-start; gap:8px; font-size:11.5px; } .check input{ margin:3px 0 0; accent-color:var(--outflow); } .check small{ color:var(--mute); display:block; font-size:10.5px; }
   .empty{ color:var(--mute); font-size:11px; background:var(--okbg); border-radius:8px; padding:8px 10px; }
 
-  .month{ display:flex; align-items:baseline; justify-content:space-between; }
-  .month b{ font-size:15px; color:var(--ink); }
-  .month span{ font-size:11px; color:var(--mute); }
+  .month{ display:flex; align-items:baseline; justify-content:space-between; } .month b{ font-size:15px; color:var(--ink); } .month span{ font-size:11px; color:var(--mute); }
   .days{ display:grid; grid-template-columns:repeat(31,1fr); gap:2px; background:var(--tile); border:1px solid var(--edge); border-radius:10px; padding:8px 8px 6px; }
   .days i{ display:block; height:26px; border-radius:4px; position:relative; }
   .days i::after{ content:attr(data-d); position:absolute; left:50%; bottom:-1px; transform:translateX(-50%); font-size:7px; color:var(--link); font-style:normal; }
-  .days i.on{ background:var(--outflow); } .days i.in{ background:var(--inflow); }
-  .days i.on::after, .days i.in::after{ color:var(--ink); font-weight:700; }
+  .days i.on{ background:var(--outflow); } .days i.in{ background:var(--inflow); } .days i.on::after, .days i.in::after{ color:var(--ink); font-weight:700; }
   .dlist{ display:flex; flex-direction:column; gap:5px; }
-  .drow{ background:var(--tile); border:1px solid var(--edge); border-radius:9px; padding:6px 9px; display:grid; grid-template-columns:38px 1fr auto; align-items:center; gap:8px; }
-  .drow.off{ opacity:.45; }
-  .drow .d{ background:var(--ink); color:#fff; font-size:10px; font-weight:700; border-radius:6px; text-align:center; padding:3px 0; }
-  .drow .d.in{ background:var(--inflow); }
-  .drow .n{ font-weight:700; font-size:11.5px; color:var(--ink); line-height:1.25; }
-  .drow .n small{ display:block; font-weight:400; color:var(--mute); font-size:9.5px; }
-  .drow .a{ font-variant-numeric:tabular-nums; font-size:11.5px; color:var(--ink); text-align:right; }
-  .drow .a small{ display:block; color:var(--mute); font-size:9px; }
+  .drow{ background:var(--tile); border:1px solid var(--edge); border-radius:9px; padding:7px 9px; display:grid; grid-template-columns:40px 1fr auto; align-items:center; gap:8px; cursor:pointer; width:100%; text-align:left; font-family:inherit; color:var(--text); }
+  .drow.off{ opacity:.45; } .drow .d{ background:var(--ink); color:#fff; font-size:10px; font-weight:700; border-radius:6px; text-align:center; padding:3px 0; } .drow .d.in{ background:var(--inflow); }
+  .drow .n{ font-weight:700; font-size:12px; color:var(--ink); line-height:1.25; } .drow .n small{ display:block; font-weight:400; color:var(--mute); font-size:9.5px; }
+  .drow .a{ font-variant-numeric:tabular-nums; font-size:12px; color:var(--ink); text-align:right; } .drow .a small{ display:block; color:var(--mute); font-size:9px; }
   .need{ background:var(--tile); border:1px solid var(--edge); border-left:4px solid var(--outflow); border-radius:10px; padding:8px 10px; display:flex; align-items:center; gap:9px; }
-  .need .amt{ margin-left:auto; text-align:right; font-variant-numeric:tabular-nums; font-weight:700; color:var(--ink); font-size:13px; line-height:1.15; }
-  .need .amt small{ display:block; font-weight:400; color:var(--mute); font-size:9.5px; }
-  .toggle{ display:flex; align-items:center; justify-content:space-between; background:var(--tile); border:1px solid var(--edge); border-radius:10px; padding:8px 10px; font-size:11.5px; color:var(--ink); cursor:pointer; }
+  .need .amt{ margin-left:auto; text-align:right; font-variant-numeric:tabular-nums; font-weight:700; color:var(--ink); font-size:13px; line-height:1.15; } .need .amt small{ display:block; font-weight:400; color:var(--mute); font-size:9.5px; }
+  .toggle{ display:flex; align-items:center; justify-content:space-between; background:var(--tile); border:1px solid var(--edge); border-radius:10px; padding:8px 10px; font-size:11.5px; color:var(--ink); cursor:pointer; gap:10px; }
   .toggle small{ color:var(--mute); display:block; }
-  .sw{ width:34px; height:20px; border-radius:999px; background:#C9CFD8; position:relative; flex:none; transition:background .15s; }
-  .sw::after{ content:""; position:absolute; top:2px; left:2px; width:16px; height:16px; border-radius:50%; background:#fff; transition:left .15s; }
+  .sw{ width:34px; height:20px; border-radius:999px; background:#C9CFD8; position:relative; flex:none; } .sw::after{ content:""; position:absolute; top:2px; left:2px; width:16px; height:16px; border-radius:50%; background:#fff; }
   .toggle.on .sw{ background:var(--outflow); } .toggle.on .sw::after{ left:16px; }
 
   .partner{ display:flex; align-items:center; gap:10px; background:var(--tile); border:1px solid var(--edge); border-radius:12px; padding:10px; }
   .partner .av{ width:34px; height:34px; font-size:14px; background:#8B5CF6; }
-  .yes, .no{ display:flex; flex-direction:column; gap:4px; margin:0; padding:0; }
-  .yes li, .no li{ list-style:none; display:flex; gap:7px; align-items:center; font-size:11.5px; }
+  .yes, .no{ display:flex; flex-direction:column; gap:4px; margin:0; padding:0; } .yes li, .no li{ list-style:none; display:flex; gap:7px; align-items:center; font-size:11.5px; }
   .yes li::before{ content:""; width:14px; height:14px; border-radius:50%; background:var(--okbg); flex:none; box-shadow:inset 0 0 0 1.5px var(--ok); }
   .no li::before{ content:""; width:14px; height:14px; border-radius:50%; background:var(--dangerbg); flex:none; box-shadow:inset 0 0 0 1.5px var(--danger); }
-  .steps{ counter-reset:s; display:flex; flex-direction:column; gap:6px; margin:0; padding:0; list-style:none; }
-  .steps li{ counter-increment:s; display:grid; grid-template-columns:20px 1fr; gap:8px; align-items:start; font-size:11.5px; color:var(--text); }
-  .steps li::before{ content:counter(s); width:20px; height:20px; border-radius:50%; background:var(--ink); color:#fff; font-size:10px; font-weight:700; display:grid; place-items:center; }
-  .steps small{ display:block; color:var(--mute); font-size:10.5px; }
   .foot{ font-size:10.5px; color:var(--mute); }
-  .toast{ position:absolute; left:50%; bottom:84px; transform:translateX(-50%); background:var(--ink); color:#fff; font-size:11px; padding:7px 12px; border-radius:999px; opacity:0; transition:opacity .2s; pointer-events:none; white-space:nowrap; }
+  .toast{ position:fixed; left:50%; bottom:calc(140px + env(safe-area-inset-bottom)); transform:translateX(-50%); background:var(--ink); color:#fff; font-size:12px; padding:8px 14px; border-radius:999px; opacity:0; transition:opacity .2s; pointer-events:none; white-space:nowrap; z-index:40; }
   .toast.show{ opacity:1; }
-  @media (prefers-reduced-motion: reduce){ .sw, .sw::after, .toast{ transition:none; } }
-</style>
 
-<style>
-  /* スマホ幅: 枠と説明を消し、アプリ画面を全面表示（ホーム画面から起動した時の見え方） */
-  @media (max-width: 520px){
-    body{ background:#F6F7F9; }
-    .wrap{ padding:0; max-width:none; }
-    header.top, .side{ display:none; }
-    .stage{ display:block; }
-    .phone{ width:100%; max-width:none; height:100dvh; border-radius:0; padding:0; box-shadow:none; background:#F6F7F9; }
-    .screen{ border-radius:0; height:100%; padding-top:env(safe-area-inset-top); padding-bottom:env(safe-area-inset-bottom); }
-    .status{ display:none; }
-    .toast{ bottom:calc(84px + env(safe-area-inset-bottom)); }
+  /* bottom sheet */
+  .scrim{ position:fixed; inset:0; background:rgba(17,24,39,.45); z-index:30; display:none; }
+  .scrim.on{ display:block; }
+  .sheet{ position:fixed; left:50%; transform:translateX(-50%); bottom:0; width:100%; max-width:520px; max-height:88dvh; overflow-y:auto; background:var(--sheet); border-radius:18px 18px 0 0; padding:12px 16px calc(20px + env(safe-area-inset-bottom)); z-index:31; display:none; flex-direction:column; gap:10px; box-shadow:0 -10px 30px rgba(0,0,0,.2); }
+  .sheet.on{ display:flex; }
+  .sheet h2{ margin:0; font-size:15px; color:var(--ink); display:flex; align-items:center; justify-content:space-between; }
+  .sheet h2 button{ background:none; border:0; font-size:20px; color:var(--mute); cursor:pointer; }
+  .f{ display:flex; flex-direction:column; gap:4px; } .f label{ font-size:11px; color:var(--mute); }
+  .f2{ display:grid; grid-template-columns:1fr 1fr; gap:8px; } .f3{ display:grid; grid-template-columns:2fr 1fr 1fr; gap:8px; }
+  .inline{ display:flex; align-items:center; gap:8px; }
+  .cb{ display:flex; align-items:center; gap:8px; font-size:12px; color:var(--ink); } .cb input{ accent-color:var(--outflow); width:16px; height:16px; }
+  .edges{ display:flex; flex-direction:column; gap:5px; }
+  .edges .e{ display:grid; grid-template-columns:1fr auto; gap:6px; align-items:center; background:var(--bg); border-radius:8px; padding:6px 8px; font-size:11.5px; }
+  .edges .e b{ color:var(--ink); }
+  .actions{ display:flex; gap:8px; }
+  .actions .btn{ flex:1; }
+  .hint{ font-size:10.5px; color:var(--mute); }
+
+  @media print{
+    body{ background:#fff; } .tabs, .fab, .banner, .toast, .scrim, .sheet{ display:none !important; }
+    #app{ max-width:none; } .body{ padding:0; }
+    .view[hidden]{ display:flex !important; } #v-clean, #v-share{ display:none !important; }
+    .tile, .drow{ break-inside:avoid; }
   }
 </style>
 </head>
 <body>
-<div class="wrap">
-  <header class="top">
-    <div>
-      <h1>お金の流れマップ 画面モック</h1>
-      <p>自分の金融の構造を一枚に描き、整理し、パートナーに渡すアプリ案。表示しているデータは架空のサンプルです。下のタブで画面を切り替えられます。「整理」で対象を選ぶと紐づきが変わり、解約予定にするとマップと引き落としに反映されます。</p>
-    </div>
-    <div class="goals"><span><b>可視化</b></span><span><b>整理</b> 不要を減らす</span><span><b>共有</b> もしもの時に</span></div>
-  </header>
-
-  <div class="stage">
-    <div class="phone">
-      <div class="screen">
-        <div class="status"><span>9:41</span><span class="notch"></span><span>●●●</span></div>
-        <div class="appbar"><h2 id="ttl">マップ</h2><span class="sub" id="sub">2026年9月1日 更新</span></div>
-        <div class="body">
-          <div class="view" id="v-map"></div>
-          <div class="view" id="v-clean" hidden></div>
-          <div class="view" id="v-debit" hidden></div>
-          <div class="view" id="v-share" hidden></div>
-        </div>
-        <nav class="tabs" id="tabs">
-          <button class="on" data-v="map"><svg viewBox="0 0 24 24"><path d="M4 6h6v5H4zM14 13h6v5h-6zM10 8.5h4M12 8.5v7"/></svg>マップ</button>
-          <button data-v="clean"><svg viewBox="0 0 24 24"><path d="M5 12l4 4L19 6"/></svg>整理</button>
-          <button data-v="debit"><svg viewBox="0 0 24 24"><path d="M4 5h16v15H4zM4 10h16M8 3v4M16 3v4"/></svg>引き落とし</button>
-          <button data-v="share"><svg viewBox="0 0 24 24"><path d="M12 14v-9M8 8l4-4 4 4M5 14v5h14v-5"/></svg>共有</button>
-        </nav>
-      </div>
-      <div class="toast" id="toast"></div>
-    </div>
-
-    <aside class="side">
-      <div class="panel" id="about"></div>
-      <div class="panel">
-        <h2>データの持ち方</h2>
-        <p>この画面はすべて1つのデータ（機関・つながり・定期引き落とし）から描いています。マップ、整理の指摘、やめるチェックリスト、口座別の必要額は同じデータの見方を変えたものです。</p>
-        <ul>
-          <li>機関: 名前、種類、ブランド色、Apple Pay登録、ハブかどうか</li>
-          <li>つながり: どこからどこへ、入金／出金／連携のどれか</li>
-          <li>定期引き落とし: 引き落とし元、日、金額（変動なら空）、内訳</li>
-        </ul>
-        <div class="try">試すこと: 整理タブで「クレジットカードB」や「QR決済B」を選び、「解約予定にする」を押してからマップと引き落としを見る。</div>
-      </div>
-    </aside>
+<div id="app">
+  <div class="appbar"><h1 id="ttl">マップ</h1><span class="sub" id="sub"></span></div>
+  <div class="body">
+    <div id="banner"></div>
+    <div class="view" id="v-map"></div>
+    <div class="view" id="v-clean" hidden></div>
+    <div class="view" id="v-debit" hidden></div>
+    <div class="view" id="v-share" hidden></div>
   </div>
+  <button class="fab" id="fab" aria-label="追加">+</button>
+  <nav class="tabs" id="tabs">
+    <button class="on" data-v="map"><svg viewBox="0 0 24 24"><path d="M4 6h6v5H4zM14 13h6v5h-6zM10 8.5h4M12 8.5v7"/></svg>マップ</button>
+    <button data-v="clean"><svg viewBox="0 0 24 24"><path d="M5 12l4 4L19 6"/></svg>整理</button>
+    <button data-v="debit"><svg viewBox="0 0 24 24"><path d="M4 5h16v15H4zM4 10h16M8 3v4M16 3v4"/></svg>引き落とし</button>
+    <button data-v="share"><svg viewBox="0 0 24 24"><path d="M12 14v-9M8 8l4-4 4 4M5 14v5h14v-5"/></svg>共有</button>
+  </nav>
+  <div class="toast" id="toast"></div>
+  <div class="scrim" id="scrim"></div>
+  <div class="sheet" id="sheet"></div>
 </div>
 
 <script>
 (function(){
-  // ===== データ（この資料の実際の構成） =====
-  const N = {
-    salary:  {name:"給与", sub:"給与振込", av:"給", col:"#1F9D6A", type:"income"},
-    smbc:    {name:"メイン銀行", sub:"給与振込口座", av:"M", col:"#1F4E79", type:"bank", hub:true},
-    rbank:   {name:"銀行B", sub:"", av:"R", col:"#BF0000", type:"bank"},
-    yucho:   {name:"銀行C", sub:"", av:"ゆ", col:"#00A040", type:"bank"},
-    scard:   {name:"クレジットカードA", sub:"26日引き落とし", av:"CA", col:"#1F4E79", type:"card", sq:true, ap:true, chips:["ETC"]},
-    rcard:   {name:"クレジットカードB", sub:"27日引き落とし", av:"R", col:"#BF0000", type:"card", sq:true, ap:true},
-    benefit: {name:"iDeCo運営管理機関", sub:"iDeCo ・ 毎月積立", av:"B", col:"#0B5AA5", type:"sec"},
-    rsec:    {name:"証券会社A", sub:"", av:"R", col:"#BF0000", type:"sec"},
-    gmo:     {name:"暗号資産取引所A", sub:"暗号資産取引所", av:"G", col:"#005BAC", type:"sec"},
-    sbivc:   {name:"暗号資産取引所B", sub:"取引所", av:"V", col:"#0B5AA5", type:"sec"},
-    docomo:  {name:"サブ銀行", sub:"自動入金 毎月5日 ・ 臨時振込", av:"d", col:"#CC0033", type:"bank", hub:true},
-    wife:    {name:"家族の口座", sub:"生活費 ・ 月末自動振込", av:"家", col:"#1F4E79", type:"bank", sq:true},
-    sbi:     {name:"証券会社B", sub:"ハイブリッド預金 ・ 配当は口座へ戻る", av:"S", col:"#0B5AA5", type:"sec"},
-    debit:   {name:"デビットカード", sub:"クリプトカード非対応店で利用", av:"P+", col:"#CC0033", type:"card", sq:true, ap:true},
-    jpyc:    {name:"ステーブルコイン購入", sub:"円建てステーブルコイン", av:"J", col:"#1C4FA0", type:"wallet", sq:true},
-    rpay:    {name:"QR決済A", sub:"", av:"R", col:"#BF0000", type:"pay", sq:true},
-    paypay:  {name:"QR決済B", sub:"", av:"P", col:"#FF0033", type:"pay", sq:true},
-    jihanpi: {name:"自販機アプリ", sub:"QR決済A払い", av:"J", col:"#0A84C1", type:"use", sq:true},
-    cokeon:  {name:"飲料アプリ", sub:"QR決済A払い", av:"C", col:"#E60012", type:"use", sq:true},
-    metamask:{name:"ウォレットA", sub:"ウォレット", av:"M", col:"#F6851B", type:"wallet", sq:true},
-    tria:    {name:"クリプトカード", sub:"クリプトカード", av:"T", col:"#111111", type:"card", sq:true, ap:true},
-    phantom: {name:"ウォレットB", sub:"ウォレット", av:"P", col:"#AB9FF2", type:"wallet", sq:true},
-    stepn:   {name:"アプリA", sub:"", av:"S", col:"#3DDC84", type:"app", sq:true},
-    stepngo: {name:"アプリB", sub:"", av:"G", col:"#9B6BFF", type:"app", sq:true},
-    suica:   {name:"交通IC", sub:"チャージ", av:"S", col:"#6BBF3B", type:"use", sq:true, ap:true},
-    amazon:  {name:"通販サイト", sub:"支払い", av:"a", col:"#FF9900", type:"use", sq:true},
-    food:    {name:"飲食店", sub:"支払い", av:"食", col:"#4B5563", type:"use", sq:true},
-    conv:    {name:"コンビニ", sub:"支払い", av:"コ", col:"#4B5563", type:"use", sq:true},
-  };
-  // kind: in=入金(緑) out=出金・チャージ(青) link=連携
-  const E = [
-    ["salary","smbc","in","給与振込"], ["smbc","scard","out","引き落とし"], ["smbc","rcard","out","引き落とし"], ["smbc","benefit","out","iDeCo 毎月積立"],
-    ["smbc","rsec","link","連携"], ["smbc","gmo","link","連携"], ["smbc","docomo","out","自動入金 毎月5日"],
-    ["docomo","wife","out","生活費 月末"], ["docomo","sbi","out","ハイブリッド預金"], ["sbi","docomo","in","配当・分配金"], ["docomo","sbivc","link","連携"],
-    ["docomo","debit","out","デビット"], ["debit","rpay","out","引き落とし"], ["debit","paypay","out","引き落とし"], ["rpay","jihanpi","out","支払い"], ["rpay","cokeon","out","支払い"],
-    ["docomo","jpyc","out","購入"], ["jpyc","metamask","out","送金"], ["metamask","tria","out","スワップ → チャージ"], ["metamask","phantom","out","送金"],
-    ["phantom","stepn","link","連携"], ["phantom","stepngo","link","連携"],
-    ["tria","suica","out","チャージ"], ["tria","amazon","out","支払い"], ["tria","food","out","支払い"], ["tria","conv","out","支払い"],
-  ];
-  const D = [
-    {bank:"smbc", day:1,  label:"1日",  item:"カード分割払い", sub:"1日固定", amt:25000},
-    {bank:"smbc", day:5,  label:"5日",  item:"サブ銀行へ自動入金", sub:"メイン銀行 → サブ銀行", amt:150000, kind:"in", to:"docomo"},
-    {bank:"smbc", day:15, label:"15日", item:"生命保険", sub:"休業日は翌営業日", amt:2500},
-    {bank:"smbc", day:26, label:"26日", item:"iDeCo", sub:"iDeCo運営管理機関", amt:23000, via:"benefit"},
-    {bank:"smbc", day:26, label:"26日", item:"クレジットカードA", sub:"積立NISA 50,000円 ・ ジム 3,000円 を含む", amt:null, via:"scard", parts:["積立NISA 50,000円","ジム 3,000円"]},
-    {bank:"smbc", day:27, label:"27日", item:"クレジットカードB", sub:"電気 ・ 水道 を含む", amt:null, via:"rcard", parts:["電気","水道"]},
-    {bank:"smbc", day:27, label:"27日", item:"家賃", sub:"休業日は翌営業日", amt:100000},
-    {bank:"docomo", day:30, label:"月末", item:"家族の口座へ生活費", sub:"最終営業日", amt:100000, via:"wife"},
-  ];
-  const off = new Set();          // 解約予定
-  const yen = n => n.toLocaleString("ja-JP") + "円";
-  const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-  const avatar = (id, small) => { const n=N[id]; return `<span class="av ${n.sq?'sq':''}" style="background:${n.col}">${esc(n.av)}</span>`; };
-  const outOf = id => E.filter(e=>e[0]===id), inTo = id => E.filter(e=>e[1]===id);
-  const degree = id => E.filter(e=>e[0]===id||e[1]===id).length;
-  const isOff = id => off.has(id);
+  "use strict";
+  const KEY = "moneymap.v1";
+  const TYPES = { income:"収入", bank:"銀行口座", card:"カード", securities:"証券・取引所", wallet:"ウォレット", pay:"QR・電子マネー", app:"アプリ・サービス", use:"利用先" };
+  const TYPE_DEFAULT = { income:["収","#1F9D6A",false], bank:["銀","#1F4E79",false], card:["C","#374151",true], securities:["証","#0B5AA5",false], wallet:["W","#F6851B",true], pay:["P","#BF0000",true], app:["A","#8B5CF6",true], use:["店","#4B5563",true] };
+  const KINDS = { in:"入金（緑）", out:"出金・チャージ（青）", link:"連携（線なし・チップ）" };
+
+  // ===== サンプルデータ（架空） =====
+  function sample(){
+    const N = [
+      ["salary","給与","給与振込","income","収","#1F9D6A",false,{}],
+      ["mainbank","メイン銀行","給与振込口座","bank","M","#1F4E79",false,{hub:true}],
+      ["bankb","銀行B","","bank","B","#BF0000",false,{}],
+      ["bankc","銀行C","","bank","C","#00A040",false,{}],
+      ["carda","クレジットカードA","26日引き落とし","card","CA","#1F4E79",true,{ap:true,chips:["ETC"]}],
+      ["cardb","クレジットカードB","27日引き落とし","card","CB","#BF0000",true,{ap:true}],
+      ["ideco","iDeCo運営管理機関","iDeCo ・ 毎月積立","securities","i","#0B5AA5",false,{}],
+      ["seca","証券会社A","","securities","A","#BF0000",false,{}],
+      ["exa","暗号資産取引所A","暗号資産取引所","securities","X","#005BAC",false,{}],
+      ["exb","暗号資産取引所B","暗号資産取引所","securities","Y","#0B5AA5",false,{}],
+      ["subbank","サブ銀行","自動入金 毎月5日","bank","S","#CC0033",false,{hub:true}],
+      ["family","家族の口座","生活費 ・ 月末自動振込","bank","家","#1F4E79",true,{}],
+      ["secb","証券会社B","ハイブリッド預金","securities","B","#0B5AA5",false,{}],
+      ["debit","デビットカード","クリプトカード非対応店で利用","card","D","#CC0033",true,{ap:true}],
+      ["stable","ステーブルコイン購入","円建てステーブルコイン","wallet","¥","#1C4FA0",true,{zone:true}],
+      ["paya","QR決済A","","pay","Qa","#BF0000",true,{}],
+      ["payb","QR決済B","","pay","Qb","#FF0033",true,{}],
+      ["vend","自販機アプリ","","use","自","#0A84C1",true,{}],
+      ["drink","飲料アプリ","","use","飲","#E60012",true,{}],
+      ["walleta","ウォレットA","ウォレット","wallet","Wa","#F6851B",true,{zone:true}],
+      ["crypto","クリプトカード","","card","K","#111111",true,{ap:true,zone:true}],
+      ["walletb","ウォレットB","ウォレット","wallet","Wb","#AB9FF2",true,{zone:true}],
+      ["appa","アプリA","","app","a","#3DDC84",true,{zone:true}],
+      ["appb","アプリB","","app","b","#9B6BFF",true,{zone:true}],
+      ["ic","交通IC","チャージ","use","IC","#6BBF3B",true,{ap:true}],
+      ["shop","通販サイト","支払い","use","通","#FF9900",true,{}],
+      ["food","飲食店","支払い","use","食","#4B5563",true,{}],
+      ["conv","コンビニ","支払い","use","コ","#4B5563",true,{}],
+    ].map(([id,name,sub,type,av,col,sq,x])=>Object.assign({id,name,sub,type,av,col,sq,hub:false,ap:false,zone:false,chips:[],off:false},x));
+    const E = [
+      ["salary","mainbank","in","給与振込"],["mainbank","carda","out","引き落とし"],["mainbank","cardb","out","引き落とし"],["mainbank","ideco","out","iDeCo 毎月積立"],
+      ["mainbank","seca","link","連携"],["mainbank","exa","link","連携"],["mainbank","subbank","out","自動入金 毎月5日"],
+      ["subbank","family","out","生活費 月末"],["subbank","secb","out","ハイブリッド預金"],["secb","subbank","in","配当・分配金"],["subbank","exb","link","連携"],
+      ["subbank","debit","out","デビット"],["debit","paya","out","引き落とし"],["debit","payb","out","引き落とし"],["paya","vend","out","支払い"],["paya","drink","out","支払い"],
+      ["subbank","stable","out","購入"],["stable","walleta","out","送金"],["walleta","crypto","out","スワップ → チャージ"],["walleta","walletb","out","送金"],
+      ["walletb","appa","link","連携"],["walletb","appb","link","連携"],
+      ["crypto","ic","out","チャージ"],["crypto","shop","out","支払い"],["crypto","food","out","支払い"],["crypto","conv","out","支払い"],
+    ].map(([from,to,kind,label],i)=>({id:"e"+i,from,to,kind,label}));
+    const D = [
+      {id:"d1",source:"mainbank",day:1,item:"カード分割払い",sub:"1日固定",amt:25000,via:"",rollover:false,kind:"out"},
+      {id:"d2",source:"mainbank",day:5,item:"サブ銀行へ自動入金",sub:"",amt:150000,via:"subbank",rollover:false,kind:"in"},
+      {id:"d3",source:"mainbank",day:15,item:"生命保険",sub:"",amt:2500,via:"",rollover:true,kind:"out"},
+      {id:"d4",source:"mainbank",day:26,item:"iDeCo",sub:"",amt:23000,via:"ideco",rollover:true,kind:"out"},
+      {id:"d5",source:"mainbank",day:26,item:"クレジットカードA",sub:"",amt:null,via:"carda",parts:"積立NISA 50,000円, ジム 3,000円",rollover:true,kind:"out"},
+      {id:"d6",source:"mainbank",day:27,item:"クレジットカードB",sub:"",amt:null,via:"cardb",parts:"電気, 水道",rollover:true,kind:"out"},
+      {id:"d7",source:"mainbank",day:27,item:"家賃",sub:"",amt:100000,via:"",rollover:true,kind:"out"},
+      {id:"d8",source:"subbank",day:31,item:"家族の口座へ生活費",sub:"最終営業日",amt:100000,via:"family",rollover:true,kind:"out"},
+    ];
+    return { version:1, nodes:N, edges:E, debits:D, settings:{ notify:true, partner:"家族", sample:true, updated:new Date().toISOString().slice(0,10) } };
+  }
+
+  // ===== 状態 =====
+  let S;
+  function load(){ try{ const raw=localStorage.getItem(KEY); S = raw ? JSON.parse(raw) : sample(); }catch(e){ S = sample(); } if(!S.settings) S.settings={notify:true,partner:"家族",sample:false}; }
+  function save(){ S.settings.updated = new Date().toISOString().slice(0,10); try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){ toast("保存できませんでした（ブラウザの保存領域が使えません）"); } }
+  const byId = id => S.nodes.find(n=>n.id===id);
+  const uid = p => p + Math.random().toString(36).slice(2,8);
+  const esc = s => String(s==null?"":s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  const yen = n => Number(n).toLocaleString("ja-JP") + "円";
+  const outOf = id => S.edges.filter(e=>e.from===id), inTo = id => S.edges.filter(e=>e.to===id);
+  const flowEdges = () => S.edges.filter(e=>e.kind!=="link");
+  const degree = id => S.edges.filter(e=>e.from===id||e.to===id).length;
+  const flowDegree = id => flowEdges().filter(e=>e.from===id||e.to===id).length;
+  const avatar = n => `<span class="av ${n.sq?'sq':''}" style="background:${esc(n.col)}">${esc(n.av)}</span>`;
+
+  // ===== 自動レイアウト（縦の流れ） =====
+  function layout(){
+    const hubs = S.nodes.filter(n=>n.hub && n.type==="bank");
+    const hubList = hubs.length ? hubs : S.nodes.filter(n=>n.type==="bank").slice(0,1);
+    const fe = flowEdges();
+    // 各ノードの最寄りハブ（入出金の辺を無向にたどった距離）
+    const dist = {}; hubList.forEach(h=>{ dist[h.id]={}; const q=[[h.id,0]]; const seen=new Set([h.id]); while(q.length){ const [x,d]=q.shift(); dist[h.id][x]=d; fe.forEach(e=>{ const y = e.from===x?e.to: e.to===x?e.from:null; if(y && !seen.has(y)){ seen.add(y); q.push([y,d+1]); } }); } });
+    const owner = {}; S.nodes.forEach(n=>{ if(n.hub && n.type==="bank"){ owner[n.id]=n.id; return; } let best=null, bd=1e9; hubList.forEach(h=>{ const d=dist[h.id][n.id]; if(d!=null && d<bd){ bd=d; best=h.id; } }); owner[n.id]=best; });
+    const sections = hubList.map(h=>{
+      const placed=[]; const rows=[];
+      // 収入（ハブへ in で入るもの、ただし他ハブ由来の振替は除く）
+      inTo(h.id).filter(e=>e.kind==="in" && byId(e.from) && byId(e.from).type==="income").forEach(e=>{ rows.push({id:e.from,kind:"in",depth:0}); placed.push(e.from); });
+      rows.push({id:h.id,kind:"in",depth:0,hub:true}); placed.push(h.id);
+      // ハブから out で下る（深さ優先、同一ハブ配下のみ）
+      const walk=(x,depth)=>{ outOf(x).filter(e=>e.kind==="out").forEach(e=>{ const y=byId(e.to); if(!y||placed.includes(e.to)||owner[e.to]!==h.id||y.hub) return; placed.push(e.to); rows.push({id:e.to,kind:"out",depth:Math.min(depth,3),label:e.label}); walk(e.to,depth+1); }); };
+      walk(h.id,1);
+      // 他ハブへの振替（out）はチップで示す
+      const transfers = outOf(h.id).filter(e=>e.kind==="out" && byId(e.to) && byId(e.to).hub);
+      // 連携（link）: この帯の配置済みノードに link で結ばれる未配置ノード
+      const links=[]; S.edges.filter(e=>e.kind==="link").forEach(e=>{ const a=placed.includes(e.from), b=placed.includes(e.to); if(a && !b && owner[e.to]==null) links.push({id:e.to, with:e.from}); else if(b && !a && owner[e.from]==null) links.push({id:e.from, with:e.to}); });
+      return {hub:h, rows, links, transfers, placed};
+    });
+    const placedAll = new Set(sections.flatMap(s=>[...s.placed, ...s.links.map(l=>l.id)]));
+    const unplaced = S.nodes.filter(n=>!placedAll.has(n.id));
+    return {sections, unplaced, owner};
+  }
 
   // ===== マップ =====
-  function tile(id, extra){
-    const n=N[id]; const cls = ["tile", n.hub?"hub":"", degree(id)===0?"dim":"", isOff(id)?"off":""].join(" ");
-    const chips = [];
-    if (id==="smbc") chips.push(`<span class="chip">定期引落 ${D.filter(d=>d.bank==="smbc").length}件</span>`);
-    if (id==="docomo") chips.push(`<span class="chip">定期引落 ${D.filter(d=>d.bank==="docomo").length}件</span>`);
+  function tileHtml(n, opts){
+    opts=opts||{}; const chips=[];
+    const dc = S.debits.filter(d=>d.source===n.id).length; if(dc) chips.push(`<span class="chip">定期引落 ${dc}件</span>`);
     (n.chips||[]).forEach(c=>chips.push(`<span class="chip">${esc(c)}</span>`));
-    if (n.ap) chips.push(`<span class="chip ap">Apple Pay</span>`);
-    if (isOff(id)) chips.push(`<span class="chip off">解約予定</span>`);
-    if (id==="sbi") chips.push(`<span class="chip ok">入金あり</span>`);
-    const sub = degree(id)===0 ? "つながり未登録" : n.sub;
-    return `<div class="${cls}">${avatar(id)}<div class="t"><span class="n">${esc(n.name)}</span>${sub?`<span class="s">${esc(sub)}</span>`:""}</div><div class="chips">${chips.join("")}</div></div>`;
+    (opts.chips||[]).forEach(c=>chips.push(`<span class="chip">${esc(c)}</span>`));
+    if(n.ap) chips.push(`<span class="chip ap">Apple Pay</span>`);
+    if(inTo(n.id).some(e=>e.kind==="in") && n.type!=="bank" && n.type!=="income") chips.push(`<span class="chip ok">入金あり</span>`);
+    if(n.off) chips.push(`<span class="chip off">解約予定</span>`);
+    const cls=["tile", n.hub?"hub":"", (degree(n.id)===0)?"dim":"", n.off?"off":"", n.zone?"zone":""].join(" ");
+    const sub = degree(n.id)===0 ? "つながり未登録" : n.sub;
+    return `<button class="${cls}" data-edit="${n.id}">${avatar(n)}<div class="t"><span class="n">${esc(n.name)}</span>${sub?`<span class="s">${esc(sub)}</span>`:""}</div><div class="chips">${chips.join("")}</div></button>`;
   }
-  function flow(rows){ // rows: [{id, kind, pos}]
-    return `<div class="flow">` + rows.map((r,i)=>{
-      const pos = rows.length===1?"only": i===0?"start": i===rows.length-1?"end":"";
-      const kind = r.kind||"out"; const arrow = kind==="link" ? "" : "<span></span>";
-      return `<div class="c ${pos} ${kind} ${isOff(r.id)?'off':''}">${arrow}</div>${tile(r.id)}`;
-    }).join("") + `</div>`;
-  }
-  function mini(id, note){ const n=N[id]; return `<div class="mini ${degree(id)===0?'dim':''} ${isOff(id)?'off':''}">${avatar(id)}${esc(n.name)}<small>${esc(note||"")}</small></div>`; }
   function renderMap(){
-    document.getElementById("v-map").innerHTML =
-      `<div class="sec"><span class="num">01</span><h3>メイン銀行系統</h3></div>` +
-      flow([{id:"salary",kind:"in"},{id:"smbc",kind:"in"},{id:"scard"},{id:"rcard"},{id:"benefit"}]) +
-      `<div class="row2">${mini("rsec","連携")}${mini("gmo","連携")}${mini("rbank","未接続")}${mini("yucho","未接続")}</div>` +
-      `<div class="sec"><span class="num">02</span><h3>サブ銀行系統</h3></div>` +
-      flow([{id:"docomo"},{id:"wife"},{id:"sbi"},{id:"debit"},{id:"jpyc"}]) +
-      `<div class="row2">${mini("rpay","デビット")}${mini("paypay","デビット")}${mini("jihanpi","QR決済A")}${mini("cokeon","QR決済A")}${mini("sbivc","連携")}</div>` +
-      `<div class="zone"><div class="zl">オンチェーン経路 ── ステーブルコイン → チェーン → クリプトカード</div><div class="row2">${mini("metamask")}${mini("tria","Apple Pay")}${mini("phantom")}${mini("suica","チャージ")}${mini("amazon","支払い")}${mini("stepn","ウォレットB")}</div></div>`;
+    const L = layout(); let h = "";
+    if(!S.nodes.length){ h = `<div class="empty">まだ何もありません。右下の「＋」から銀行を追加してください。最初に追加した銀行が起点（ハブ）になります。</div>`; }
+    L.sections.forEach((sec,i)=>{
+      h += `<div class="sec"><span class="num">${String(i+1).padStart(2,"0")}</span><h3>${esc(sec.hub.name)}系統</h3></div><div class="flow">`;
+      sec.rows.forEach((r,j)=>{ const n=byId(r.id); const pos = sec.rows.length===1?"only": j===0?"start": j===sec.rows.length-1?"end":""; const arrow = `<span></span>`;
+        const chips = r.hub ? sec.transfers.map(t=>`→ ${byId(t.to).name}`) : [];
+        h += `<div class="c ${pos} ${r.kind} ${n.off?'off':''}">${arrow}</div><div class="d${r.depth>1?Math.min(r.depth-1,3):0}">${tileHtml(n,{chips})}</div>`; });
+      h += `</div>`;
+      if(sec.links.length) h += `<div class="lbl">連携（線なし）</div><div class="row2">${sec.links.map(l=>{ const n=byId(l.id); return `<button class="mini ${n.off?'off':''}" data-edit="${n.id}">${avatar(n)}${esc(n.name)}<small>連携 ${esc(byId(l.with).name)}</small></button>`; }).join("")}</div>`;
+    });
+    if(L.unplaced.length) h += `<div class="lbl">つながり未登録</div><div class="row2">${L.unplaced.map(n=>`<button class="mini dim ${n.off?'off':''}" data-edit="${n.id}">${avatar(n)}${esc(n.name)}<small>${esc(TYPES[n.type]||"")}</small></button>`).join("")}</div>`;
+    h += `<div class="hint">タイルをタップすると編集できます。配置は「入金・出金」のつながりから自動で決まります。</div>`;
+    document.getElementById("v-map").innerHTML = h;
   }
 
   // ===== 整理 =====
-  let pick = "rcard";
+  let pick = null;
   function checklist(id){
-    const n=N[id]; const items=[];
-    D.filter(d=>d.via===id).forEach(d=>{ (d.parts||[d.item]).forEach(p=>items.push({t:`引き落とし先を移す：${p}`, s:`${d.label} ・ ${n.name}払い`})); });
-    outOf(id).filter(e=>e[2]!=="link").forEach(e=>items.push({t:`${N[e[1]].name} の${e[3]}を別の手段に移す`, s:"この先につながっているもの"}));
-    outOf(id).filter(e=>e[2]==="link").forEach(e=>items.push({t:`${N[e[1]].name} との連携を解除する`, s:"連携"}));
-    if (n.ap) items.push({t:"Apple Payの登録を外す", s:"iPhone のウォレット"});
-    inTo(id).filter(e=>e[2]!=="link").forEach(e=>items.push({t:`${N[e[0]].name} からの${e[3]}が止まる`, s:"自動で反映", done:true}));
+    const n=byId(id); const items=[];
+    S.debits.filter(d=>d.via===id).forEach(d=>{ const parts=(d.parts||"").split(/[、,]/).map(s=>s.trim()).filter(Boolean); (parts.length?parts:[d.item]).forEach(p=>items.push({t:`引き落とし先を移す：${p}`, s:`${dayLabel(d.day)} ・ ${n.name}払い`})); });
+    outOf(id).filter(e=>e.kind!=="link").forEach(e=>items.push({t:`${byId(e.to)?byId(e.to).name:"?"} の${e.label||"支払い"}を別の手段に移す`, s:"この先につながっているもの"}));
+    S.edges.filter(e=>e.kind==="link"&&(e.from===id||e.to===id)).forEach(e=>items.push({t:`${byId(e.from===id?e.to:e.from)?.name} との連携を解除する`, s:"連携"}));
+    if(n.ap) items.push({t:"Apple Payの登録を外す", s:"iPhone のウォレット"});
+    inTo(id).filter(e=>e.kind!=="link").forEach(e=>items.push({t:`${byId(e.from)?.name} からの${e.label||"入金"}が止まる`, s:"自動で反映", done:true}));
     return items;
   }
   function renderClean(){
-    const unlinked = Object.keys(N).filter(id=>N[id].type==="bank" && degree(id)===0);
-    const pays = Object.keys(N).filter(id=>N[id].type==="pay" && !isOff(id));
-    const dup = pays.length>1 && pays.every(p=>inTo(p).some(e=>e[0]===inTo(pays[0])[0][0]));
-    const byDay = {}; D.filter(d=>!isOff(d.via)).forEach(d=>{ byDay[d.day]=(byDay[d.day]||0)+1; });
-    const busy = Object.entries(byDay).filter(([d,c])=>c>=2).map(([d])=>d).join("・");
-    const items = checklist(pick);
-    const opts = Object.keys(N).filter(id=>["bank","card","pay","sec"].includes(N[id].type) && !N[id].hub && id!=="wife")
-      .map(id=>`<option value="${id}" ${id===pick?"selected":""}>${esc(N[id].name)}${isOff(id)?"（解約予定）":""}</option>`).join("");
+    const unlinked = S.nodes.filter(n=>n.type==="bank" && degree(n.id)===0);
+    const groups = {}; S.nodes.filter(n=>!n.off && (n.type==="pay"||n.type==="card")).forEach(n=>{ const p = inTo(n.id).find(e=>e.kind==="out"); if(p){ const k=n.type+"@"+p.from; (groups[k]=groups[k]||[]).push(n); } });
+    const dups = Object.values(groups).filter(g=>g.length>1);
+    const byDay = {}; S.debits.filter(d=>!(d.via && byId(d.via)?.off)).forEach(d=>{ byDay[d.day]=(byDay[d.day]||0)+1; });
+    const busy = Object.entries(byDay).filter(([d,c])=>c>=2).map(([d])=>dayLabel(+d)).join("・");
+    const cand = S.nodes.filter(n=>!n.hub && n.type!=="income" && n.type!=="use");
+    if(!pick || !byId(pick)) pick = cand[0]?.id || null;
+    const items = pick ? checklist(pick) : [];
     document.getElementById("v-clean").innerHTML =
-      `<div class="kpi"><div class="w"><b>${unlinked.length}</b><span>未接続の口座</span></div><div class="${dup?'w':''}"><b>${dup?1:0}</b><span>役割の重複</span></div><div><b>${busy||"—"}</b><span>引き落とし集中日</span></div></div>` +
-      `<div class="card"><h4><span class="sev"></span>つながりのない口座が${unlinked.length}つあります</h4><ul class="list">${unlinked.map(id=>`<li>${avatar(id)}${esc(N[id].name)}<span class="r">入出金・連携なし</span></li>`).join("")}</ul><p>図の中で線が1本もありません。使っていなければ解約候補です。</p></div>` +
-      (dup ? `<div class="card"><h4><span class="sev"></span>同じ役割のQR決済が${pays.length}つあります</h4><ul class="list">${pays.map(id=>`<li>${avatar(id)}${esc(N[id].name)}<span class="r">${esc(N[inTo(id)[0][0]].name)}から引き落とし ・ 利用先${outOf(id).length}</span></li>`).join("")}</ul><p>利用先が登録されていないものは、使い分けの理由がなければ1つに寄せられます。</p></div>` : `<div class="empty">QR決済の重複はありません。</div>`) +
-      `<div class="card"><h4><span class="sev ok"></span>やめるチェックリスト</h4><select id="pick">${opts}</select>` +
-      (items.length ? `<div class="check">${items.map(it=>`<label><input type="checkbox" ${it.done?"checked":""}><span>${esc(it.t)}<small>${esc(it.s)}</small></span></label>`).join("")}</div>` : `<div class="empty">紐づくものはありません。そのまま解約できます。</div>`) +
-      `<button class="btn ${isOff(pick)?'':'danger'} blk" id="toggleOff">${isOff(pick)?"解約予定を取り消す":"解約予定にする"}</button>` +
-      `<button class="btn pri blk" id="goMap">解約後のマップを確認する</button></div>`;
-    document.getElementById("pick").addEventListener("change", e=>{ pick=e.target.value; renderClean(); });
-    document.getElementById("toggleOff").addEventListener("click", ()=>{ if(isOff(pick)) off.delete(pick); else off.add(pick); renderAll(); toast(isOff(pick)?`${N[pick].name} を解約予定にしました`:`${N[pick].name} の解約予定を取り消しました`); });
-    document.getElementById("goMap").addEventListener("click", ()=>show("map"));
+      `<div class="kpi"><div class="${unlinked.length?'w':''}"><b>${unlinked.length}</b><span>未接続の口座</span></div><div class="${dups.length?'w':''}"><b>${dups.length}</b><span>役割の重複</span></div><div><b>${busy||"—"}</b><span>引き落とし集中日</span></div></div>` +
+      (unlinked.length ? `<div class="card"><h4><span class="sev"></span>つながりのない口座が${unlinked.length}つあります</h4><ul class="list">${unlinked.map(n=>`<li>${avatar(n)}${esc(n.name)}<span class="r">入出金・連携なし</span></li>`).join("")}</ul><p>図の中で線が1本もありません。使っていなければ解約候補です。</p></div>` : `<div class="empty">つながりのない口座はありません。</div>`) +
+      (dups.length ? dups.map(g=>`<div class="card"><h4><span class="sev"></span>同じ役割の${TYPES[g[0].type]}が${g.length}つあります</h4><ul class="list">${g.map(n=>`<li>${avatar(n)}${esc(n.name)}<span class="r">${esc(byId(inTo(n.id).find(e=>e.kind==="out").from)?.name)}から ・ 利用先${outOf(n.id).length}</span></li>`).join("")}</ul><p>利用先が少ないものは、使い分けの理由がなければ1つに寄せられます。</p></div>`).join("") : `<div class="empty">同じ役割の重複はありません。</div>`) +
+      `<div class="card"><h4><span class="sev ok"></span>やめるチェックリスト</h4>` +
+      (cand.length ? `<select id="pick">${cand.map(n=>`<option value="${n.id}" ${n.id===pick?"selected":""}>${esc(n.name)}${n.off?"（解約予定）":""}</option>`).join("")}</select>` +
+        (items.length ? `<div class="check">${items.map(it=>`<label><input type="checkbox" ${it.done?"checked":""}><span>${esc(it.t)}<small>${esc(it.s)}</small></span></label>`).join("")}</div>` : `<div class="empty">紐づくものはありません。そのまま解約できます。</div>`) +
+        `<button class="btn ${byId(pick).off?'':'danger'} blk" id="toggleOff">${byId(pick).off?"解約予定を取り消す":"解約予定にする"}</button><button class="btn pri blk" id="goMap">解約後のマップを確認する</button>` : `<div class="empty">対象になる機関がまだありません。</div>`) + `</div>`;
+    const sel=document.getElementById("pick"); if(sel) sel.addEventListener("change", e=>{ pick=e.target.value; renderClean(); });
+    const t=document.getElementById("toggleOff"); if(t) t.addEventListener("click", ()=>{ const n=byId(pick); n.off=!n.off; save(); renderAll(); toast(n.off?`${n.name} を解約予定にしました`:`${n.name} の解約予定を取り消しました`); });
+    const g=document.getElementById("goMap"); if(g) g.addEventListener("click", ()=>show("map"));
   }
 
   // ===== 引き落とし =====
-  let notify = true;
+  const dayLabel = d => d>=31 ? "月末" : `${d}日`;
   function renderDebit(){
-    const live = D.filter(d=>!isOff(d.via));
-    const fixed = live.filter(d=>d.amt!=null).reduce((a,d)=>a+d.amt,0), varn = live.filter(d=>d.amt==null).length;
-    const days = Array.from({length:31},(_,i)=>i+1).map(d=>{ const hit=live.filter(x=>x.day===d); const cls=hit.length?(hit.every(x=>x.kind==="in")?"in":"on"):""; const lab=(hit.length||d===1||d%5===0||d===31)?d:""; return `<i data-d="${lab}" class="${cls}"></i>`; }).join("");
-    const need = (bank, until) => { const l=live.filter(d=>d.bank===bank); const f=l.filter(d=>d.amt!=null).reduce((a,d)=>a+d.amt,0); const v=l.filter(d=>d.amt==null).length; return `<div class="need">${avatar(bank)}<div class="t"><span class="n">${esc(N[bank].name)}</span><span class="s">${until}までに必要</span></div><div class="amt">${yen(f)}${v?`<small>＋ カード${v}枚の利用額</small>`:(bank==="docomo"?`<small>＋ デビット利用分</small>`:"")}</div></div>`; };
+    const live = S.debits.filter(d=>!(d.via && byId(d.via)?.off));
+    const fixed = live.filter(d=>d.amt!=null).reduce((a,d)=>a+Number(d.amt),0), varn = live.filter(d=>d.amt==null).length;
+    const days = Array.from({length:31},(_,i)=>i+1).map(d=>{ const hit=live.filter(x=>x.day===d); const cls=hit.length?(hit.every(x=>x.kind==="in")?"in":"on"):""; const lab=(hit.length||d===1||d%5===0||d===31)?(d===31?"末":d):""; return `<i data-d="${lab}" class="${cls}"></i>`; }).join("");
+    const banks = S.nodes.filter(n=>n.type==="bank" && S.debits.some(d=>d.source===n.id));
+    const need = banks.map(b=>{ const l=live.filter(d=>d.source===b.id); const f=l.filter(d=>d.amt!=null).reduce((a,d)=>a+Number(d.amt),0); const v=l.filter(d=>d.amt==null).length; const last=Math.max(...l.map(d=>d.day)); return `<div class="need">${avatar(b)}<div class="t"><span class="n">${esc(b.name)}</span><span class="s">${dayLabel(last)}までに必要</span></div><div class="amt">${yen(f)}${v?`<small>＋ 変動分 ${v}件</small>`:""}</div></div>`; }).join("");
+    const rows = [...S.debits].sort((a,b)=>a.day-b.day).map(d=>`<button class="drow ${(d.via&&byId(d.via)?.off)?'off':''}" data-editd="${d.id}"><span class="d ${d.kind==='in'?'in':''}">${dayLabel(d.day)}</span><span class="n">${esc(d.item)}<small>${esc([byId(d.source)?.name, d.parts?("含む: "+d.parts):"", d.rollover?"休業日は翌営業日":"", d.sub].filter(Boolean).join(" ・ "))}</small></span><span class="a">${d.amt!=null?yen(d.amt):'変動<small>金額未設定</small>'}</span></button>`).join("");
     document.getElementById("v-debit").innerHTML =
-      `<div class="month"><b>9月の予定 ${live.length}件</b><span>固定額 ${yen(fixed)}${varn?` ＋ カード${varn}枚の利用額`:""}</span></div>` +
-      `<div class="days">${days}</div>` + need("smbc","27日") + need("docomo","月末") +
-      `<div class="dlist">${D.map(d=>`<div class="drow ${isOff(d.via)?'off':''}"><span class="d ${d.kind==='in'?'in':''}">${d.label}</span><span class="n">${esc(d.item)}<small>${esc(d.sub)}</small></span><span class="a">${d.amt!=null?yen(d.amt):'利用額<small>変動</small>'}</span></div>`).join("")}</div>` +
-      `<div class="toggle ${notify?'on':''}" id="notify"><span>前日に通知する<small>口座横断で「明日いくら必要か」を知らせる</small></span><span class="sw"></span></div>`;
-    document.getElementById("notify").addEventListener("click", ()=>{ notify=!notify; renderDebit(); toast(notify?"前日通知をオンにしました":"前日通知をオフにしました"); });
+      `<div class="month"><b>毎月の予定 ${S.debits.length}件</b><span>固定額 ${yen(fixed)}${varn?` ＋ 変動 ${varn}件`:""}</span></div><div class="days">${days}</div>` + need +
+      (S.debits.length ? `<div class="dlist">${rows}</div>` : `<div class="empty">定期引き落としがまだありません。右下の「＋」から追加してください。</div>`) +
+      `<div class="toggle ${S.settings.notify?'on':''}" id="notify"><span>前日に通知する<small>Web版では通知は動きません（アプリ版で実装）</small></span><span class="sw"></span></div>`;
+    document.getElementById("notify").addEventListener("click", ()=>{ S.settings.notify=!S.settings.notify; save(); renderDebit(); });
   }
 
   // ===== 共有 =====
   function renderShare(){
+    const hubs = S.nodes.filter(n=>n.hub); const secs = S.nodes.filter(n=>n.type==="securities"&&!n.off); const zones = S.nodes.filter(n=>n.zone&&!n.off);
     document.getElementById("v-share").innerHTML =
-      `<div class="partner"><span class="av">家</span><div class="t"><span class="n">家族（閲覧のみ）</span><span class="s">最終共有 2026年9月1日 ・ 更新を通知済み</span></div><span class="chip ok">共有中</span></div>` +
+      `<div class="partner"><span class="av">${esc((S.settings.partner||"家")[0])}</span><div class="t"><span class="n">${esc(S.settings.partner||"家族")}（閲覧のみ）</span><span class="s">最終更新 ${esc(S.settings.updated||"")}</span></div><button class="btn sm" id="editPartner">名前</button></div>` +
       `<div class="card"><h4><span class="sev ok"></span>相手に渡るもの</h4><ul class="yes"><li>お金の流れマップ（構造図）</li><li>口座・カード・アプリの一覧と役割</li><li>定期引き落としの一覧</li><li>もしもの時に見る順番</li></ul></div>` +
-      `<div class="card"><h4><span class="sev bad"></span>このアプリに保存しないもの</h4><ul class="no"><li>残高・取引明細</li><li>暗証番号・パスワード・秘密鍵</li><li>口座番号・カード番号</li></ul><p>「どこに何があるか」だけを渡します。手続きに必要な情報の所在は別に管理します。</p></div>` +
-      `<div class="card"><h4>もしもの時に見る順番</h4><ol class="steps"><li><span>メイン銀行 ── 給与と定期引き落としの中心<small>27日までに必要額を確認</small></span></li><li><span>サブ銀行 ── 生活費の振込元<small>月末の自動振込を確認</small></span></li><li><span>証券口座 ── 証券会社B・証券会社A<small>積立の停止・解約はここから</small></span></li><li><span>暗号資産 ── ウォレットと取引所<small>所在のみ。復旧手順は別紙</small></span></li></ol></div>` +
-      `<button class="btn pri blk" id="sendLink">閲覧リンクを送る</button><button class="btn blk" id="pdf">PDFで書き出す（2ページ）</button><div class="foot">共有先は閲覧のみ。あなたが図を更新すると相手に「更新されました」とだけ届きます。</div>`;
-    document.getElementById("sendLink").addEventListener("click", ()=>toast("閲覧リンクを家族に送りました（モック）"));
-    document.getElementById("pdf").addEventListener("click", ()=>toast("PDFを書き出しました（モック）"));
+      `<div class="card"><h4><span class="sev bad"></span>このアプリに保存しないもの</h4><ul class="no"><li>残高・取引明細</li><li>暗証番号・パスワード・秘密鍵</li><li>口座番号・カード番号</li></ul><p>「どこに何があるか」だけを渡します。データはこの端末の中にだけ保存されます。</p></div>` +
+      `<div class="card"><h4>もしもの時に見る順番</h4><ol class="list" style="counter-reset:s">${[...hubs.map(h=>`${h.name} ── ${h.sub||"銀行口座"}`), secs.length?`証券・取引所 ── ${secs.map(s=>s.name).join("・")}`:"", zones.length?`オンチェーン ── ${zones.map(z=>z.name).join("・")}（所在のみ。復旧手順は別紙）`:""].filter(Boolean).map((t,i)=>`<li><span class="d" style="background:var(--ink);color:#fff;border-radius:50%;width:20px;height:20px;display:grid;place-items:center;font-size:10px;font-weight:700">${i+1}</span>${esc(t)}</li>`).join("")}</ol></div>` +
+      `<button class="btn pri blk" id="print">印刷 / PDFに保存（マップと引き落とし）</button>` +
+      `<div class="card"><h4>データの書き出し・読み込み</h4><p>書き出したテキストを控えておけば、別の端末やアプリ版へ移せます。</p><div class="actions"><button class="btn" id="exportBtn">書き出す</button><button class="btn" id="importBtn">読み込む</button></div><textarea id="io" rows="4" placeholder="ここに書き出し結果が出ます／読み込むテキストを貼り付けます"></textarea></div>` +
+      `<div class="card"><h4>データの初期化</h4><div class="actions"><button class="btn" id="loadSample">サンプルを読み込む</button><button class="btn danger" id="clearAll">すべて消して空にする</button></div></div>` +
+      `<div class="foot">Web版（GitHub Pages）。閲覧リンク共有はアプリ版で実装予定。</div>`;
+    document.getElementById("print").addEventListener("click", ()=>{ show("map"); setTimeout(()=>window.print(), 100); });
+    document.getElementById("exportBtn").addEventListener("click", ()=>{ const ta=document.getElementById("io"); ta.value=JSON.stringify(S); ta.select(); try{ document.execCommand("copy"); toast("書き出してコピーしました"); }catch(e){ toast("書き出しました。テキストを選択してコピーしてください"); } });
+    document.getElementById("importBtn").addEventListener("click", ()=>{ const ta=document.getElementById("io"); try{ const o=JSON.parse(ta.value); if(!o.nodes||!o.edges) throw 0; if(!confirm("いまのデータを置き換えます。よろしいですか？")) return; S=o; save(); renderAll(); toast("読み込みました"); }catch(e){ toast("読み込めません。書き出したテキストを貼り付けてください"); } });
+    document.getElementById("loadSample").addEventListener("click", ()=>{ if(!confirm("いまのデータを消してサンプルに置き換えます。よろしいですか？")) return; S=sample(); save(); renderAll(); toast("サンプルを読み込みました"); });
+    document.getElementById("clearAll").addEventListener("click", ()=>{ if(!confirm("すべてのデータを消します。よろしいですか？")) return; S={version:1,nodes:[],edges:[],debits:[],settings:{notify:true,partner:"家族",sample:false}}; save(); renderAll(); toast("空にしました"); });
+    document.getElementById("editPartner").addEventListener("click", ()=>{ const v=prompt("共有相手の呼び名", S.settings.partner||"家族"); if(v!=null){ S.settings.partner=v.trim()||"家族"; save(); renderShare(); } });
   }
 
-  // ===== 画面切り替え =====
-  const META = {
-    map:   {t:"マップ", s:"2026年9月1日 更新", about:"<h2>マップ ── 可視化</h2><p>ハブ銀行ごとに縦の流れとして描きます。線は入金（緑）と出金（青）だけ。連携は文字チップ、未接続は破線、解約予定は薄く表示します。</p><ul><li>金額は任意。構造だけで成立させる</li><li>公式ロゴは使わず、ブランド色のイニシャル</li></ul>"},
-    clean: {t:"整理", s:"見直し候補", about:"<h2>整理 ── 不要を減らす</h2><p>図の「線」から機械的に出せる指摘だけを並べます。やめるチェックリストは、選んだ口座やカードに紐づく引き落とし・利用先・連携を列挙します。</p><ul><li>対象を選ぶと内容が変わる</li><li>「解約予定にする」でマップと引き落としに反映</li></ul>"},
-    debit: {t:"引き落とし", s:"2026年9月", about:"<h2>引き落とし ── 資金ショートを防ぐ</h2><p>銀行の通知と違い、口座横断で「何日までにいくら必要か」を出します。ここだけは金額を必須にします。</p><ul><li>解約予定のカードの引き落としは薄く表示</li><li>固定額の合計と、変動するカード利用額を分けて表示</li></ul>"},
-    share: {t:"共有", s:"もしもの時のために", about:"<h2>共有 ── パートナーへ</h2><p>渡すのは構造と見る順番だけ。残高・暗証番号・口座番号は保存しない前提を画面で明示します。相手側に操作を求めません。</p><ul><li>閲覧専用リンクとPDFの2本立て</li><li>更新時は「更新されました」とだけ通知</li></ul>"},
-  };
-  function show(v){
-    ["map","clean","debit","share"].forEach(k=>{ document.getElementById("v-"+k).hidden = (k!==v); });
-    document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on", b.dataset.v===v));
-    document.getElementById("ttl").textContent = META[v].t; document.getElementById("sub").textContent = META[v].s;
-    document.getElementById("about").innerHTML = META[v].about;
-    document.querySelector(".body").scrollTop = 0;
+  // ===== 編集シート =====
+  const sheet=document.getElementById("sheet"), scrim=document.getElementById("scrim");
+  function openSheet(html){ sheet.innerHTML=html; sheet.classList.add("on"); scrim.classList.add("on"); }
+  function closeSheet(){ sheet.classList.remove("on"); scrim.classList.remove("on"); sheet.innerHTML=""; }
+  scrim.addEventListener("click", closeSheet);
+  const opt = (list, sel) => list.map(([v,l])=>`<option value="${esc(v)}" ${v===sel?"selected":""}>${esc(l)}</option>`).join("");
+
+  function nodeForm(n, isNew){
+    const others = S.nodes.filter(x=>x.id!==n.id).map(x=>[x.id,x.name]);
+    const edges = S.edges.filter(e=>e.from===n.id||e.to===n.id);
+    openSheet(`<h2>${isNew?"機関を追加":"機関を編集"}<button id="close" aria-label="閉じる">×</button></h2>
+      <div class="f"><label>種類</label><select id="ntype">${opt(Object.entries(TYPES), n.type)}</select></div>
+      <div class="f"><label>名前</label><input type="text" id="nname" value="${esc(n.name)}" placeholder="例: メイン銀行"></div>
+      <div class="f"><label>補足（任意）</label><input type="text" id="nsub" value="${esc(n.sub||"")}" placeholder="例: 給与振込口座 ・ 26日引き落とし"></div>
+      <div class="f3"><div class="f"><label>チップ（読点区切り・任意）</label><input type="text" id="nchips" value="${esc((n.chips||[]).join("、"))}" placeholder="例: ETC"></div><div class="f"><label>頭文字</label><input type="text" id="nav" value="${esc(n.av)}" maxlength="2"></div><div class="f"><label>色</label><input type="color" id="ncol" value="${esc(n.col)}"></div></div>
+      <div class="f2"><label class="cb"><input type="checkbox" id="nhub" ${n.hub?"checked":""}>起点の銀行（ハブ）</label><label class="cb"><input type="checkbox" id="nap" ${n.ap?"checked":""}>Apple Pay 登録</label><label class="cb"><input type="checkbox" id="nzone" ${n.zone?"checked":""}>オンチェーン領域</label><label class="cb"><input type="checkbox" id="nsq" ${n.sq?"checked":""}>角丸四角のアイコン</label></div>
+      ${isNew?"":`<div class="f"><label>つながり</label><div class="edges">${edges.length?edges.map(e=>`<div class="e"><span>${e.from===n.id?`<b>この機関</b> → ${esc(byId(e.to)?.name)}`:`${esc(byId(e.from)?.name)} → <b>この機関</b>`}　<small>${esc(KINDS[e.kind].split("（")[0])}${e.label?" ・ "+esc(e.label):""}</small></span><button class="btn sm" data-deledge="${e.id}">削除</button></div>`).join(""):`<div class="hint">まだつながりがありません。</div>`}</div></div>
+      <div class="f"><label>つながりを追加</label><div class="f3"><select id="edir"><option value="out">この機関 → 相手</option><option value="in">相手 → この機関</option></select><select id="ekind">${opt(Object.entries(KINDS),"out")}</select><select id="etarget">${opt(others, others[0]?.[0])}</select></div><div class="inline"><input type="text" id="elabel" placeholder="線のラベル（任意）例: 引き落とし"><button class="btn sm" id="addEdge">追加</button></div></div>`}
+      <div class="actions"><button class="btn pri" id="saveNode">保存</button>${isNew?"":`<button class="btn" id="offNode">${n.off?"解約予定を取消":"解約予定"}</button><button class="btn danger" id="delNode">削除</button>`}</div>`);
+    document.getElementById("close").addEventListener("click", closeSheet);
+    document.getElementById("ntype").addEventListener("change", e=>{ if(isNew){ const [av,col,sq]=TYPE_DEFAULT[e.target.value]; document.getElementById("nav").value=av; document.getElementById("ncol").value=col; document.getElementById("nsq").checked=sq; } });
+    const read = ()=>{ n.type=document.getElementById("ntype").value; n.name=document.getElementById("nname").value.trim()||"名称未設定"; n.sub=document.getElementById("nsub").value.trim(); n.chips=document.getElementById("nchips").value.split(/[、,]/).map(s=>s.trim()).filter(Boolean); n.av=document.getElementById("nav").value.trim()||n.name[0]; n.col=document.getElementById("ncol").value; n.hub=document.getElementById("nhub").checked && n.type==="bank"; n.ap=document.getElementById("nap").checked; n.zone=document.getElementById("nzone").checked; n.sq=document.getElementById("nsq").checked; };
+    document.getElementById("saveNode").addEventListener("click", ()=>{ read(); if(isNew) S.nodes.push(n); save(); closeSheet(); renderAll(); toast("保存しました"); });
+    if(!isNew){
+      sheet.querySelectorAll("[data-deledge]").forEach(b=>b.addEventListener("click", ()=>{ S.edges=S.edges.filter(e=>e.id!==b.dataset.deledge); save(); nodeForm(n,false); renderAll(); }));
+      document.getElementById("addEdge").addEventListener("click", ()=>{ const dir=document.getElementById("edir").value, kind=document.getElementById("ekind").value, tgt=document.getElementById("etarget").value, label=document.getElementById("elabel").value.trim(); if(!tgt) return; read(); S.edges.push({id:uid("e"), from:dir==="out"?n.id:tgt, to:dir==="out"?tgt:n.id, kind, label}); save(); nodeForm(n,false); renderAll(); toast("つながりを追加しました"); });
+      document.getElementById("offNode").addEventListener("click", ()=>{ read(); n.off=!n.off; save(); closeSheet(); renderAll(); });
+      document.getElementById("delNode").addEventListener("click", ()=>{ if(!confirm(`${n.name} を削除します。つながりも消えます。よろしいですか？`)) return; S.nodes=S.nodes.filter(x=>x.id!==n.id); S.edges=S.edges.filter(e=>e.from!==n.id&&e.to!==n.id); S.debits.forEach(d=>{ if(d.via===n.id) d.via=""; }); S.debits=S.debits.filter(d=>d.source!==n.id); save(); closeSheet(); renderAll(); toast("削除しました"); });
+    }
   }
+  function debitForm(d, isNew){
+    const banks = S.nodes.filter(n=>n.type==="bank").map(n=>[n.id,n.name]);
+    const vias = [["","（なし）"], ...S.nodes.filter(n=>n.type!=="income").map(n=>[n.id,n.name])];
+    if(!banks.length){ toast("先に銀行口座を追加してください"); return; }
+    openSheet(`<h2>${isNew?"定期引き落としを追加":"定期引き落としを編集"}<button id="close" aria-label="閉じる">×</button></h2>
+      <div class="f"><label>引き落とし元の銀行</label><select id="dsrc">${opt(banks, d.source||banks[0][0])}</select></div>
+      <div class="f2"><div class="f"><label>引き落とし日（31＝月末）</label><input type="number" id="dday" min="1" max="31" value="${d.day||27}"></div><div class="f"><label>金額（空欄＝変動）</label><input type="number" id="damt" value="${d.amt==null?"":d.amt}" placeholder="例: 100000"></div></div>
+      <div class="f"><label>項目</label><input type="text" id="ditem" value="${esc(d.item||"")}" placeholder="例: 家賃 ／ クレジットカードA"></div>
+      <div class="f"><label>内訳（読点区切り・任意）</label><input type="text" id="dparts" value="${esc(d.parts||"")}" placeholder="例: 電気, 水道"></div>
+      <div class="f"><label>経由する機関（任意。カード払いならそのカード）</label><select id="dvia">${opt(vias, d.via||"")}</select></div>
+      <div class="f"><label>補足（任意）</label><input type="text" id="dsub" value="${esc(d.sub||"")}"></div>
+      <div class="f2"><label class="cb"><input type="checkbox" id="droll" ${d.rollover?"checked":""}>銀行休業日は翌営業日</label><label class="cb"><input type="checkbox" id="dkind" ${d.kind==="in"?"checked":""}>自分の口座間の振替（緑）</label></div>
+      <div class="actions"><button class="btn pri" id="saveD">保存</button>${isNew?"":`<button class="btn danger" id="delD">削除</button>`}</div>`);
+    document.getElementById("close").addEventListener("click", closeSheet);
+    document.getElementById("saveD").addEventListener("click", ()=>{ d.source=document.getElementById("dsrc").value; d.day=Math.min(31,Math.max(1,parseInt(document.getElementById("dday").value)||1)); const a=document.getElementById("damt").value.trim(); d.amt=a===""?null:Number(a); d.item=document.getElementById("ditem").value.trim()||"名称未設定"; d.parts=document.getElementById("dparts").value.trim(); d.via=document.getElementById("dvia").value; d.sub=document.getElementById("dsub").value.trim(); d.rollover=document.getElementById("droll").checked; d.kind=document.getElementById("dkind").checked?"in":"out"; if(isNew) S.debits.push(d); save(); closeSheet(); renderAll(); toast("保存しました"); });
+    if(!isNew) document.getElementById("delD").addEventListener("click", ()=>{ if(!confirm("この引き落としを削除します。よろしいですか？")) return; S.debits=S.debits.filter(x=>x.id!==d.id); save(); closeSheet(); renderAll(); });
+  }
+
+  // ===== 画面切り替え・共通 =====
+  let view="map";
+  const META = { map:["マップ", ()=>`${S.nodes.length}機関 ・ ${S.settings.updated||""}`], clean:["整理", ()=>"見直し候補"], debit:["引き落とし", ()=>"毎月の予定"], share:["共有", ()=>"もしもの時のために"] };
+  function show(v){ view=v; ["map","clean","debit","share"].forEach(k=>{ document.getElementById("v-"+k).hidden=(k!==v); }); document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on", b.dataset.v===v)); document.getElementById("ttl").textContent=META[v][0]; document.getElementById("sub").textContent=META[v][1](); document.getElementById("fab").hidden = !(v==="map"||v==="debit"); window.scrollTo(0,0); }
   let tt; function toast(msg){ const el=document.getElementById("toast"); el.textContent=msg; el.classList.add("show"); clearTimeout(tt); tt=setTimeout(()=>el.classList.remove("show"),1800); }
-  function renderAll(){ renderMap(); renderClean(); renderDebit(); renderShare(); }
+  function renderBanner(){ document.getElementById("banner").innerHTML = S.settings.sample ? `<div class="banner">表示中は架空のサンプルです。編集すると自分のデータになります。<button class="btn sm" id="startEmpty">空にする</button></div>` : ""; const b=document.getElementById("startEmpty"); if(b) b.addEventListener("click", ()=>{ if(!confirm("サンプルを消して空から始めます。よろしいですか？")) return; S={version:1,nodes:[],edges:[],debits:[],settings:{notify:true,partner:"家族",sample:false}}; save(); renderAll(); }); }
+  function renderAll(){ renderBanner(); renderMap(); renderClean(); renderDebit(); renderShare(); document.getElementById("sub").textContent=META[view][1](); }
   document.getElementById("tabs").addEventListener("click", e=>{ const b=e.target.closest("button"); if(b) show(b.dataset.v); });
-  renderAll(); show("map");
+  document.getElementById("fab").addEventListener("click", ()=>{ if(view==="debit") debitForm({id:uid("d"),day:27,amt:null,rollover:true,kind:"out"}, true); else { const [av,col,sq]=TYPE_DEFAULT.bank; nodeForm({id:uid("n"),name:"",sub:"",type:"bank",av,col,sq,hub:!S.nodes.some(n=>n.hub),ap:false,zone:false,chips:[],off:false}, true); } });
+  document.body.addEventListener("click", e=>{ const t=e.target.closest("[data-edit]"); if(t){ const n=byId(t.dataset.edit); if(n){ if(S.settings.sample){ S.settings.sample=false; } nodeForm(n,false); } return; } const d=e.target.closest("[data-editd]"); if(d){ const x=S.debits.find(y=>y.id===d.dataset.editd); if(x){ S.settings.sample=false; debitForm(x,false); } } });
+  const origSave = save;
+  load(); renderAll(); show("map");
 })();
 </script>
 </body>
