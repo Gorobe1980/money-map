@@ -41,27 +41,41 @@
   .sec{ display:flex; align-items:center; gap:8px; margin-top:6px; }
   .sec .num{ background:var(--ink); color:#fff; font-size:10px; font-weight:700; border-radius:999px; padding:1px 7px; letter-spacing:.06em; }
   .sec h3{ margin:0; font-size:13px; font-weight:700; color:var(--ink); } .sec::after{ content:""; flex:1; height:1px; background:var(--edge); }
-  .tile{ background:var(--tile); border:1px solid var(--edge); border-radius:10px; padding:9px 10px; display:flex; align-items:center; gap:9px; cursor:pointer; text-align:left; width:100%; font-family:inherit; color:var(--text); -webkit-touch-callout:none; user-select:none; -webkit-user-select:none; }
-  .tile.hub{ border-color:var(--ink); border-width:1.5px; } .tile.dim{ border-style:dashed; border-color:#C9CFD8; } .tile.off{ opacity:.45; } .tile.off .n{ text-decoration:line-through; }
-  .tile.lift{ transform:scale(1.04); box-shadow:0 12px 26px rgba(17,24,39,.25); border-color:var(--outflow); position:relative; z-index:5; }
-  .tile.target{ outline:3px solid var(--outflow); outline-offset:1px; }
+  /* ---- ツリー表示（系統ごとに白カード、行はタイル枠なし） ---- */
+  .tree{ background:var(--tile); border:1px solid var(--edge); border-radius:12px; padding:4px 12px; }
+  .row{ position:relative; display:flex; align-items:center; gap:9px; height:52px; padding-left:calc(var(--d,0) * 28px); cursor:pointer; text-align:left; width:100%; font-family:inherit; color:var(--text); background:none; border:0; border-radius:8px; -webkit-touch-callout:none; user-select:none; -webkit-user-select:none; }
+  .row + .row::after{ content:""; position:absolute; left:calc(var(--d,0) * 28px + 36px); right:0; top:0; height:1px; background:#EEF1F5; }
+  .row .av{ position:relative; z-index:1; }
+  .row .t .n{ font-size:14px; } .row .t .s{ font-size:11px; }
+  .row.hub .t .n{ font-size:15px; } .row.hub .av{ box-shadow:0 0 0 2px #fff, 0 0 0 4px var(--ink); }
+  /* 親から降りるL字（左下角丸）と、末尾でない場合の縦線の継ぎ足し */
+  .row.child .l{ position:absolute; left:calc(var(--d,0) * 28px - 15px); top:0; width:9px; height:26px; border-left:2px solid var(--lc); border-bottom:2px solid var(--lc); border-radius:0 0 0 8px; pointer-events:none; }
+  .row.child.cont .v{ position:absolute; left:calc(var(--d,0) * 28px - 15px); top:26px; bottom:-1px; width:2px; background:var(--lc); pointer-events:none; }
+  .row.child .ah{ position:absolute; left:calc(var(--d,0) * 28px - 6px); top:22px; width:0; height:0; border-left:6px solid var(--lc); border-top:4px solid transparent; border-bottom:4px solid transparent; pointer-events:none; }
+  .row.out{ --lc:var(--outflow); } .row.in{ --lc:var(--inflow); }
+  .row.link{ --lc:var(--link); } .row.link .l{ border-left-style:dashed; border-bottom-style:dashed; } .row.link .ah{ display:none; }
+  .row .g{ position:absolute; top:0; bottom:-1px; width:2px; background:var(--outflow); pointer-events:none; opacity:.9; }
+  .row.gl .g{ background:var(--link); }
+  /* 収入 → 起点銀行（緑の短い縦線と下向き矢じり） */
+  .row.inc .dn{ position:absolute; left:13px; top:40px; width:2px; height:12px; background:var(--inflow); pointer-events:none; }
+  .row.hasin .up{ position:absolute; left:13px; top:0; width:2px; height:6px; background:var(--inflow); pointer-events:none; }
+  .row.hasin .dh{ position:absolute; left:10px; top:6px; width:0; height:0; border-top:6px solid var(--inflow); border-left:4px solid transparent; border-right:4px solid transparent; pointer-events:none; }
+  .row.off .t .n{ text-decoration:line-through; } .row.off .av, .row.off .t, .row.off .chips{ opacity:.45; }
+  .row.off .l, .row.off .ah, .row.off .v, .row.offb .l, .row.offb .ah, .row.offb .v, .row.offb .g{ opacity:.35; }
+  .row.lift{ transform:scale(1.03); box-shadow:0 12px 26px rgba(17,24,39,.25); background:#fff; z-index:5; }
+  .row.target{ outline:3px solid var(--outflow); outline-offset:-2px; background:#EEF3FF; }
+  .row.new{ animation:pulse 1.2s ease-out 1; }
+  @keyframes pulse{ 0%{ box-shadow:inset 0 0 0 2px var(--lc,var(--outflow)); background:#EEF3FF; } 100%{ box-shadow:inset 0 0 0 0 transparent; background:transparent; } }
+  @media (prefers-reduced-motion: reduce){ .row.new{ animation:none; } }
   .av{ width:28px; height:28px; border-radius:50%; display:grid; place-items:center; color:#fff; font-weight:700; font-size:12px; flex:none; } .av.sq{ border-radius:7px; }
-  .t{ display:flex; flex-direction:column; min-width:0; flex:1; } .t .n{ font-weight:700; color:var(--ink); font-size:13px; line-height:1.3; } .t .s{ color:var(--mute); font-size:10.5px; }
-  .chips{ display:flex; gap:4px; flex-wrap:wrap; justify-content:flex-end; max-width:44%; }
-  .chip{ background:var(--chip); color:var(--chiptx); font-size:9.5px; border-radius:999px; padding:2px 7px; white-space:nowrap; }
-  .chip.ap{ background:#111111; color:#fff; font-weight:700; } .chip.ok{ background:var(--okbg); color:var(--ok); } .chip.off{ background:var(--dangerbg); color:var(--danger); }
-  .flow{ display:grid; grid-template-columns:22px 1fr; column-gap:6px; row-gap:6px; }
-  .flow .c{ position:relative; }
-  .flow .c::before{ content:""; position:absolute; left:10px; top:-6px; bottom:-6px; width:2px; background:var(--lc,var(--outflow)); }
-  .flow .c::after{ content:""; position:absolute; left:4px; top:50%; width:10px; height:2px; background:var(--lc,var(--outflow)); transform:translateY(-1px); }
-  .flow .c.end::before{ bottom:50%; } .flow .c.start::before{ top:50%; } .flow .c.only::before{ display:none; }
-  .flow .c span{ position:absolute; left:14px; top:50%; width:0; height:0; border-left:5px solid var(--lc,var(--outflow)); border-top:4px solid transparent; border-bottom:4px solid transparent; transform:translateY(-4px); }
-  .flow .in{ --lc:var(--inflow); } .flow .c.off{ opacity:.35; }
-  .flow .d1{ margin-left:14px; } .flow .d2{ margin-left:28px; } .flow .d3{ margin-left:42px; }
+  .t{ display:flex; flex-direction:column; min-width:0; flex:1; } .t .n{ font-weight:700; color:var(--ink); font-size:13px; line-height:1.3; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; } .t .s{ color:var(--mute); font-size:10.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .chips{ display:flex; gap:4px; flex-wrap:wrap; justify-content:flex-end; max-width:42%; }
+  .chip{ background:var(--chip); color:var(--chiptx); font-size:10px; border-radius:999px; padding:2px 7px; white-space:nowrap; }
+  .chip.ap{ background:#111111; color:#fff; font-weight:700; } .chip.ok{ background:var(--okbg); color:var(--ok); } .chip.off{ background:var(--dangerbg); color:var(--danger); } .chip.lk{ background:transparent; color:var(--link); padding-right:0; }
   .row2{ display:grid; grid-template-columns:1fr 1fr; gap:6px; }
-  .mini{ background:var(--tile); border:1px solid var(--edge); border-radius:8px; padding:6px 7px; display:flex; align-items:center; gap:6px; font-size:11px; font-weight:700; color:var(--ink); cursor:pointer; text-align:left; font-family:inherit; -webkit-touch-callout:none; user-select:none; -webkit-user-select:none; }
-  .mini.dim{ border-style:dashed; color:var(--mute); } .mini.off{ opacity:.45; text-decoration:line-through; } .mini.lift{ transform:scale(1.04); box-shadow:0 12px 26px rgba(17,24,39,.25); } .mini.target{ outline:3px solid var(--outflow); }
-  .mini .av{ width:18px; height:18px; font-size:9px; } .mini small{ font-weight:400; color:var(--mute); font-size:9.5px; margin-left:auto; }
+  .mini{ background:var(--tile); border:1px dashed #C9CFD8; border-radius:8px; padding:7px 8px; display:flex; align-items:center; gap:6px; font-size:11.5px; font-weight:700; color:var(--mute); cursor:pointer; text-align:left; font-family:inherit; -webkit-touch-callout:none; user-select:none; -webkit-user-select:none; }
+  .mini.off{ opacity:.45; text-decoration:line-through; } .mini.lift{ transform:scale(1.04); box-shadow:0 12px 26px rgba(17,24,39,.25); } .mini.target{ outline:3px solid var(--outflow); }
+  .mini .av{ width:20px; height:20px; font-size:9px; opacity:.7; } .mini small{ font-weight:400; color:var(--mute); font-size:9.5px; margin-left:auto; }
   .lbl{ font-size:10.5px; color:var(--mute); margin-top:2px; }
   .card{ background:var(--tile); border:1px solid var(--edge); border-radius:12px; padding:10px 11px; display:flex; flex-direction:column; gap:7px; }
   .card h4{ margin:0; font-size:12.5px; font-weight:700; color:var(--ink); display:flex; align-items:center; gap:6px; }
@@ -178,24 +192,37 @@
   const dayLabel = d => d>=31 ? "月末" : `${d}日`;
   const viaOff = d => !!(d.via && byId(d.via) && byId(d.via).off);
 
-  // ===== 自動レイアウト =====
+  // ===== 自動レイアウト（ツリー行） =====
   function layout(){
     const hubs = S.nodes.filter(n=>n.hub && n.type==="bank");
     const hubList = hubs.length ? hubs : S.nodes.filter(n=>n.type==="bank").slice(0,1);
     const fe = flowEdges(); const dist = {};
     hubList.forEach(h=>{ dist[h.id]={}; const q=[[h.id,0]]; const seen=new Set([h.id]); while(q.length){ const [x,d]=q.shift(); dist[h.id][x]=d; fe.forEach(e=>{ const y = e.from===x?e.to: e.to===x?e.from:null; if(y && !seen.has(y)){ seen.add(y); q.push([y,d+1]); } }); } });
     const owner = {}; S.nodes.forEach(n=>{ if(n.hub && n.type==="bank"){ owner[n.id]=n.id; return; } let best=null, bd=1e9; hubList.forEach(h=>{ const d=dist[h.id][n.id]; if(d!=null && d<bd){ bd=d; best=h.id; } }); owner[n.id]=best; });
-    const sections = hubList.map(h=>{
-      const placed=[]; const rows=[];
-      inTo(h.id).filter(e=>e.kind==="in" && byId(e.from) && byId(e.from).type==="income").forEach(e=>{ rows.push({id:e.from,kind:"in",depth:0}); placed.push(e.from); });
-      rows.push({id:h.id,kind:"in",depth:0,hub:true}); placed.push(h.id);
-      const walk=(x,depth)=>{ outOf(x).filter(e=>e.kind==="out").forEach(e=>{ const y=byId(e.to); if(!y||placed.includes(e.to)||owner[e.to]!==h.id||y.hub) return; placed.push(e.to); rows.push({id:e.to,kind:"out",depth:Math.min(depth,3)}); walk(e.to,depth+1); }); };
-      walk(h.id,1);
-      const transfers = outOf(h.id).filter(e=>e.kind==="out" && byId(e.to) && byId(e.to).hub);
-      const links=[]; S.edges.filter(e=>e.kind==="link").forEach(e=>{ const a=placed.includes(e.from), b=placed.includes(e.to); if(a && !b && owner[e.to]==null) links.push({id:e.to, with:e.from}); else if(b && !a && owner[e.from]==null) links.push({id:e.from, with:e.to}); });
-      return {hub:h, rows, links, transfers, placed};
+    const placedAll = new Set();
+    const sections = hubList.map((h,hi)=>{
+      const rows=[]; const placed=new Set([h.id]);
+      const incomes = inTo(h.id).filter(e=>e.kind==="in" && byId(e.from) && byId(e.from).type==="income");
+      incomes.forEach(e=>{ rows.push({id:e.from, depth:0, kind:"in", inc:true, guides:[], offb:false}); placed.add(e.from); });
+      rows.push({id:h.id, depth:0, kind:"hub", hub:true, hasin:incomes.length>0, guides:[], offb:false});
+      // 子の一覧: 出金 → 連携 の順。別系統のハブへの振替は jump 行
+      const children = x => {
+        const outs = outOf(x).filter(e=>e.kind==="out" && byId(e.to)).map(e=>({e, kind:"out"}));
+        const links = S.edges.filter(e=>e.kind==="link" && (e.from===x||e.to===x)).map(e=>({e, kind:"link", other:e.from===x?e.to:e.from})).filter(c=>byId(c.other));
+        return [...outs.map(c=>({id:c.e.to, kind:"out"})), ...links.map(c=>({id:c.other, kind:"link"}))].filter(c=>!placed.has(c.id) && (byId(c.id).hub ? c.kind==="out" : (owner[c.id]===h.id || owner[c.id]==null)));
+      };
+      const walk=(x, depth, guides, offb)=>{
+        const cs = children(x); cs.forEach(c=>placed.add(c.id));
+        cs.forEach((c,i)=>{ const n=byId(c.id); const last = i===cs.length-1; const isJump = n.hub && n.id!==h.id;
+          const row = {id:c.id, depth:Math.min(depth,3), kind:c.kind, child:true, last, guides:guides.slice(), offb, jump:isJump ? hubList.indexOf(n) : -1, back: inTo(x).some(e=>e.kind==="in" && e.from===c.id)};
+          rows.push(row);
+          if(!isJump && depth<3) walk(c.id, depth+1, [...guides, {on:!last, kind:c.kind}], offb || !!n.off);
+        });
+      };
+      walk(h.id, 1, [], !!h.off);
+      placed.forEach(id=>placedAll.add(id));
+      return {hub:h, rows};
     });
-    const placedAll = new Set(sections.flatMap(s=>[...s.placed, ...s.links.map(l=>l.id)]));
     return {sections, unplaced: S.nodes.filter(n=>!placedAll.has(n.id))};
   }
 
@@ -222,30 +249,32 @@
   }
 
   // ===== マップ =====
-  function tileHtml(n, extraChips){
-    const chips=[]; const dc = S.debits.filter(d=>d.source===n.id).length; if(dc) chips.push(`<span class="chip">定期引落 ${dc}件</span>`);
-    (extraChips||[]).forEach(c=>chips.push(`<span class="chip">${esc(c)}</span>`));
+  let newId = null;
+  function rowHtml(r){
+    const n = byId(r.id); const chips=[];
+    const dc = S.debits.filter(d=>d.source===n.id).length; if(dc) chips.push(`<span class="chip">定期引落 ${dc}件</span>`);
+    if(r.jump>=0) chips.push(`<span class="chip">${String(r.jump+1).padStart(2,"0")}へ ›</span>`);
     if(n.ap) chips.push(`<span class="chip ap">Apple Pay</span>`);
-    if(inTo(n.id).some(e=>e.kind==="in") && n.type!=="bank" && n.type!=="income") chips.push(`<span class="chip ok">入金あり</span>`);
+    if(r.back) chips.push(`<span class="chip ok">↩ 入金あり</span>`);
     if(n.off) chips.push(`<span class="chip off">解約予定</span>`);
-    const cls=["tile", n.hub?"hub":"", degree(n.id)===0?"dim":"", n.off?"off":""].join(" ");
-    const sub = degree(n.id)===0 ? "つながり未登録" : (n.sub||TYPES[n.type]);
-    return `<button class="${cls}" data-edit="${n.id}">${avatar(n)}<div class="t"><span class="n">${esc(n.name)}</span><span class="s">${esc(sub)}</span></div><div class="chips">${chips.join("")}</div></button>`;
+    if(r.kind==="link") chips.push(`<span class="chip lk">連携</span>`);
+    const cls = ["row", `d${r.depth}`, r.kind, r.child?"child":"", r.child&&!r.last?"cont":"", r.hub?"hub":"", r.inc?"inc":"", r.hasin?"hasin":"", n.off?"off":"", r.offb?"offb":"", r.id===newId?"new":""].join(" ");
+    const guides = (r.guides||[]).map((g,k)=> g.on ? `<i class="g ${g.kind==='link'?'gl':''}" style="left:${k*28+13}px"></i>` : "").join("");
+    const conn = r.child ? `<i class="l"></i><i class="v"></i><b class="ah"></b>` : (r.inc ? `<i class="dn"></i>` : (r.hasin ? `<i class="up"></i><b class="dh"></b>` : ""));
+    const sub = r.jump>=0 ? "へ振替" : (n.sub || TYPES[n.type]);
+    return `<button class="${cls}" style="--d:${r.depth}" data-edit="${n.id}">${guides}${conn}${avatar(n)}<div class="t"><span class="n">${esc(n.name)}</span><span class="s">${esc(sub)}</span></div><div class="chips">${chips.join("")}</div></button>`;
   }
   function renderMap(){
     const L = layout(); let h = reviewHtml();
     if(!S.nodes.length) h += `<div class="empty">まだ何もありません。右下の「＋」から銀行を追加してください。最初の銀行が起点になります。</div>`;
     L.sections.forEach((sec,i)=>{
-      h += `<div class="sec"><span class="num">${String(i+1).padStart(2,"0")}</span><h3>${esc(sec.hub.name)}系統</h3></div><div class="flow">`;
-      sec.rows.forEach((r,j)=>{ const n=byId(r.id); const pos = sec.rows.length===1?"only": j===0?"start": j===sec.rows.length-1?"end":"";
-        h += `<div class="c ${pos} ${r.kind} ${n.off?'off':''}"><span></span></div><div class="d${r.depth>1?Math.min(r.depth-1,3):0}">${tileHtml(n, r.hub ? sec.transfers.map(t=>"→ "+byId(t.to).name) : [])}</div>`; });
-      h += `</div>`;
-      if(sec.links.length) h += `<div class="lbl">連携</div><div class="row2">${sec.links.map(l=>{ const n=byId(l.id); return `<button class="mini ${n.off?'off':''}" data-edit="${n.id}">${avatar(n)}${esc(n.name)}<small>連携 ${esc(byId(l.with).name)}</small></button>`; }).join("")}</div>`;
+      h += `<div class="sec"><span class="num">${String(i+1).padStart(2,"0")}</span><h3>${esc(sec.hub.name)}系統</h3></div><div class="tree">` + sec.rows.map(rowHtml).join("") + `</div>`;
     });
-    if(L.unplaced.length) h += `<div class="lbl">つながり未登録</div><div class="row2">${L.unplaced.map(n=>`<button class="mini dim ${n.off?'off':''}" data-edit="${n.id}">${avatar(n)}${esc(n.name)}<small>${esc(TYPES[n.type]||"")}</small></button>`).join("")}</div>`;
+    if(L.unplaced.length) h += `<div class="lbl">つながり未登録</div><div class="row2">${L.unplaced.map(n=>`<button class="mini ${n.off?'off':''}" data-edit="${n.id}">${avatar(n)}${esc(n.name)}<small>${esc(TYPES[n.type]||"")}</small></button>`).join("")}</div>`;
     h += `<div class="hint">タップで編集。長押しして相手まで動かすとつながります。</div>`;
     document.getElementById("v-map").innerHTML = h;
     const rb=document.getElementById("reviewBtn"); if(rb) rb.addEventListener("click", ()=>{ reviewOpen=!reviewOpen; renderMap(); });
+    if(newId){ const el=document.querySelector(`.row.new`); if(el) el.scrollIntoView({block:"center", behavior:"smooth"}); newId=null; }
   }
 
   // ===== 引き落とし =====
@@ -376,7 +405,7 @@
   function connect(from, to){
     const a=byId(from), b=byId(to); if(!a||!b) return;
     const kind = AUTO_KIND(a,b); const e = {id:uid("e"), from:a.id, to:b.id, kind, label:""};
-    S.edges.push(e); S.settings.sample=false; save(); renderAll();
+    S.edges.push(e); S.settings.sample=false; save(); newId=b.id; renderAll();
     toastAction(`${a.name} → ${b.name}（${KINDS[kind]}）`, "変更", ()=>edgeForm(e.id));
   }
 
