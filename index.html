@@ -64,6 +64,9 @@
   .row.hasin .dh{ position:absolute; left:10px; top:6px; width:0; height:0; border-top:6px solid var(--inflow); border-left:4px solid transparent; border-right:4px solid transparent; pointer-events:none; }
   .row.off .t .n{ text-decoration:line-through; } .row.off .av, .row.off .t, .row.off .chips{ opacity:.45; }
   .row.off .l, .row.off .ah, .row.off .v, .row.offb .l, .row.offb .ah, .row.offb .v, .row.offb .g{ opacity:.35; }
+  .row.ghost .av, .row.ghost .t{ opacity:.45; }
+  .chip.up{ background:transparent; color:var(--mute); border:1px dashed #C9CFD8; padding:1px 6px; }
+  .mini.new{ animation:pulse 1.2s ease-out 1; }
   .row.lift{ transform:scale(1.03); box-shadow:0 12px 26px rgba(17,24,39,.25); background:#fff; z-index:5; }
   .row.target{ outline:3px solid var(--outflow); outline-offset:-2px; background:#EEF3FF; }
   .row.new{ animation:pulse 1.2s ease-out 1; }
@@ -205,21 +208,26 @@
     const sections = hubList.map((h,hi)=>{
       const rows=[]; const placed=new Set([h.id]);
       const incomes = inTo(h.id).filter(e=>e.kind==="in" && byId(e.from) && byId(e.from).type==="income");
-      incomes.forEach(e=>{ rows.push({id:e.from, depth:0, kind:"in", inc:true, guides:[], offb:false}); placed.add(e.from); });
+      incomes.forEach(e=>{ rows.push({id:e.from, eid:e.id, depth:0, kind:"in", inc:true, guides:[], offb:false}); placed.add(e.from); });
       rows.push({id:h.id, depth:0, kind:"hub", hub:true, hasin:incomes.length>0, guides:[], offb:false});
-      // 子の一覧: 出金 → 連携 の順。別系統のハブへの振替は jump 行
+      // 子の一覧: 出金・入金 → 連携 の順。配置済みの相手は「分身行」(ghost)、別系統のハブは jump 行
+      const parentOf = {};
       const children = x => {
-        const outs = outOf(x).filter(e=>e.kind==="out" && byId(e.to)).map(e=>({e, kind:"out"}));
-        const links = S.edges.filter(e=>e.kind==="link" && (e.from===x||e.to===x)).map(e=>({e, kind:"link", other:e.from===x?e.to:e.from})).filter(c=>byId(c.other));
-        return [...outs.map(c=>({id:c.e.to, kind:"out"})), ...links.map(c=>({id:c.other, kind:"link"}))].filter(c=>!placed.has(c.id) && (byId(c.id).hub ? c.kind==="out" : (owner[c.id]===h.id || owner[c.id]==null)));
+        const seenC = new Set(); const out = [];
+        const push = (id, kind, eid) => { const n = byId(id); if(!n || seenC.has(id) || id===parentOf[x]) return; seenC.add(id);
+          const isHub = n.hub && n.id!==h.id; const ghost = !isHub && (placed.has(id) || (owner[id]!==h.id && owner[id]!=null));
+          out.push({id, kind, eid, ghost, jump: isHub ? hubList.indexOf(n) : -1}); };
+        outOf(x).filter(e=>e.kind!=="link").forEach(e=>push(e.to, e.kind, e.id));
+        S.edges.filter(e=>e.kind==="link" && (e.from===x||e.to===x)).forEach(e=>push(e.from===x?e.to:e.from, "link", e.id));
+        return out;
       };
       const walk=(x, depth, guides, offb)=>{
-        const cs = children(x); cs.forEach(c=>placed.add(c.id));
-        if(cs.length){ const pr = rows.find(r=>r.id===x); if(pr){ pr.par=true; pr.pk=cs[0].kind; } }
-        cs.forEach((c,i)=>{ const n=byId(c.id); const last = i===cs.length-1; const isJump = n.hub && n.id!==h.id;
-          const row = {id:c.id, depth:Math.min(depth,4), kind:c.kind, child:true, last, guides:guides.slice(), offb, jump:isJump ? hubList.indexOf(n) : -1, back: inTo(x).some(e=>e.kind==="in" && e.from===c.id)};
-          rows.push(row);
-          if(!isJump && depth<4) walk(c.id, depth+1, [...guides, {on:!last, kind:c.kind}], offb || !!n.off);
+        const cs = children(x);
+        cs.forEach(c=>{ if(!c.ghost && c.jump<0){ placed.add(c.id); parentOf[c.id]=x; } });
+        if(cs.length){ const pr = rows.find(r=>r.id===x && !r.ghost); if(pr){ pr.par=true; pr.pk=cs[0].kind; } }
+        cs.forEach((c,i)=>{ const n=byId(c.id); const last = i===cs.length-1; const real = !c.ghost && c.jump<0;
+          rows.push({id:c.id, eid:c.eid, depth:Math.min(depth,4), kind:c.kind, child:true, last, guides:guides.slice(), offb, jump:c.jump, ghost:c.ghost, back: S.edges.some(e=>e.kind!=="link" && e.from===c.id && e.to===x)});
+          if(real && depth<4) walk(c.id, depth+1, [...guides, {on:!last, kind:c.kind}], offb || !!n.off);
         });
       };
       walk(h.id, 1, [], !!h.off);
@@ -252,7 +260,7 @@
   }
 
   // ===== マップ =====
-  let newId = null;
+  let newEid = null, seenIds = new Set();
   function rowHtml(r){
     const n = byId(r.id); const chips=[];
     const dc = S.debits.filter(d=>d.source===n.id).length; if(dc) chips.push(`<span class="chip">定期引落 ${dc}件</span>`);
@@ -261,7 +269,8 @@
     if(r.back) chips.push(`<span class="chip ok">↩ 入金あり</span>`);
     if(n.off) chips.push(`<span class="chip off">解約予定</span>`);
     if(r.kind==="link") chips.push(`<span class="chip lk">連携</span>`);
-    const cls = ["row", `d${r.depth}`, r.kind, r.child?"child":"", r.child&&!r.last?"cont":"", r.hub?"hub":"", r.inc?"inc":"", r.hasin?"hasin":"", n.off?"off":"", r.offb?"offb":"", r.id===newId?"new":"", r.par?"par pk-"+r.pk:""].join(" ");
+    if(r.ghost) chips.push(`<span class="chip up" data-goto="${n.id}">${seenIds.has(n.id)?"上にもあり ↑":"下にもあり ↓"}</span>`); else seenIds.add(n.id);
+    const cls = ["row", `d${r.depth}`, r.kind, r.child?"child":"", r.child&&!r.last?"cont":"", r.hub?"hub":"", r.inc?"inc":"", r.hasin?"hasin":"", n.off?"off":"", r.offb?"offb":"", r.ghost?"ghost":"", r.eid && r.eid===newEid?"new":"", r.par?"par pk-"+r.pk:""].join(" ");
     const guides = (r.guides||[]).map((g,k)=> g.on ? `<i class="g ${g.kind==='link'?'gl':''}" style="left:${k*28+13}px"></i>` : "").join("");
     let conn = r.child ? `<i class="l"></i><i class="v"></i><b class="ah"></b>` : (r.inc ? `<i class="dn"></i>` : (r.hasin ? `<i class="up"></i><b class="dh"></b>` : ""));
     if(r.par) conn += `<i class="pd"></i>`;
@@ -269,7 +278,7 @@
     return `<button class="${cls}" style="--d:${r.depth}" data-edit="${n.id}">${guides}${conn}${avatar(n)}<div class="t"><span class="n">${esc(n.name)}</span><span class="s">${esc(sub)}</span></div><div class="chips">${chips.join("")}</div></button>`;
   }
   function renderMap(){
-    const L = layout(); let h = reviewHtml();
+    const L = layout(); let h = reviewHtml(); seenIds = new Set();
     if(!S.nodes.length) h += `<div class="empty">まだ何もありません。右下の「＋」から銀行を追加してください。最初の銀行が起点になります。</div>`;
     L.sections.forEach((sec,i)=>{
       h += `<div class="sec"><span class="num">${String(i+1).padStart(2,"0")}</span><h3>${esc(sec.hub.name)}系統</h3></div><div class="tree">` + sec.rows.map(rowHtml).join("") + `</div>`;
@@ -278,7 +287,7 @@
     h += `<div class="hint">タップで編集。長押しして相手まで動かすとつながります。</div>`;
     document.getElementById("v-map").innerHTML = h;
     const rb=document.getElementById("reviewBtn"); if(rb) rb.addEventListener("click", ()=>{ reviewOpen=!reviewOpen; renderMap(); });
-    if(newId){ const el=document.querySelector(`.row.new`); if(el) el.scrollIntoView({block:"center", behavior:"smooth"}); newId=null; }
+    if(newEid){ const el=document.querySelector(`.row.new`); if(el) el.scrollIntoView({block:"center", behavior:"smooth"}); newEid=null; }
   }
 
   // ===== 引き落とし =====
@@ -409,7 +418,7 @@
   function connect(from, to){
     const a=byId(from), b=byId(to); if(!a||!b) return;
     const kind = AUTO_KIND(a,b); const e = {id:uid("e"), from:a.id, to:b.id, kind, label:""};
-    S.edges.push(e); S.settings.sample=false; save(); newId=b.id; renderAll();
+    S.edges.push(e); S.settings.sample=false; save(); newEid=e.id; renderAll();
     toastAction(`${a.name} → ${b.name}（${KINDS[kind]}）`, "変更", ()=>edgeForm(e.id));
   }
 
@@ -423,7 +432,7 @@
   function renderAll(){ renderBanner(); renderMap(); renderDebit(); renderShare(); document.getElementById("sub").textContent=META[view][1](); }
   document.getElementById("tabs").addEventListener("click", e=>{ const b=e.target.closest("button"); if(b) show(b.dataset.v); });
   document.getElementById("fab").addEventListener("click", ()=>{ if(view==="debit") debitForm({id:uid("d"),day:27,amt:null,rollover:true}, true); else nodeForm({id:uid("n"),name:"",sub:"",type:"bank",av:"?",col:TYPE_STYLE.bank[0],sq:false,hub:false,ap:false,off:false}, true); });
-  document.body.addEventListener("click", e=>{ const t=e.target.closest("[data-edit]"); if(t){ const n=byId(t.dataset.edit); if(n) nodeForm(n,false); return; } const d=e.target.closest("[data-editd]"); if(d){ const x=S.debits.find(y=>y.id===d.dataset.editd); if(x) debitForm(x,false); } });
+  document.body.addEventListener("click", e=>{ const g=e.target.closest("[data-goto]"); if(g){ e.stopPropagation(); const id=g.dataset.goto; const o=document.querySelector(`.row[data-edit="${id}"]:not(.ghost), .mini[data-edit="${id}"]`); if(o){ o.scrollIntoView({block:"center", behavior:"smooth"}); o.classList.remove("new"); void o.offsetWidth; o.classList.add("new"); } return; } const t=e.target.closest("[data-edit]"); if(t){ const n=byId(t.dataset.edit); if(n) nodeForm(n,false); return; } const d=e.target.closest("[data-editd]"); if(d){ const x=S.debits.find(y=>y.id===d.dataset.editd); if(x) debitForm(x,false); } });
   load(); renderAll(); show("map");
 })();
 </script>
