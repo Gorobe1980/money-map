@@ -134,15 +134,15 @@
   .actions .btn{ flex:1; }
   .hint{ font-size:10.5px; color:var(--mute); }
 
-  /* 長押しドラッグでつなぐ */
+  /* 2回タップでつなぐ */
+  .connectbar{ position:fixed; left:50%; top:calc(10px + env(safe-area-inset-top)); transform:translateX(-50%); background:var(--ink); color:#fff; font-size:12.5px; padding:9px 12px 9px 16px; border-radius:999px; z-index:26; display:none; align-items:center; gap:10px; white-space:nowrap; box-shadow:0 8px 20px rgba(0,0,0,.25); }
+  .connectbar.on{ display:flex; }
+  .connectbar button{ background:rgba(255,255,255,.18); color:#fff; border:0; border-radius:999px; padding:4px 10px; font-size:11.5px; font-family:inherit; cursor:pointer; }
+  body.connecting .tile, body.connecting .mini{ outline:2px dashed rgba(59,111,216,.55); outline-offset:1px; }
+  body.connecting .tile.src, body.connecting .mini.src{ outline:3px solid var(--outflow); }
+  .toast.act{ pointer-events:auto; display:flex; align-items:center; gap:10px; }
+  .toast.act button{ background:#fff; color:var(--ink); border:0; border-radius:999px; padding:4px 10px; font-size:11.5px; font-weight:700; font-family:inherit; cursor:pointer; }
   .tile, .mini{ -webkit-touch-callout:none; user-select:none; -webkit-user-select:none; }
-  .tile.lift{ transform:scale(1.03); box-shadow:0 10px 24px rgba(17,24,39,.22); border-color:var(--outflow); position:relative; z-index:5; }
-  .tile.target, .mini.target{ outline:3px solid var(--outflow); outline-offset:1px; }
-  body.dragging{ overflow:hidden; }
-  #dragline{ position:fixed; inset:0; width:100vw; height:100vh; pointer-events:none; z-index:25; display:none; }
-  #dragline.on{ display:block; }
-  .draghint{ position:fixed; left:50%; top:calc(12px + env(safe-area-inset-top)); transform:translateX(-50%); background:var(--ink); color:#fff; font-size:12px; padding:7px 14px; border-radius:999px; z-index:26; display:none; white-space:nowrap; }
-  .draghint.on{ display:block; }
 
   @media print{
     body{ background:#fff; } .tabs, .fab, .banner, .toast, .scrim, .sheet{ display:none !important; }
@@ -392,14 +392,17 @@
       <div class="f"><label>補足（任意）</label><input type="text" id="nsub" value="${esc(n.sub||"")}" placeholder="例: 給与振込口座 ・ 26日引き落とし"></div>
       <div class="f3"><div class="f"><label>チップ（読点区切り・任意）</label><input type="text" id="nchips" value="${esc((n.chips||[]).join("、"))}" placeholder="例: ETC"></div><div class="f"><label>頭文字</label><input type="text" id="nav" value="${esc(n.av)}" maxlength="2"></div><div class="f"><label>色</label><input type="color" id="ncol" value="${esc(n.col)}"></div></div>
       <div class="f2"><label class="cb"><input type="checkbox" id="nhub" ${n.hub?"checked":""}>起点の銀行（ハブ）</label><label class="cb"><input type="checkbox" id="nap" ${n.ap?"checked":""}>Apple Pay 登録</label><label class="cb"><input type="checkbox" id="nzone" ${n.zone?"checked":""}>オンチェーン領域</label><label class="cb"><input type="checkbox" id="nsq" ${n.sq?"checked":""}>角丸四角のアイコン</label></div>
-      ${isNew?"":`<div class="f"><label>つながり</label><div class="edges">${edges.length?edges.map(e=>`<div class="e"><span>${e.from===n.id?`<b>この機関</b> → ${esc(byId(e.to)?.name)}`:`${esc(byId(e.from)?.name)} → <b>この機関</b>`}　<small>${esc(KINDS[e.kind].split("（")[0])}${e.label?" ・ "+esc(e.label):""}</small></span><button class="btn sm" data-deledge="${e.id}">削除</button></div>`).join(""):`<div class="hint">まだつながりがありません。</div>`}</div></div>
+      ${isNew?"":`<div class="f"><label>つながり</label><div class="edges">${edges.length?edges.map(e=>`<div class="e"><span>${e.from===n.id?`<b>この機関</b> → ${esc(byId(e.to)?.name)}`:`${esc(byId(e.from)?.name)} → <b>この機関</b>`}　<small>${esc(KINDS[e.kind].split("（")[0])}${e.label?" ・ "+esc(e.label):""}</small></span><span><button class="btn sm" data-editedge="${e.id}">変更</button> <button class="btn sm" data-deledge="${e.id}">削除</button></span></div>`).join(""):`<div class="hint">まだつながりがありません。</div>`}</div></div>
       <div class="f"><label>つながりを追加</label><div class="f3"><select id="edir"><option value="out">この機関 → 相手</option><option value="in">相手 → この機関</option></select><select id="ekind">${opt(Object.entries(KINDS),"out")}</select><select id="etarget">${opt(others, others[0]?.[0])}</select></div><div class="inline"><input type="text" id="elabel" placeholder="線のラベル（任意）例: 引き落とし"><button class="btn sm" id="addEdge">追加</button></div></div>`}
+      ${isNew?"":`<button class="btn pri blk" id="connectNode">この機関とつなぐ（相手をタップ）</button>`}
       <div class="actions"><button class="btn pri" id="saveNode">保存</button>${isNew?"":`<button class="btn" id="offNode">${n.off?"解約予定を取消":"解約予定"}</button><button class="btn danger" id="delNode">削除</button>`}</div>`);
     document.getElementById("close").addEventListener("click", closeSheet);
     document.getElementById("ntype").addEventListener("change", e=>{ if(isNew){ const [av,col,sq]=TYPE_DEFAULT[e.target.value]; document.getElementById("nav").value=av; document.getElementById("ncol").value=col; document.getElementById("nsq").checked=sq; } });
     const read = ()=>{ n.type=document.getElementById("ntype").value; n.name=document.getElementById("nname").value.trim()||"名称未設定"; n.sub=document.getElementById("nsub").value.trim(); n.chips=document.getElementById("nchips").value.split(/[、,]/).map(s=>s.trim()).filter(Boolean); n.av=document.getElementById("nav").value.trim()||n.name[0]; n.col=document.getElementById("ncol").value; n.hub=document.getElementById("nhub").checked && n.type==="bank"; n.ap=document.getElementById("nap").checked; n.zone=document.getElementById("nzone").checked; n.sq=document.getElementById("nsq").checked; };
     document.getElementById("saveNode").addEventListener("click", ()=>{ read(); if(isNew) S.nodes.push(n); save(); closeSheet(); renderAll(); toast("保存しました"); });
     if(!isNew){
+      document.getElementById("connectNode").addEventListener("click", ()=>{ read(); save(); startConnect(n.id); });
+      sheet.querySelectorAll("[data-editedge]").forEach(x=>x.addEventListener("click", ()=>{ read(); save(); edgeForm(x.dataset.editedge); }));
       sheet.querySelectorAll("[data-deledge]").forEach(b=>b.addEventListener("click", ()=>{ S.edges=S.edges.filter(e=>e.id!==b.dataset.deledge); save(); nodeForm(n,false); renderAll(); }));
       document.getElementById("addEdge").addEventListener("click", ()=>{ const dir=document.getElementById("edir").value, kind=document.getElementById("ekind").value, tgt=document.getElementById("etarget").value, label=document.getElementById("elabel").value.trim(); if(!tgt) return; read(); S.edges.push({id:uid("e"), from:dir==="out"?n.id:tgt, to:dir==="out"?tgt:n.id, kind, label}); save(); nodeForm(n,false); renderAll(); toast("つながりを追加しました"); });
       document.getElementById("offNode").addEventListener("click", ()=>{ read(); n.off=!n.off; save(); closeSheet(); renderAll(); });
@@ -433,60 +436,44 @@
   function renderAll(){ renderBanner(); renderMap(); renderClean(); renderDebit(); renderShare(); document.getElementById("sub").textContent=META[view][1](); }
   document.getElementById("tabs").addEventListener("click", e=>{ const b=e.target.closest("button"); if(b) show(b.dataset.v); });
   document.getElementById("fab").addEventListener("click", ()=>{ if(view==="debit") debitForm({id:uid("d"),day:27,amt:null,rollover:true,kind:"out"}, true); else { const [av,col,sq]=TYPE_DEFAULT.bank; nodeForm({id:uid("n"),name:"",sub:"",type:"bank",av,col,sq,hub:!S.nodes.some(n=>n.hub),ap:false,zone:false,chips:[],off:false}, true); } });
-  document.body.addEventListener("click", e=>{ const t=e.target.closest("[data-edit]"); if(t){ const n=byId(t.dataset.edit); if(n){ if(S.settings.sample){ S.settings.sample=false; } nodeForm(n,false); } return; } const d=e.target.closest("[data-editd]"); if(d){ const x=S.debits.find(y=>y.id===d.dataset.editd); if(x){ S.settings.sample=false; debitForm(x,false); } } });
+  document.body.addEventListener("click", e=>{ const t=e.target.closest("[data-edit]"); if(t){ if(connectFrom){ finishConnect(t.dataset.edit); return; } const n=byId(t.dataset.edit); if(n){ if(S.settings.sample){ S.settings.sample=false; } nodeForm(n,false); } return; } const d=e.target.closest("[data-editd]"); if(d){ const x=S.debits.find(y=>y.id===d.dataset.editd); if(x){ S.settings.sample=false; debitForm(x,false); } } });
   const origSave = save;
 
-  // ===== 長押しドラッグでつなぐ =====
-  (function(){
-    const svg = document.createElementNS("http://www.w3.org/2000/svg","svg"); svg.id="dragline";
-    svg.innerHTML = '<line x1="0" y1="0" x2="0" y2="0" stroke="#3B6FD8" stroke-width="3" stroke-linecap="round" stroke-dasharray="6 5"/><circle r="6" fill="#3B6FD8"/>';
-    document.body.appendChild(svg);
-    const hint = document.createElement("div"); hint.className="draghint"; hint.textContent="つなぐ相手のタイルまでドラッグ"; document.body.appendChild(hint);
-    const line = svg.querySelector("line"), dotEl = svg.querySelector("circle");
-    let timer=null, src=null, srcEl=null, start=null, dragging=false, target=null, suppressClick=false;
-    const tileAt = (x,y) => { const el = document.elementFromPoint(x,y); return el ? el.closest("[data-edit]") : null; };
-    const clearTarget = () => { if(target){ target.classList.remove("target"); target=null; } };
-    const endDrag = () => { dragging=false; clearTimeout(timer); timer=null; document.body.classList.remove("dragging"); svg.classList.remove("on"); hint.classList.remove("on"); if(srcEl) srcEl.classList.remove("lift"); clearTarget(); };
-    document.addEventListener("pointerdown", e=>{
-      const el = e.target.closest("[data-edit]"); if(!el || e.button>0) return;
-      src = el.dataset.edit; srcEl = el; start = {x:e.clientX, y:e.clientY}; dragging=false;
-      clearTimeout(timer);
-      timer = setTimeout(()=>{ dragging=true; suppressClick=true; document.body.classList.add("dragging"); srcEl.classList.add("lift"); svg.classList.add("on"); hint.classList.add("on");
-        const r = srcEl.getBoundingClientRect(); const cx=r.left+r.width/2, cy=r.top+r.height/2; line.setAttribute("x1",cx); line.setAttribute("y1",cy); line.setAttribute("x2",start.x); line.setAttribute("y2",start.y); dotEl.setAttribute("cx",start.x); dotEl.setAttribute("cy",start.y);
-        if(navigator.vibrate) navigator.vibrate(15); }, 420);
-    }, {passive:true});
-    document.addEventListener("pointermove", e=>{
-      if(!srcEl) return;
-      if(!dragging){ if(start && Math.hypot(e.clientX-start.x, e.clientY-start.y) > 8){ clearTimeout(timer); timer=null; srcEl=null; } return; }
-      line.setAttribute("x2", e.clientX); line.setAttribute("y2", e.clientY); dotEl.setAttribute("cx", e.clientX); dotEl.setAttribute("cy", e.clientY);
-      const t = tileAt(e.clientX, e.clientY);
-      if(t !== target){ clearTarget(); if(t && t.dataset.edit !== src){ target=t; t.classList.add("target"); } }
-    }, {passive:true});
-    document.addEventListener("touchmove", e=>{ if(dragging) e.preventDefault(); }, {passive:false});
-    document.addEventListener("contextmenu", e=>{ if(e.target.closest("[data-edit]")) e.preventDefault(); });
-    const finish = e => {
-      if(!srcEl){ return; }
-      if(!dragging){ clearTimeout(timer); timer=null; srcEl=null; return; }
-      const to = target ? target.dataset.edit : null; const from = src;
-      endDrag(); srcEl=null;
-      if(to && to!==from) connectForm(from, to);
-      setTimeout(()=>{ suppressClick=false; }, 50);
-    };
-    document.addEventListener("pointerup", finish); document.addEventListener("pointercancel", finish);
-    document.addEventListener("click", e=>{ if(suppressClick){ e.stopPropagation(); e.preventDefault(); } }, true);
-    window.connectForm = function(from, to){
-      const a=byId(from), b=byId(to); if(!a||!b) return;
-      openSheet(`<h2>つながりを追加<button id="close" aria-label="閉じる">×</button></h2>
-        <div class="edges"><div class="e"><span><b>${esc(a.name)}</b> → <b>${esc(b.name)}</b></span><button class="btn sm" id="swap">向きを逆に</button></div></div>
-        <div class="f"><label>種類</label><select id="ckind">${opt(Object.entries(KINDS),"out")}</select></div>
-        <div class="f"><label>線のラベル（任意）</label><input type="text" id="clabel" placeholder="例: 引き落とし ／ チャージ ／ 連携"></div>
-        <div class="actions"><button class="btn pri" id="cSave">追加</button><button class="btn" id="cCancel">取り消し</button></div>`);
-      let f=from, t=to;
-      document.getElementById("close").addEventListener("click", closeSheet); document.getElementById("cCancel").addEventListener("click", closeSheet);
-      document.getElementById("swap").addEventListener("click", ()=>{ [f,t]=[t,f]; sheet.querySelector(".e span").innerHTML = `<b>${esc(byId(f).name)}</b> → <b>${esc(byId(t).name)}</b>`; });
-      document.getElementById("cSave").addEventListener("click", ()=>{ S.edges.push({id:uid("e"), from:f, to:t, kind:document.getElementById("ckind").value, label:document.getElementById("clabel").value.trim()}); S.settings.sample=false; save(); closeSheet(); renderAll(); toast(`${byId(f).name} → ${byId(t).name} をつなぎました`); });
-    };
-  })();
+
+
+  // ===== 2回タップでつなぐ =====
+  const AUTO_KIND = (a,b) => {
+    if(a.type==="income") return "in";
+    if(a.type==="securities" && b.type==="bank") return "in";
+    if(a.type==="bank" && b.type==="securities") return "link";
+    if(a.type==="wallet" && b.type==="app") return "link";
+    if(a.type===b.type && (a.type==="securities"||a.type==="app")) return "link";
+    return "out";
+  };
+  let connectFrom = null;
+  const cbar = document.createElement("div"); cbar.className="connectbar"; document.body.appendChild(cbar);
+  function startConnect(id){ connectFrom=id; closeSheet(); document.body.classList.add("connecting"); cbar.innerHTML=`「${esc(byId(id).name)}」とつなぐ相手をタップ <button id="cancelConnect">やめる</button>`; cbar.classList.add("on"); document.getElementById("cancelConnect").addEventListener("click", stopConnect); document.querySelectorAll(`[data-edit="${id}"]`).forEach(el=>el.classList.add("src")); }
+  function stopConnect(){ connectFrom=null; document.body.classList.remove("connecting"); cbar.classList.remove("on"); document.querySelectorAll(".src").forEach(el=>el.classList.remove("src")); }
+  function finishConnect(toId){
+    const a=byId(connectFrom), b=byId(toId); if(!a||!b||a.id===b.id){ stopConnect(); return; }
+    const kind = AUTO_KIND(a,b); const e = {id:uid("e"), from:a.id, to:b.id, kind, label:""};
+    S.edges.push(e); S.settings.sample=false; save(); stopConnect(); renderAll();
+    toastAction(`${a.name} → ${b.name}（${KINDS[kind].split("（")[0]}）`, "変更", ()=>edgeForm(e.id));
+  }
+  function edgeForm(eid){
+    const e = S.edges.find(x=>x.id===eid); if(!e) return;
+    openSheet(`<h2>つながりを変更<button id="close" aria-label="閉じる">×</button></h2>
+      <div class="edges"><div class="e"><span id="pair"><b>${esc(byId(e.from).name)}</b> → <b>${esc(byId(e.to).name)}</b></span><button class="btn sm" id="swap">向きを逆に</button></div></div>
+      <div class="f"><label>種類</label><select id="ckind">${opt(Object.entries(KINDS), e.kind)}</select></div>
+      <div class="f"><label>線のラベル（任意）</label><input type="text" id="clabel" value="${esc(e.label||"")}" placeholder="例: 引き落とし ／ チャージ"></div>
+      <div class="actions"><button class="btn pri" id="cSave">保存</button><button class="btn danger" id="cDel">このつながりを削除</button></div>`);
+    let f=e.from, t=e.to;
+    document.getElementById("close").addEventListener("click", closeSheet);
+    document.getElementById("swap").addEventListener("click", ()=>{ [f,t]=[t,f]; document.getElementById("pair").innerHTML=`<b>${esc(byId(f).name)}</b> → <b>${esc(byId(t).name)}</b>`; });
+    document.getElementById("cSave").addEventListener("click", ()=>{ e.from=f; e.to=t; e.kind=document.getElementById("ckind").value; e.label=document.getElementById("clabel").value.trim(); save(); closeSheet(); renderAll(); toast("保存しました"); });
+    document.getElementById("cDel").addEventListener("click", ()=>{ S.edges=S.edges.filter(x=>x.id!==eid); save(); closeSheet(); renderAll(); toast("削除しました"); });
+  }
+  let ta; function toastAction(msg, label, fn){ const el=document.getElementById("toast"); el.classList.add("act"); el.innerHTML=`<span>${esc(msg)}</span><button>${esc(label)}</button>`; el.querySelector("button").addEventListener("click", ()=>{ el.classList.remove("show","act"); fn(); }); el.classList.add("show"); clearTimeout(tt); clearTimeout(ta); ta=setTimeout(()=>{ el.classList.remove("show","act"); }, 5000); }
 
   load(); renderAll(); show("map");
 })();
