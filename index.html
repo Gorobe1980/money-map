@@ -370,6 +370,7 @@
   function openSheet(html){ sheet.innerHTML=html; sheet.classList.add("on"); scrim.classList.add("on"); }
   function closeSheet(){ sheet.classList.remove("on"); scrim.classList.remove("on"); sheet.innerHTML=""; }
   scrim.addEventListener("click", closeSheet);
+  document.addEventListener("keydown", e=>{ if(e.key==="Escape" && sheet.classList.contains("on")) closeSheet(); });
   const opt = (list, sel) => list.map(([v,l])=>`<option value="${esc(v)}" ${v===sel?"selected":""}>${esc(l)}</option>`).join("");
 
   function nodeForm(n, isNew){
