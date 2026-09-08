@@ -52,6 +52,8 @@
   .row.child .l{ position:absolute; left:calc(var(--d,0) * 28px - 15px); top:0; width:9px; height:26px; border-left:2px solid var(--lc); border-bottom:2px solid var(--lc); border-radius:0 0 0 8px; pointer-events:none; }
   .row.child.cont .v{ position:absolute; left:calc(var(--d,0) * 28px - 15px); top:26px; bottom:-1px; width:2px; background:var(--lc); pointer-events:none; }
   .row.child .ah{ position:absolute; left:calc(var(--d,0) * 28px - 6px); top:22px; width:0; height:0; border-left:6px solid var(--lc); border-top:4px solid transparent; border-bottom:4px solid transparent; pointer-events:none; }
+  .row.par .pd{ position:absolute; left:calc(var(--d,0) * 28px + 13px); top:40px; bottom:-1px; width:2px; background:var(--outflow); pointer-events:none; }
+  .row.par.pk-link .pd{ background:var(--link); }
   .row.out{ --lc:var(--outflow); } .row.in{ --lc:var(--inflow); }
   .row.link{ --lc:var(--link); } .row.link .l{ border-left-style:dashed; border-bottom-style:dashed; } .row.link .ah{ display:none; }
   .row .g{ position:absolute; top:0; bottom:-1px; width:2px; background:var(--outflow); pointer-events:none; opacity:.9; }
@@ -213,10 +215,11 @@
       };
       const walk=(x, depth, guides, offb)=>{
         const cs = children(x); cs.forEach(c=>placed.add(c.id));
+        if(cs.length){ const pr = rows.find(r=>r.id===x); if(pr){ pr.par=true; pr.pk=cs[0].kind; } }
         cs.forEach((c,i)=>{ const n=byId(c.id); const last = i===cs.length-1; const isJump = n.hub && n.id!==h.id;
-          const row = {id:c.id, depth:Math.min(depth,3), kind:c.kind, child:true, last, guides:guides.slice(), offb, jump:isJump ? hubList.indexOf(n) : -1, back: inTo(x).some(e=>e.kind==="in" && e.from===c.id)};
+          const row = {id:c.id, depth:Math.min(depth,4), kind:c.kind, child:true, last, guides:guides.slice(), offb, jump:isJump ? hubList.indexOf(n) : -1, back: inTo(x).some(e=>e.kind==="in" && e.from===c.id)};
           rows.push(row);
-          if(!isJump && depth<3) walk(c.id, depth+1, [...guides, {on:!last, kind:c.kind}], offb || !!n.off);
+          if(!isJump && depth<4) walk(c.id, depth+1, [...guides, {on:!last, kind:c.kind}], offb || !!n.off);
         });
       };
       walk(h.id, 1, [], !!h.off);
@@ -258,10 +261,11 @@
     if(r.back) chips.push(`<span class="chip ok">↩ 入金あり</span>`);
     if(n.off) chips.push(`<span class="chip off">解約予定</span>`);
     if(r.kind==="link") chips.push(`<span class="chip lk">連携</span>`);
-    const cls = ["row", `d${r.depth}`, r.kind, r.child?"child":"", r.child&&!r.last?"cont":"", r.hub?"hub":"", r.inc?"inc":"", r.hasin?"hasin":"", n.off?"off":"", r.offb?"offb":"", r.id===newId?"new":""].join(" ");
+    const cls = ["row", `d${r.depth}`, r.kind, r.child?"child":"", r.child&&!r.last?"cont":"", r.hub?"hub":"", r.inc?"inc":"", r.hasin?"hasin":"", n.off?"off":"", r.offb?"offb":"", r.id===newId?"new":"", r.par?"par pk-"+r.pk:""].join(" ");
     const guides = (r.guides||[]).map((g,k)=> g.on ? `<i class="g ${g.kind==='link'?'gl':''}" style="left:${k*28+13}px"></i>` : "").join("");
-    const conn = r.child ? `<i class="l"></i><i class="v"></i><b class="ah"></b>` : (r.inc ? `<i class="dn"></i>` : (r.hasin ? `<i class="up"></i><b class="dh"></b>` : ""));
-    const sub = r.jump>=0 ? "へ振替" : (n.sub || TYPES[n.type]);
+    let conn = r.child ? `<i class="l"></i><i class="v"></i><b class="ah"></b>` : (r.inc ? `<i class="dn"></i>` : (r.hasin ? `<i class="up"></i><b class="dh"></b>` : ""));
+    if(r.par) conn += `<i class="pd"></i>`;
+    const sub = n.sub || TYPES[n.type];
     return `<button class="${cls}" style="--d:${r.depth}" data-edit="${n.id}">${guides}${conn}${avatar(n)}<div class="t"><span class="n">${esc(n.name)}</span><span class="s">${esc(sub)}</span></div><div class="chips">${chips.join("")}</div></button>`;
   }
   function renderMap(){
