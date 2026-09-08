@@ -1,0 +1,414 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>お金の流れマップ モック（サンプル）</title>
+<meta name="application-name" content="お金の流れマップ">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="お金マップ">
+<meta name="theme-color" content="#111827">
+<link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjogIuOBiumHkeOBrua1geOCjOODnuODg+ODlyIsICJzaG9ydF9uYW1lIjogIuOBiumHkeODnuODg+ODlyIsICJzdGFydF91cmwiOiAiLi8iLCAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwgImJhY2tncm91bmRfY29sb3IiOiAiI0Y2RjdGOSIsICJ0aGVtZV9jb2xvciI6ICIjMTExODI3IiwgImxhbmciOiAiamEiLCAiaWNvbnMiOiBbeyJzcmMiOiAiZGF0YTppbWFnZS9wbmc7YmFzZTY0LGlWQk9SdzBLR2dvQUFBQU5TVWhFVWdBQUFnQUFBQUlBQ0FZQUFBRDBlTlQ2QUFBUHNrbEVRVlI0bk8zZHY0cGM1eDNHY2Ntb05td25jT1ZLeElWdndxUjJhY2hObUJTR2dIRmxEQUVYSVRjUmNPazYrQ1pVT0xoU0pYQTM0QnRRV0NVRHM2UFozZG1aYzg3N2UzL1A1d01KNUE5NFp2YWc1M3ZlTTVLZVA2T2ttNWV2M28xK0RRRFgydjMrMjNPZllrMStNQU1aZVNDZFFCaEhBR3pBMEFPY1R4UnNRd0Nzd09BRExFY1FyRU1BTE1Ub0EyeERFQ3hEQUZ6STRBT01Kd1l1SndDZXdPZ0QxQ1VHbmtZQW5NSHdBOHhGRER4T0FOekQ2QVAwSUFaT0V3QkhERDlBVDBMZ0xnSHdmNFlmSUlNUStKL29BREQ2QUxsMjRYOU1jZVNiTi93QXBJZEEzSnMyL2dDY2toWUNNVy9XOEFOd2psMUlDTFIvazRZZmdFdnNtb2RBMnpkbitBRzQxcTV4QkxSOFk4WWZnQ1h0R29aQXF6ZGsrQUZZMDY1UkNIejByQW5qRDRDdE9kLzBKV1A0QVJoaE4vbHB3TlFuQU1ZZkFCc1VGZ0RHSDREUmJsNitldmRzVXRNZFg4ejhZUVBRMTI2eVJ3SlRuUUFZZndDcXVwbnNCbldhQUpqdGd3VWd6ODFFVzFYK3VHS21EeE1BWm5rY1VQb0ZHbjhBWnJZckhBSmxId0VZZndCbWQxUDRGTHRrQUZUK3dBQ2d3NmFWQzRDcUh4UUFkTnEyVWdGUThRTUNnSTRiVnlZQXFuMHdBTkI1NjBvRVFLVVBCQUFTTm05NEFGVDVJQUFnYWZzK1N2OEFBQ0J4QXo5S2ZlTUFNTnJJTFJ3U0FNWWZBTVp1NHVZQllQd0JZUHcyYmhvQXhoOEFhbXprWmdGZy9BR2dqdUcvRFJBQTJQNW1lWk1BY1BjUEFMVTJjL1VBTVA0QVVHODdWdzBBNHc4QU5UZlVkd0FBSU5CcUFlRHVId0RxYnVrcUFXRDhBYUQycGk0ZUFNWWZBT3B2cSs4QUFFQ2dSUVBBM1Q4QXJHUHBqVjBzQUl3L0FLeHJ5YTMxQ0FBQUFpMFNBTzcrQVdBYlMyM3UxUUZnL0FGZ1cwdHNyMGNBQUJEb3FnQnc5dzhBWTF5N3dVNEFBQ0RReFFIZzdoOEF4cnBtaTUwQUFFQ2dpd0xBM1Q4QTFIRHBKajg1QUl3L0FNelBJd0FBbU53bE4rZFBDZ0IzL3dEUWd4TUFBR2pncVRmcEFnQUFBcDBkQUk3L0FhQzJwMnkxRXdBQUNIUldBTGo3QjRBNW5MdlpUZ0FBSU5DakFlRHVId0RtY3M1Mk93RUFnRUFDQUFBQ1BSZ0FqdjhCWUU2UGJiZ1RBQUFJZEc4QXVQc0hnTGs5dE9WT0FBQWdrQUFBZ0VBbkE4RHhQd0QwY04rbU93RUFnRUFDQUFBQ0NRQUFDUFJCQUhqK0R3QzluTnAySndBQUVFZ0FBRUI2QURqK0I0Q2VqamZlQ1FBQUJCSUFBQkJJQUFCQWNnQjQvZzhBdlIxdXZSTUFBQWdrQUFBZ2tBQUFnRUFDQUFBQ0NRQUFTQTBBdndNQUFETHNOOThKQUFBRUVnQUFFRWdBQUVBZ0FRQUFnUVFBQUFRU0FBQVE2TG5mQXNncEgvL3doUTltWW45OCs4dm9sd0FVSndCNHorRDNKUWFBVXdSQU9NT2ZSUXdBZXdJZ2xPSFBKZ1FBWHdJTVpQeHhEUUJPQUlMNFJaOVRuQVpBSmljQUlZdy9yZzNna0FBSVlQeHhqUURIQkVCenhoL1hDbkNLQUdqTStPT2FBZTRqQUpveS9yaDJnSWU4ZVBCL0JaamM5ei8rYy9STGFPRzdiNzRlL1JKWW1OOEcySkM3ZjlKL2U2RFJYNWNZNkVFQU5HUDhTWTRBdzc4dElUQTNqd0NBNlJuK3NaKzdFSmlUTHdFMjR1NmZ4R3ZLK0kvblp6QW5BUUJNeS9EVTRXY3hId0hReEF4M2FzeXA2clZsY09yeE01bUxBQUNtWTJqcThyT1pod0FBcG1KZzZ2TXptb01BQUtaaFdPYmhaMVdmQUdpZzZqTmErbkNOUVQ4Q0FKaUNPOHI1K0puVjVnOENBaUw0dzJvdVk4VDc4a2NCTitCNGx1NS9MUEExSTJUNC9RdzR6UWtBMEpMaFgrZnpkQ0xRaCs4QUFFQWdBUUNVZHNrZHA3di85Vnp5MlRvMXFFa0FBRUFnQVFDMDR1N2ZaOHg1QkFBQUJCSUFBQkJJQUFCQUlBRUFBSUVFQUFBRUVnQUFFRWdBQUVBZ0FRQUFnUVFBQUFRU0FBQVFTQUFBUUNBQkFBQ0JCQUFBQkJJQUFCQklBQUJBSUFFQUFJRUVBQUFFRWdBQUVFZ0FBRUFnQVFBQWdRUUFBQVFTQUFBUVNBQUFRQ0FCQUFDQkJBQUFCQklBQUJCSUFBQkFJQUVBQUlFRUFBQUVFZ0FBRUVnQUFFQWdBUUFBZ1FRQUFBUVNBQUFRU0FBQVFDQUJBQUNCQkFBQUJCSUFBQkJJQUFCQUlBRUFBSUVFQUFBRUVnQUFFRWdBQUVBZ0FRQUFnUVFBQUFRU0FBQVFTQUFBclh6LzR6OUh2NFQyZk1ZOUNBQUFWdlhkTjEvN2hBc1NBRUM3OFhDSHVoNmZiUjhDQUlDekdQOWVCQURRZHF3TTFyS2ZKNzA4djNuNTZ0M29GOEYxUHY3aEN4OGhxL3ZqMjErbUhpRFBvWDN1M1BYaTZEOER0T1FPRnU3eUNLQ0IwWGRtOUZmaEduTUhQeDgvczlvRUFBQ0xNLzcxQ1FCZ0drWUZsaU1BbXFod1JFdFAxYTR0RVZDZm45RWNCQUF3SFFOVGw1L05QQVFBTUNWRFU0K2Z5VndFUUNQVmptcVpYL1ZyeXVEVTRXY3hId0VBVE0zd2pQLzgvUXptNUU4Q2JNaWZERWpDM2Y4cC9yQ2ZiUm4rdVFtQXBrUUFhZU4vU0Fpc3kvRDNJQUNhRWdDa2p2OHhNWEE5ZzkrVEFHaE1CSENKYmdFQW5PWkxnSTM1aFJ6WERIQWZBZENjQ01DMUFwd2lBQUtJQUZ3andESGZBUWppT3dFY0U0ZVFTd0FFRWdMY012NlF6U09BUUg3aHh6VUFPQUVJNXpRZ2krRUg5Z1FBMDRmQWYvN3lqOVgvR1gvNjExK2Z6Y3JvQTZlOE9QbmZFdWQ0SkdZT0Fvdys4RGduQUV6djdadlhxLzh6UHZuMDg5WC9HUUJiOGlWQUFBZ2tBQUFna0FBQWdFQUNBQUFDQ1FBQUNDUUFBQ0NRQUFDQVFBSUFBQUlKQUFBSUpBQUFJSkFBQUlCQUFnQUFBZ2tBQUFna0FBQWdrQUFBZ0VBQ0FBQUNDUUFBQ0NRQUFDQ1FBQUNBUUFJQUFBSUpBQUFJSkFBQUlKQUFBSUJBQWdBQUFna0FBQWdrQUFBZ2tBQUFnRUFDQUFBQ0NRQUFDQ1FBQUNDUUFBQ0FRQUlBQUFJSkFBQUlKQUFBSUpBQUFJQkFBZ0FBQWdrQUFBZ2tBQUFna0FBQWdFQUNBQUFDQ1FBQUNDUUFBQ0NRQUFDQVFBSUFBQUlKQUFBSUpBQUFJSkFBQUlCQUFnQUFBZ2tBQUFna0FBQWdrQUFBZ0VBQ0FBQUNDUUFBQ0NRQUFDQ1FBQUNBUUFJQUFBSUpBQUFJSkFBQUlKQUFBSUJBQWdBQUFna0FBQWdrQUFBZ2tBQUFnRUFDQUFBQ0NRQUFDQ1FBQUNDUUFBQ0FRQUlBQUFJSkFBQUlKQUFBSUpBQUFJQkFBZ0FBQWdrQUFBZ2tBQUFna0FBQWdFQUNBQUFDQ1FBQUNDUUFBQ0NRQUFDQVFBSUFBQUlKQUFBSUpBQUFJSkFBQUlCQUFnQUFBZ2tBQUFna0FBQWdrQUFBZ0VBQ0FBQUNDUUFBQ0NRQUFDQ1FBQUNBUUFJQUFBSUpBQUFJSkFBQUlKQUFBSUJBQWdBQUFna0FBQWdrQUFBZ2tBQUFnRUFDQUFBQ3ZSajlBb0E1ZlBiVno2TmZBbGY0OWFjdmZYN2NJUUNBa3d4KzM1K25HT0NXQUFEdUhRcDZFZ1BjRWdEQUI2TkEzcy9kcVVBZVh3SUVqRCt1Z1VCT0FDQ1l1MzVPWFE5T0F6STRBWUJReGgvWFJqWUJBSUdNUDY0UkJBQ0VNZjY0VnJnbEFDQ0k4Y2MxdzU0QWdCREdIOWNPaHdRQUFBUVNBQkRBM1QrdUlZNEpBR2pPK09OYTRoUUJBQUNCQkFBMDV1NGYxeFQzRVFBQUVFZ0FRRlB1L25GdDhSQUJBQUNCQkFBQUJCSUEwTXpiTjY5SHZ3UmdBZ0lBR2hJQnJNMTNUT1luQUtDcGYvLzkwL2YvQWpoRkFFQnpJZ0E0UlFCQUFCRUFIQk1BRU1JakFlQ1FBSUF3VGdPQVd3SUFBb2tBUUFCQUtJOEVJSnNBZ0hCT0F5Q1RBQUJFQUFRU0FNQjdIZ2xBRmdFQTNPR1JBR1FRQU1BSFJBRDBKd0NBa3p3U2dONEVBUEFncHdIUWt3QUFIaVVDb0I4QkFKeEZCRUF2QWdBNG0rOEZRQjh2UnI4QW1NSGJONjlIdjRSeUlmRG52NzBaL1RLQUt6Z0JBQzdpa1FETVRRQUFGL05JQU9ZbEFJQ3JPUTJBK1FnQVlCRWlBT1lpQUlERmVDUUE4eEFBd09LY0JrQjlBZ0JZaFFpQTJnUUFzQnFQQktBdUFRQ3N6bWtBMUNNQWdFMklBS2hGQUFDYjhVZ0E2aEFBd09hY0JzQjRBZ0RZbkw5SUNNYnp0d0VDbXpIOFVJY1RBS2IzeWFlZmozNEpuTUg0UXkwQ0FGaWQ4WWQ2UEFJQVZtUDRvUzRuQUxUZ01VQTl4aDlxRXdDMElRTHFNUDVRbjBjQXRJdUF0MjllajM0WnNRdy96TU1KQU8wNENSakQrTU5jQkFBdGlZQnRHWCtZajBjQVJFU0F4d0xyTVB3d0x3RkFCREd3UE9NUGN4TUF4T24rZUdDTDB3N2pEL01UQU1EWkRELzA0VXVBd0ZtTVAvUWlBSUJIR1gvb1J3QUFEekwrMEpQdkFBQW5HWDdvelFrQThBSGpELzBKQU9BTzR3OFpQQUlBM2pQOGtNVUpBR0Q4SVpBQWdIRHUvQ0dUUndBUXl2QkROaWNBRU1qNEF3SUF3aGgvNEpaSEFCREM4QU9IbkFCQUFPTVBIQk1BMEp6eEIwN3hDQUNhTXZ6QVE1d0FRRVBHSDNqTTg1dVhyOTQ5K3Y4Q3B2UFpWeitQZmdrMDl1dFBYNDUrQ1Z6SkNRQUFCQklBQUJCSUFFQlRqbWh4YmZFUUFRQUFnUVFBQUFRU0FOQ1l4d0M0cHJpUEFBQ0FRQUlBbW5NS2dHdUpVd1FBQkJBQnVJWTRKZ0FBZUpDQTdFa0FRQWkvaUFPSEJBQUVFUUc0WnRnVEFCQkdCT0JhNFpZQWdFQWlBTmNJL2pwZ0NPYXZET2FZT013aEFBQWh3SHZHUDR0SEFJQmYrSEVOQkhJQ0FOemhzVUFXZC8yNW50LysyODNMVis5R3Z4Q2dGaUhRbDlGbjkvdHZ6d1VBY0JaQk1EZWp6eUVCQUFDaEFlQkxnQUFRU0FBQVFDQUJBQUNCQkFBQUJCSUFBSkFhQUxmZkJoejlRZ0NBOWUwMzN3a0FBQVFTQUFBUVNBQUFRQ0FCQUFESkFlQ0xnQURRMitIV093RUFnRUFDQUFBQ0NRQUFTQThBM3dNQWdKNk9OOTRKQUFBRUVnQUFFRWdBQUVDZ0R3TEE5d0FBb0pkVDIrNEVBQUFDQ1FBQUNIUXlBRHdHQUlBZTd0dDBKd0FBRUVnQUFFQ2dld1BBWXdBQW1OdERXKzRFQUFBQ0NRQUFDUFJnQUhnTUFBQnplbXpEblFBQVFDQUJBQURObkhPQy8yZ0FlQXdBQVAwNEFRQ0FRR2NGZ0ZNQUFKakR1WnZ0QkFBQUFwMGRBRTRCQUtDMnAyeTFFd0FBQ1BTa0FIQUtBQUExUFhXam5RQUFRS0FuQjRCVEFBQ281Wkp0ZGdJQUFJRXVDZ0NuQUFCUXc2V2I3QVFBQUFKZEhBQk9BUUJnckd1MjJBa0FBQVM2S2dDY0FnREFHTmR1OE5VbkFDSUFBTGExeFBaNkJBQUFnUllKQUtjQUFMQ05wVGJYQ1FBQVRHTEpHKzdGQXNBcEFBRE1ZOUVUQUJFQUFPdFllbU05QWdDQTR0YTR3VjQ4QUp3Q0FFQjlxNXdBaUFBQXFMMnBxejBDRUFFQVVIZExmUWNBQUFwYSswWjYxUUJ3Q2dBQU5hMStBaUFDQUtEZWRtN3lDRUFFQUVDdHpkenNPd0FpQUFEcWJLVXZBUUpBQVZ2ZktHOGFBRTRCQUtDR3pVOEFSQUFBak4vR0lZOEFSQUFBak4zRVlkOEJFQUVBcE5zTkd2L2hYd0lVQVFDazJnMGMveEsvQzJEMEJ3QUFpZHMzUEFDcWZCQUFrTFI1SlFLZzBnY0NBQWxiVnlZQXFuMHdBTkI1NDBvRlFNVVBDQUE2Ymx1NUFLajZRUUZBcDAwcithTDJibDYrZWpmNk5RQkFwK0hmSy8zaTlvUUFBRFBaRlIvL3NvOEFadndnQVdDbXpab2lBR2I2UUFISXRadG9xNlo1b1hzZUJ3QlF6VzZpNGQrYjdnWHZDUUVBS3RoTk9QNVRQUUxvOG9FRDBNZHU0aTJhOW9Ydk9Ra0FZR3U3aVlkL2IvbzNzQ2NFQU5qQ3JzSDQzMnJ4SnZaRUFBQnIyVFVaL3IxV2IyWlBDQUN3cEYyejhiL1Y3ZzN0aVFBQXJyVnJPUHg3YmQvWW5oQUE0Qks3eHVOL3EvV2JPeVFFQURqSHJ2bnc3MFc4eVVOQ0FJRGs0ZCtMZXJPSGhBQUFpY08vRi9tbUR3a0JnRXk3ME9IZmkzN3poNFFBUUliMDRkL3pJUndSQWdBOUdmNjdCTUE5aEFEQS9JeisvUVRBR2NRQXdGd00vK01Fd0JNSUFZQzZqUDdUQ0lBTGlRR0E4WXorNVFUQVFnUUJ3RGFNL2pJRXdBckVBTUJ5RFA0NkJNQUdCQUhBK1F6K05nVEFRTUlBU0dmc3h4RUFSWWtEb0FNRC82eXMvd0poU1BBSm8vQmRrQUFBQUFCSlJVNUVya0pnZ2c9PSIsICJzaXplcyI6ICI1MTJ4NTEyIiwgInR5cGUiOiAiaW1hZ2UvcG5nIn1dfQ==">
+<link rel="apple-touch-icon" sizes="180x180" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAYAAAA9zQYyAAAE3ElEQVR4nO3dv4pbVxDAYcmkDrgzuNrKxIVfIqROGchLmBSGQFAlAoEUIS8RSJk65CVSOLhyFXAnyAs4bKHgyNLqz73nnJm531cv0r3w29FIrM6uV0E8fvLs/ehr4Ha7d2/WqwCGXIR469sNCrzbk4p4uXYd427+REKmZ9zNHlzIjAh79gcVMiPDnu3BhEyEqGd5IDETJexHUx9AzMxljpZu/o0QMhGn9U0TWsy0dmtjVwctZnq5pbWrghYzvV3b3MVBi5lRrmnvoqDFzGiXNjj5YzuI5GzQpjNRXNLig0GLmWjONXkyaDET1UNt2qEp5WjQpjPRnWrUhKaUj4I2ncniWKsmNKX8L2jTmWwOmzWhKeW/oE1nsvqwXROaUgRNvaCtG2S3b9iEphRBU4qgKUXQlLL2hpBKTGhK+WSV2Kfff76K7p/v/hh9CYuScuXIEPIhYfeRKuiMIR8SdltpdugKMVe6j6hS79BLtf3x52HPvXn1chVZipWj4lS7ZfUYGXKWsNOsHEsXKeaI15Mm6IrT+dr7ihrPNuB12aGTGvGSvw0YcLoJvXTHIhq1v26OPG+0yAWdzOg3Y5ugbwb3BE0pgqYUQVOKoClF0JQiaEoRNKUImlIETSmCphRBU4qgKUXQlCJoShE0pQiaUgSdzOhviGyDfUPlkKCDi/S1p22gr4Od4kuySUWYlJtgMaeY0FXPgrvmviKGE1X4oIkX9ebVy1DXk+4osGoHzkx91XG23Wl26ISiTscI0qwcVXbpKvcRVZqVI/v6IeQ+UgY9R9h/ff3T2Z/57JdvVlMJua/UQU/x99s/z/7M07sXXa6FBe7QcAlBU4qgKUXQlCJoShE0pQiaUgRNKYKmFEFTiqApRdCUImhKETSlCJpSBE0pgqYUQVOKoClF0JQiaEoRNKUImlIETSmCphRBU4qgKUXQlCJoShE0pQiaUgRNKYKmFEFTin/rNsDzr35bRff61y9XGQm6owwhH15rtrAF3UGmkLOHbYduLHPMGe9D0JQi6IayTLVK9yNoShH0wP9Um9Hz4FNa0A39/sNdy4fnCEF3iFrY/Qi6E1H3IeiORN2eoDsTdVuCHsBe3Y6/5Rj40dt92F98+7bpcyyNCT2YFWRegg5A1PMRdBD26nkIOhjTeprFBv307sUqIm8Sp1n0pxz3UUf5IyIhz2OxEzrSpBbzfBY9oUdPaiHPT9CNJvW5XxAxt7H4lWMEMbdjQnck5PZM6E7E3IcJ3ZiQ+zKhGxJzf4JuRMxjCLqRLGfBVbsvQVOKoBc8zSrej6ApRdCNZZhqle5j/fjJs/ejL2Ipop8LlznkPUEPkCHs18lC3hM0pTzavXuzHn0RMIf7lr0ppBRBU4qgqRe0PZrs9g2b0JQiaGoGbe0gqw/bNaEpRdDUDdraQTaHzZrQlPJR0KY0WRxr1YSmlKNBm9JEd6rRkxNa1ET1UJtWDkp5MGhTmmjONXl2QouaKC5p0cpBCpcO1ouCNqXJ4uIJLWpGuaa9q1YOUdPbtc1dvUOLml5uae3mMzkcIUYrU4bm5ENmhM2cpm4Akz+2s4Iwlzlamu0YMJOaCENx9nPthM3IV/hmBzUKmxGravOTR4VNz/dc3Y7SFfZy7Toe2TzkbGhx17cbdO54mMPORZ7bLsjB+f8CgZ11NwHeQgkAAAAASUVORK5CYII=">
+<link rel="icon" type="image/png" sizes="512x512" href="data:image/png;base64,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">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&display=swap">
+<style>
+  :root{
+    --page-bg:#EEF0F4; --page-ink:#111827; --page-mute:#5B6472; --page-rule:#D6DAE2; --page-card:#FFFFFF;
+    --bg:#F6F7F9; --tile:#FFFFFF; --edge:#E3E6EA; --ink:#111827; --text:#1F2933; --mute:#6B7280;
+    --chip:#EEF0F3; --chiptx:#4B5563; --zone:#ECEFF4; --inflow:#1F9D6A; --outflow:#3B6FD8; --link:#94A3B8;
+    --warn:#B45309; --warnbg:#FFF4E5; --ok:#1F9D6A; --okbg:#E8F6EF; --danger:#B91C1C; --dangerbg:#FDECEC;
+    --frame:#1B1F27;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){ --page-bg:#14171D; --page-ink:#E8EBF0; --page-mute:#9AA3B2; --page-rule:#2B313C; --page-card:#1C2029; --frame:#0B0D12; }
+  }
+  :root[data-theme="dark"]{ --page-bg:#14171D; --page-ink:#E8EBF0; --page-mute:#9AA3B2; --page-rule:#2B313C; --page-card:#1C2029; --frame:#0B0D12; }
+
+  body{ background:var(--page-bg); color:var(--page-ink); font-family:"BIZ UDPGothic","Hiragino Sans","Yu Gothic UI",system-ui,sans-serif; font-size:14px; line-height:1.6; }
+  .wrap{ max-width:1080px; margin:0 auto; padding:28px 24px 48px; }
+  header.top{ display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between; gap:12px 32px; border-bottom:1px solid var(--page-rule); padding-bottom:16px; margin-bottom:24px; }
+  header.top h1{ font-size:22px; font-weight:700; margin:0; text-wrap:balance; }
+  header.top p{ margin:4px 0 0; color:var(--page-mute); max-width:62ch; }
+  .goals{ display:flex; gap:8px; flex-wrap:wrap; }
+  .goals span{ font-size:12px; color:var(--page-mute); border:1px solid var(--page-rule); border-radius:999px; padding:3px 10px; }
+  .goals b{ color:var(--page-ink); }
+
+  .stage{ display:grid; grid-template-columns:360px 1fr; gap:28px; align-items:start; }
+  @media (max-width:760px){ .stage{ grid-template-columns:1fr; } .wrap{ padding:18px 14px 40px; } }
+  .side{ display:flex; flex-direction:column; gap:14px; }
+  .side .panel{ background:var(--page-card); border:1px solid var(--page-rule); border-radius:14px; padding:16px 18px; }
+  .side h2{ margin:0 0 6px; font-size:15px; }
+  .side p{ margin:0; color:var(--page-mute); font-size:13px; }
+  .side ul{ margin:8px 0 0; padding-left:18px; color:var(--page-mute); font-size:13px; }
+  .side ul li{ margin:3px 0; }
+  .side .try{ font-size:12px; color:var(--page-ink); background:var(--page-bg); border-radius:8px; padding:8px 10px; margin-top:10px; }
+
+  /* ---- phone ---- */
+  .phone{ width:340px; max-width:100%; height:720px; background:var(--frame); border-radius:38px; padding:10px; box-shadow:0 18px 40px rgba(0,0,0,.18); position:relative; }
+  .screen{ background:var(--bg); color:var(--text); border-radius:30px; height:100%; display:flex; flex-direction:column; overflow:hidden; font-size:12.5px; line-height:1.45; }
+  .status{ height:30px; display:flex; align-items:center; justify-content:space-between; padding:0 22px; font-size:11px; font-weight:700; color:var(--ink); }
+  .status .notch{ position:absolute; left:50%; top:18px; transform:translateX(-50%); width:96px; height:22px; background:var(--frame); border-radius:12px; }
+  .appbar{ padding:6px 16px 8px; display:flex; align-items:baseline; justify-content:space-between; gap:8px; }
+  .appbar h2{ margin:0; font-size:17px; font-weight:700; color:var(--ink); }
+  .appbar .sub{ font-size:11px; color:var(--mute); }
+  .body{ flex:1; overflow-y:auto; padding:0 12px 14px; display:flex; flex-direction:column; gap:10px; }
+  .body::-webkit-scrollbar{ width:0; }
+  .view[hidden]{ display:none; }
+  .view{ display:flex; flex-direction:column; gap:10px; }
+  .tabs{ display:grid; grid-template-columns:repeat(4,1fr); border-top:1px solid var(--edge); background:var(--tile); padding:8px 6px 10px; }
+  .tabs button{ background:none; border:0; text-align:center; color:var(--mute); font-size:10px; display:flex; flex-direction:column; align-items:center; gap:3px; cursor:pointer; font-family:inherit; padding:2px 0; }
+  .tabs button svg{ width:20px; height:20px; stroke:currentColor; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+  .tabs button.on{ color:var(--outflow); font-weight:700; }
+  .tabs button:focus-visible{ outline:2px solid var(--outflow); outline-offset:2px; border-radius:6px; }
+
+  /* ---- components ---- */
+  .sec{ display:flex; align-items:center; gap:8px; margin-top:4px; }
+  .sec .num{ background:var(--ink); color:#fff; font-size:10px; font-weight:700; border-radius:999px; padding:1px 7px; letter-spacing:.06em; }
+  .sec h3{ margin:0; font-size:12.5px; font-weight:700; color:var(--ink); }
+  .sec::after{ content:""; flex:1; height:1px; background:var(--edge); }
+  .tile{ background:var(--tile); border:1px solid var(--edge); border-radius:10px; padding:8px 10px; display:flex; align-items:center; gap:9px; }
+  .tile.hub{ border-color:var(--ink); border-width:1.5px; }
+  .tile.dim{ border-style:dashed; border-color:#C9CFD8; }
+  .tile.dim .n{ color:var(--mute); }
+  .tile.off{ opacity:.45; }
+  .tile.off .n{ text-decoration:line-through; }
+  .av{ width:26px; height:26px; border-radius:50%; display:grid; place-items:center; color:#fff; font-weight:700; font-size:12px; flex:none; }
+  .av.sq{ border-radius:7px; }
+  .t{ display:flex; flex-direction:column; min-width:0; flex:1; }
+  .t .n{ font-weight:700; color:var(--ink); font-size:12.5px; line-height:1.3; }
+  .t .s{ color:var(--mute); font-size:10.5px; }
+  .chips{ display:flex; gap:4px; flex-wrap:wrap; justify-content:flex-end; max-width:46%; }
+  .chip{ background:var(--chip); color:var(--chiptx); font-size:9.5px; border-radius:999px; padding:2px 7px; white-space:nowrap; }
+  .chip.ap{ background:#111111; color:#fff; font-weight:700; }
+  .chip.ok{ background:var(--okbg); color:var(--ok); }
+  .chip.warn{ background:var(--warnbg); color:var(--warn); }
+  .chip.off{ background:var(--dangerbg); color:var(--danger); }
+
+  .flow{ display:grid; grid-template-columns:22px 1fr; column-gap:6px; row-gap:6px; }
+  .flow .c{ position:relative; }
+  .flow .c::before{ content:""; position:absolute; left:10px; top:-6px; bottom:-6px; width:2px; background:var(--lc,var(--outflow)); }
+  .flow .c::after{ content:""; position:absolute; left:4px; top:50%; width:10px; height:2px; background:var(--lc,var(--outflow)); transform:translateY(-1px); }
+  .flow .c.end::before{ bottom:50%; }
+  .flow .c.start::before{ top:50%; }
+  .flow .c.only::before{ display:none; }
+  .flow .c span{ position:absolute; left:14px; top:50%; width:0; height:0; border-left:5px solid var(--lc,var(--outflow)); border-top:4px solid transparent; border-bottom:4px solid transparent; transform:translateY(-4px); }
+  .flow .in{ --lc:var(--inflow); }
+  .flow .link{ --lc:var(--link); }
+  .flow .c.off{ opacity:.35; }
+  .zone{ background:var(--zone); border-radius:10px; padding:8px; display:flex; flex-direction:column; gap:6px; }
+  .zone .zl{ font-size:10px; font-weight:700; color:var(--chiptx); letter-spacing:.04em; }
+  .row2{ display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+  .mini{ background:var(--tile); border:1px solid var(--edge); border-radius:8px; padding:5px 7px; display:flex; align-items:center; gap:6px; font-size:11px; font-weight:700; color:var(--ink); }
+  .mini.dim{ border-style:dashed; color:var(--mute); }
+  .mini.off{ opacity:.45; text-decoration:line-through; }
+  .mini .av{ width:18px; height:18px; font-size:9px; }
+  .mini small{ font-weight:400; color:var(--mute); font-size:9.5px; margin-left:auto; }
+
+  .kpi{ display:grid; grid-template-columns:repeat(3,1fr); gap:6px; }
+  .kpi div{ background:var(--tile); border:1px solid var(--edge); border-radius:10px; padding:8px 6px; text-align:center; }
+  .kpi b{ display:block; font-size:20px; font-variant-numeric:tabular-nums; color:var(--ink); line-height:1.1; }
+  .kpi span{ font-size:10px; color:var(--mute); }
+  .kpi .w b{ color:var(--warn); }
+  .card{ background:var(--tile); border:1px solid var(--edge); border-radius:12px; padding:10px 11px; display:flex; flex-direction:column; gap:7px; }
+  .card h4{ margin:0; font-size:12.5px; font-weight:700; color:var(--ink); display:flex; align-items:center; gap:6px; }
+  .card h4 .sev{ width:8px; height:8px; border-radius:50%; background:var(--warn); flex:none; }
+  .card h4 .sev.ok{ background:var(--ok); }
+  .card h4 .sev.bad{ background:var(--danger); }
+  .card p{ margin:0; color:var(--mute); font-size:11px; }
+  .list{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:5px; }
+  .list li{ display:flex; align-items:center; gap:7px; font-size:11.5px; color:var(--text); }
+  .list li .av{ width:20px; height:20px; font-size:10px; }
+  .list li .r{ margin-left:auto; color:var(--mute); font-size:10.5px; white-space:nowrap; }
+  .btn{ display:inline-flex; align-items:center; justify-content:center; gap:6px; border-radius:9px; padding:8px 12px; font-size:11.5px; font-weight:700; border:1px solid var(--edge); color:var(--ink); background:var(--tile); cursor:pointer; font-family:inherit; }
+  .btn.pri{ background:var(--ink); color:#fff; border-color:var(--ink); }
+  .btn.danger{ background:var(--dangerbg); color:var(--danger); border-color:#F3C1C1; }
+  .btn.blk{ width:100%; }
+  .btn:focus-visible{ outline:2px solid var(--outflow); outline-offset:2px; }
+  select{ font-family:inherit; font-size:12px; padding:7px 9px; border-radius:9px; border:1px solid var(--edge); background:var(--tile); color:var(--ink); width:100%; }
+  .check{ display:flex; flex-direction:column; gap:6px; }
+  .check label{ display:flex; align-items:flex-start; gap:8px; font-size:11.5px; color:var(--text); }
+  .check input{ margin:3px 0 0; accent-color:var(--outflow); }
+  .check small{ color:var(--mute); display:block; font-size:10.5px; }
+  .empty{ color:var(--mute); font-size:11px; background:var(--okbg); border-radius:8px; padding:8px 10px; }
+
+  .month{ display:flex; align-items:baseline; justify-content:space-between; }
+  .month b{ font-size:15px; color:var(--ink); }
+  .month span{ font-size:11px; color:var(--mute); }
+  .days{ display:grid; grid-template-columns:repeat(31,1fr); gap:2px; background:var(--tile); border:1px solid var(--edge); border-radius:10px; padding:8px 8px 6px; }
+  .days i{ display:block; height:26px; border-radius:4px; position:relative; }
+  .days i::after{ content:attr(data-d); position:absolute; left:50%; bottom:-1px; transform:translateX(-50%); font-size:7px; color:var(--link); font-style:normal; }
+  .days i.on{ background:var(--outflow); } .days i.in{ background:var(--inflow); }
+  .days i.on::after, .days i.in::after{ color:var(--ink); font-weight:700; }
+  .dlist{ display:flex; flex-direction:column; gap:5px; }
+  .drow{ background:var(--tile); border:1px solid var(--edge); border-radius:9px; padding:6px 9px; display:grid; grid-template-columns:38px 1fr auto; align-items:center; gap:8px; }
+  .drow.off{ opacity:.45; }
+  .drow .d{ background:var(--ink); color:#fff; font-size:10px; font-weight:700; border-radius:6px; text-align:center; padding:3px 0; }
+  .drow .d.in{ background:var(--inflow); }
+  .drow .n{ font-weight:700; font-size:11.5px; color:var(--ink); line-height:1.25; }
+  .drow .n small{ display:block; font-weight:400; color:var(--mute); font-size:9.5px; }
+  .drow .a{ font-variant-numeric:tabular-nums; font-size:11.5px; color:var(--ink); text-align:right; }
+  .drow .a small{ display:block; color:var(--mute); font-size:9px; }
+  .need{ background:var(--tile); border:1px solid var(--edge); border-left:4px solid var(--outflow); border-radius:10px; padding:8px 10px; display:flex; align-items:center; gap:9px; }
+  .need .amt{ margin-left:auto; text-align:right; font-variant-numeric:tabular-nums; font-weight:700; color:var(--ink); font-size:13px; line-height:1.15; }
+  .need .amt small{ display:block; font-weight:400; color:var(--mute); font-size:9.5px; }
+  .toggle{ display:flex; align-items:center; justify-content:space-between; background:var(--tile); border:1px solid var(--edge); border-radius:10px; padding:8px 10px; font-size:11.5px; color:var(--ink); cursor:pointer; }
+  .toggle small{ color:var(--mute); display:block; }
+  .sw{ width:34px; height:20px; border-radius:999px; background:#C9CFD8; position:relative; flex:none; transition:background .15s; }
+  .sw::after{ content:""; position:absolute; top:2px; left:2px; width:16px; height:16px; border-radius:50%; background:#fff; transition:left .15s; }
+  .toggle.on .sw{ background:var(--outflow); } .toggle.on .sw::after{ left:16px; }
+
+  .partner{ display:flex; align-items:center; gap:10px; background:var(--tile); border:1px solid var(--edge); border-radius:12px; padding:10px; }
+  .partner .av{ width:34px; height:34px; font-size:14px; background:#8B5CF6; }
+  .yes, .no{ display:flex; flex-direction:column; gap:4px; margin:0; padding:0; }
+  .yes li, .no li{ list-style:none; display:flex; gap:7px; align-items:center; font-size:11.5px; }
+  .yes li::before{ content:""; width:14px; height:14px; border-radius:50%; background:var(--okbg); flex:none; box-shadow:inset 0 0 0 1.5px var(--ok); }
+  .no li::before{ content:""; width:14px; height:14px; border-radius:50%; background:var(--dangerbg); flex:none; box-shadow:inset 0 0 0 1.5px var(--danger); }
+  .steps{ counter-reset:s; display:flex; flex-direction:column; gap:6px; margin:0; padding:0; list-style:none; }
+  .steps li{ counter-increment:s; display:grid; grid-template-columns:20px 1fr; gap:8px; align-items:start; font-size:11.5px; color:var(--text); }
+  .steps li::before{ content:counter(s); width:20px; height:20px; border-radius:50%; background:var(--ink); color:#fff; font-size:10px; font-weight:700; display:grid; place-items:center; }
+  .steps small{ display:block; color:var(--mute); font-size:10.5px; }
+  .foot{ font-size:10.5px; color:var(--mute); }
+  .toast{ position:absolute; left:50%; bottom:84px; transform:translateX(-50%); background:var(--ink); color:#fff; font-size:11px; padding:7px 12px; border-radius:999px; opacity:0; transition:opacity .2s; pointer-events:none; white-space:nowrap; }
+  .toast.show{ opacity:1; }
+  @media (prefers-reduced-motion: reduce){ .sw, .sw::after, .toast{ transition:none; } }
+</style>
+
+<style>
+  /* スマホ幅: 枠と説明を消し、アプリ画面を全面表示（ホーム画面から起動した時の見え方） */
+  @media (max-width: 520px){
+    body{ background:#F6F7F9; }
+    .wrap{ padding:0; max-width:none; }
+    header.top, .side{ display:none; }
+    .stage{ display:block; }
+    .phone{ width:100%; max-width:none; height:100dvh; border-radius:0; padding:0; box-shadow:none; background:#F6F7F9; }
+    .screen{ border-radius:0; height:100%; padding-top:env(safe-area-inset-top); padding-bottom:env(safe-area-inset-bottom); }
+    .status{ display:none; }
+    .toast{ bottom:calc(84px + env(safe-area-inset-bottom)); }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>お金の流れマップ 画面モック</h1>
+      <p>自分の金融の構造を一枚に描き、整理し、パートナーに渡すアプリ案。表示しているデータは架空のサンプルです。下のタブで画面を切り替えられます。「整理」で対象を選ぶと紐づきが変わり、解約予定にするとマップと引き落としに反映されます。</p>
+    </div>
+    <div class="goals"><span><b>可視化</b></span><span><b>整理</b> 不要を減らす</span><span><b>共有</b> もしもの時に</span></div>
+  </header>
+
+  <div class="stage">
+    <div class="phone">
+      <div class="screen">
+        <div class="status"><span>9:41</span><span class="notch"></span><span>●●●</span></div>
+        <div class="appbar"><h2 id="ttl">マップ</h2><span class="sub" id="sub">2026年9月1日 更新</span></div>
+        <div class="body">
+          <div class="view" id="v-map"></div>
+          <div class="view" id="v-clean" hidden></div>
+          <div class="view" id="v-debit" hidden></div>
+          <div class="view" id="v-share" hidden></div>
+        </div>
+        <nav class="tabs" id="tabs">
+          <button class="on" data-v="map"><svg viewBox="0 0 24 24"><path d="M4 6h6v5H4zM14 13h6v5h-6zM10 8.5h4M12 8.5v7"/></svg>マップ</button>
+          <button data-v="clean"><svg viewBox="0 0 24 24"><path d="M5 12l4 4L19 6"/></svg>整理</button>
+          <button data-v="debit"><svg viewBox="0 0 24 24"><path d="M4 5h16v15H4zM4 10h16M8 3v4M16 3v4"/></svg>引き落とし</button>
+          <button data-v="share"><svg viewBox="0 0 24 24"><path d="M12 14v-9M8 8l4-4 4 4M5 14v5h14v-5"/></svg>共有</button>
+        </nav>
+      </div>
+      <div class="toast" id="toast"></div>
+    </div>
+
+    <aside class="side">
+      <div class="panel" id="about"></div>
+      <div class="panel">
+        <h2>データの持ち方</h2>
+        <p>この画面はすべて1つのデータ（機関・つながり・定期引き落とし）から描いています。マップ、整理の指摘、やめるチェックリスト、口座別の必要額は同じデータの見方を変えたものです。</p>
+        <ul>
+          <li>機関: 名前、種類、ブランド色、Apple Pay登録、ハブかどうか</li>
+          <li>つながり: どこからどこへ、入金／出金／連携のどれか</li>
+          <li>定期引き落とし: 引き落とし元、日、金額（変動なら空）、内訳</li>
+        </ul>
+        <div class="try">試すこと: 整理タブで「クレジットカードB」や「QR決済B」を選び、「解約予定にする」を押してからマップと引き落としを見る。</div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<script>
+(function(){
+  // ===== データ（この資料の実際の構成） =====
+  const N = {
+    salary:  {name:"給与", sub:"給与振込", av:"給", col:"#1F9D6A", type:"income"},
+    smbc:    {name:"メイン銀行", sub:"給与振込口座", av:"M", col:"#1F4E79", type:"bank", hub:true},
+    rbank:   {name:"銀行B", sub:"", av:"R", col:"#BF0000", type:"bank"},
+    yucho:   {name:"銀行C", sub:"", av:"ゆ", col:"#00A040", type:"bank"},
+    scard:   {name:"クレジットカードA", sub:"26日引き落とし", av:"CA", col:"#1F4E79", type:"card", sq:true, ap:true, chips:["ETC"]},
+    rcard:   {name:"クレジットカードB", sub:"27日引き落とし", av:"R", col:"#BF0000", type:"card", sq:true, ap:true},
+    benefit: {name:"iDeCo運営管理機関", sub:"iDeCo ・ 毎月積立", av:"B", col:"#0B5AA5", type:"sec"},
+    rsec:    {name:"証券会社A", sub:"", av:"R", col:"#BF0000", type:"sec"},
+    gmo:     {name:"暗号資産取引所A", sub:"暗号資産取引所", av:"G", col:"#005BAC", type:"sec"},
+    sbivc:   {name:"暗号資産取引所B", sub:"取引所", av:"V", col:"#0B5AA5", type:"sec"},
+    docomo:  {name:"サブ銀行", sub:"自動入金 毎月5日 ・ 臨時振込", av:"d", col:"#CC0033", type:"bank", hub:true},
+    wife:    {name:"家族の口座", sub:"生活費 ・ 月末自動振込", av:"家", col:"#1F4E79", type:"bank", sq:true},
+    sbi:     {name:"証券会社B", sub:"ハイブリッド預金 ・ 配当は口座へ戻る", av:"S", col:"#0B5AA5", type:"sec"},
+    debit:   {name:"デビットカード", sub:"クリプトカード非対応店で利用", av:"P+", col:"#CC0033", type:"card", sq:true, ap:true},
+    jpyc:    {name:"ステーブルコイン購入", sub:"円建てステーブルコイン", av:"J", col:"#1C4FA0", type:"wallet", sq:true},
+    rpay:    {name:"QR決済A", sub:"", av:"R", col:"#BF0000", type:"pay", sq:true},
+    paypay:  {name:"QR決済B", sub:"", av:"P", col:"#FF0033", type:"pay", sq:true},
+    jihanpi: {name:"自販機アプリ", sub:"QR決済A払い", av:"J", col:"#0A84C1", type:"use", sq:true},
+    cokeon:  {name:"飲料アプリ", sub:"QR決済A払い", av:"C", col:"#E60012", type:"use", sq:true},
+    metamask:{name:"ウォレットA", sub:"ウォレット", av:"M", col:"#F6851B", type:"wallet", sq:true},
+    tria:    {name:"クリプトカード", sub:"クリプトカード", av:"T", col:"#111111", type:"card", sq:true, ap:true},
+    phantom: {name:"ウォレットB", sub:"ウォレット", av:"P", col:"#AB9FF2", type:"wallet", sq:true},
+    stepn:   {name:"アプリA", sub:"", av:"S", col:"#3DDC84", type:"app", sq:true},
+    stepngo: {name:"アプリB", sub:"", av:"G", col:"#9B6BFF", type:"app", sq:true},
+    suica:   {name:"交通IC", sub:"チャージ", av:"S", col:"#6BBF3B", type:"use", sq:true, ap:true},
+    amazon:  {name:"通販サイト", sub:"支払い", av:"a", col:"#FF9900", type:"use", sq:true},
+    food:    {name:"飲食店", sub:"支払い", av:"食", col:"#4B5563", type:"use", sq:true},
+    conv:    {name:"コンビニ", sub:"支払い", av:"コ", col:"#4B5563", type:"use", sq:true},
+  };
+  // kind: in=入金(緑) out=出金・チャージ(青) link=連携
+  const E = [
+    ["salary","smbc","in","給与振込"], ["smbc","scard","out","引き落とし"], ["smbc","rcard","out","引き落とし"], ["smbc","benefit","out","iDeCo 毎月積立"],
+    ["smbc","rsec","link","連携"], ["smbc","gmo","link","連携"], ["smbc","docomo","out","自動入金 毎月5日"],
+    ["docomo","wife","out","生活費 月末"], ["docomo","sbi","out","ハイブリッド預金"], ["sbi","docomo","in","配当・分配金"], ["docomo","sbivc","link","連携"],
+    ["docomo","debit","out","デビット"], ["debit","rpay","out","引き落とし"], ["debit","paypay","out","引き落とし"], ["rpay","jihanpi","out","支払い"], ["rpay","cokeon","out","支払い"],
+    ["docomo","jpyc","out","購入"], ["jpyc","metamask","out","送金"], ["metamask","tria","out","スワップ → チャージ"], ["metamask","phantom","out","送金"],
+    ["phantom","stepn","link","連携"], ["phantom","stepngo","link","連携"],
+    ["tria","suica","out","チャージ"], ["tria","amazon","out","支払い"], ["tria","food","out","支払い"], ["tria","conv","out","支払い"],
+  ];
+  const D = [
+    {bank:"smbc", day:1,  label:"1日",  item:"カード分割払い", sub:"1日固定", amt:25000},
+    {bank:"smbc", day:5,  label:"5日",  item:"サブ銀行へ自動入金", sub:"メイン銀行 → サブ銀行", amt:150000, kind:"in", to:"docomo"},
+    {bank:"smbc", day:15, label:"15日", item:"生命保険", sub:"休業日は翌営業日", amt:2500},
+    {bank:"smbc", day:26, label:"26日", item:"iDeCo", sub:"iDeCo運営管理機関", amt:23000, via:"benefit"},
+    {bank:"smbc", day:26, label:"26日", item:"クレジットカードA", sub:"積立NISA 50,000円 ・ ジム 3,000円 を含む", amt:null, via:"scard", parts:["積立NISA 50,000円","ジム 3,000円"]},
+    {bank:"smbc", day:27, label:"27日", item:"クレジットカードB", sub:"電気 ・ 水道 を含む", amt:null, via:"rcard", parts:["電気","水道"]},
+    {bank:"smbc", day:27, label:"27日", item:"家賃", sub:"休業日は翌営業日", amt:100000},
+    {bank:"docomo", day:30, label:"月末", item:"家族の口座へ生活費", sub:"最終営業日", amt:100000, via:"wife"},
+  ];
+  const off = new Set();          // 解約予定
+  const yen = n => n.toLocaleString("ja-JP") + "円";
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  const avatar = (id, small) => { const n=N[id]; return `<span class="av ${n.sq?'sq':''}" style="background:${n.col}">${esc(n.av)}</span>`; };
+  const outOf = id => E.filter(e=>e[0]===id), inTo = id => E.filter(e=>e[1]===id);
+  const degree = id => E.filter(e=>e[0]===id||e[1]===id).length;
+  const isOff = id => off.has(id);
+
+  // ===== マップ =====
+  function tile(id, extra){
+    const n=N[id]; const cls = ["tile", n.hub?"hub":"", degree(id)===0?"dim":"", isOff(id)?"off":""].join(" ");
+    const chips = [];
+    if (id==="smbc") chips.push(`<span class="chip">定期引落 ${D.filter(d=>d.bank==="smbc").length}件</span>`);
+    if (id==="docomo") chips.push(`<span class="chip">定期引落 ${D.filter(d=>d.bank==="docomo").length}件</span>`);
+    (n.chips||[]).forEach(c=>chips.push(`<span class="chip">${esc(c)}</span>`));
+    if (n.ap) chips.push(`<span class="chip ap">Apple Pay</span>`);
+    if (isOff(id)) chips.push(`<span class="chip off">解約予定</span>`);
+    if (id==="sbi") chips.push(`<span class="chip ok">入金あり</span>`);
+    const sub = degree(id)===0 ? "つながり未登録" : n.sub;
+    return `<div class="${cls}">${avatar(id)}<div class="t"><span class="n">${esc(n.name)}</span>${sub?`<span class="s">${esc(sub)}</span>`:""}</div><div class="chips">${chips.join("")}</div></div>`;
+  }
+  function flow(rows){ // rows: [{id, kind, pos}]
+    return `<div class="flow">` + rows.map((r,i)=>{
+      const pos = rows.length===1?"only": i===0?"start": i===rows.length-1?"end":"";
+      const kind = r.kind||"out"; const arrow = kind==="link" ? "" : "<span></span>";
+      return `<div class="c ${pos} ${kind} ${isOff(r.id)?'off':''}">${arrow}</div>${tile(r.id)}`;
+    }).join("") + `</div>`;
+  }
+  function mini(id, note){ const n=N[id]; return `<div class="mini ${degree(id)===0?'dim':''} ${isOff(id)?'off':''}">${avatar(id)}${esc(n.name)}<small>${esc(note||"")}</small></div>`; }
+  function renderMap(){
+    document.getElementById("v-map").innerHTML =
+      `<div class="sec"><span class="num">01</span><h3>メイン銀行系統</h3></div>` +
+      flow([{id:"salary",kind:"in"},{id:"smbc",kind:"in"},{id:"scard"},{id:"rcard"},{id:"benefit"}]) +
+      `<div class="row2">${mini("rsec","連携")}${mini("gmo","連携")}${mini("rbank","未接続")}${mini("yucho","未接続")}</div>` +
+      `<div class="sec"><span class="num">02</span><h3>サブ銀行系統</h3></div>` +
+      flow([{id:"docomo"},{id:"wife"},{id:"sbi"},{id:"debit"},{id:"jpyc"}]) +
+      `<div class="row2">${mini("rpay","デビット")}${mini("paypay","デビット")}${mini("jihanpi","QR決済A")}${mini("cokeon","QR決済A")}${mini("sbivc","連携")}</div>` +
+      `<div class="zone"><div class="zl">オンチェーン経路 ── ステーブルコイン → チェーン → クリプトカード</div><div class="row2">${mini("metamask")}${mini("tria","Apple Pay")}${mini("phantom")}${mini("suica","チャージ")}${mini("amazon","支払い")}${mini("stepn","ウォレットB")}</div></div>`;
+  }
+
+  // ===== 整理 =====
+  let pick = "rcard";
+  function checklist(id){
+    const n=N[id]; const items=[];
+    D.filter(d=>d.via===id).forEach(d=>{ (d.parts||[d.item]).forEach(p=>items.push({t:`引き落とし先を移す：${p}`, s:`${d.label} ・ ${n.name}払い`})); });
+    outOf(id).filter(e=>e[2]!=="link").forEach(e=>items.push({t:`${N[e[1]].name} の${e[3]}を別の手段に移す`, s:"この先につながっているもの"}));
+    outOf(id).filter(e=>e[2]==="link").forEach(e=>items.push({t:`${N[e[1]].name} との連携を解除する`, s:"連携"}));
+    if (n.ap) items.push({t:"Apple Payの登録を外す", s:"iPhone のウォレット"});
+    inTo(id).filter(e=>e[2]!=="link").forEach(e=>items.push({t:`${N[e[0]].name} からの${e[3]}が止まる`, s:"自動で反映", done:true}));
+    return items;
+  }
+  function renderClean(){
+    const unlinked = Object.keys(N).filter(id=>N[id].type==="bank" && degree(id)===0);
+    const pays = Object.keys(N).filter(id=>N[id].type==="pay" && !isOff(id));
+    const dup = pays.length>1 && pays.every(p=>inTo(p).some(e=>e[0]===inTo(pays[0])[0][0]));
+    const byDay = {}; D.filter(d=>!isOff(d.via)).forEach(d=>{ byDay[d.day]=(byDay[d.day]||0)+1; });
+    const busy = Object.entries(byDay).filter(([d,c])=>c>=2).map(([d])=>d).join("・");
+    const items = checklist(pick);
+    const opts = Object.keys(N).filter(id=>["bank","card","pay","sec"].includes(N[id].type) && !N[id].hub && id!=="wife")
+      .map(id=>`<option value="${id}" ${id===pick?"selected":""}>${esc(N[id].name)}${isOff(id)?"（解約予定）":""}</option>`).join("");
+    document.getElementById("v-clean").innerHTML =
+      `<div class="kpi"><div class="w"><b>${unlinked.length}</b><span>未接続の口座</span></div><div class="${dup?'w':''}"><b>${dup?1:0}</b><span>役割の重複</span></div><div><b>${busy||"—"}</b><span>引き落とし集中日</span></div></div>` +
+      `<div class="card"><h4><span class="sev"></span>つながりのない口座が${unlinked.length}つあります</h4><ul class="list">${unlinked.map(id=>`<li>${avatar(id)}${esc(N[id].name)}<span class="r">入出金・連携なし</span></li>`).join("")}</ul><p>図の中で線が1本もありません。使っていなければ解約候補です。</p></div>` +
+      (dup ? `<div class="card"><h4><span class="sev"></span>同じ役割のQR決済が${pays.length}つあります</h4><ul class="list">${pays.map(id=>`<li>${avatar(id)}${esc(N[id].name)}<span class="r">${esc(N[inTo(id)[0][0]].name)}から引き落とし ・ 利用先${outOf(id).length}</span></li>`).join("")}</ul><p>利用先が登録されていないものは、使い分けの理由がなければ1つに寄せられます。</p></div>` : `<div class="empty">QR決済の重複はありません。</div>`) +
+      `<div class="card"><h4><span class="sev ok"></span>やめるチェックリスト</h4><select id="pick">${opts}</select>` +
+      (items.length ? `<div class="check">${items.map(it=>`<label><input type="checkbox" ${it.done?"checked":""}><span>${esc(it.t)}<small>${esc(it.s)}</small></span></label>`).join("")}</div>` : `<div class="empty">紐づくものはありません。そのまま解約できます。</div>`) +
+      `<button class="btn ${isOff(pick)?'':'danger'} blk" id="toggleOff">${isOff(pick)?"解約予定を取り消す":"解約予定にする"}</button>` +
+      `<button class="btn pri blk" id="goMap">解約後のマップを確認する</button></div>`;
+    document.getElementById("pick").addEventListener("change", e=>{ pick=e.target.value; renderClean(); });
+    document.getElementById("toggleOff").addEventListener("click", ()=>{ if(isOff(pick)) off.delete(pick); else off.add(pick); renderAll(); toast(isOff(pick)?`${N[pick].name} を解約予定にしました`:`${N[pick].name} の解約予定を取り消しました`); });
+    document.getElementById("goMap").addEventListener("click", ()=>show("map"));
+  }
+
+  // ===== 引き落とし =====
+  let notify = true;
+  function renderDebit(){
+    const live = D.filter(d=>!isOff(d.via));
+    const fixed = live.filter(d=>d.amt!=null).reduce((a,d)=>a+d.amt,0), varn = live.filter(d=>d.amt==null).length;
+    const days = Array.from({length:31},(_,i)=>i+1).map(d=>{ const hit=live.filter(x=>x.day===d); const cls=hit.length?(hit.every(x=>x.kind==="in")?"in":"on"):""; const lab=(hit.length||d===1||d%5===0||d===31)?d:""; return `<i data-d="${lab}" class="${cls}"></i>`; }).join("");
+    const need = (bank, until) => { const l=live.filter(d=>d.bank===bank); const f=l.filter(d=>d.amt!=null).reduce((a,d)=>a+d.amt,0); const v=l.filter(d=>d.amt==null).length; return `<div class="need">${avatar(bank)}<div class="t"><span class="n">${esc(N[bank].name)}</span><span class="s">${until}までに必要</span></div><div class="amt">${yen(f)}${v?`<small>＋ カード${v}枚の利用額</small>`:(bank==="docomo"?`<small>＋ デビット利用分</small>`:"")}</div></div>`; };
+    document.getElementById("v-debit").innerHTML =
+      `<div class="month"><b>9月の予定 ${live.length}件</b><span>固定額 ${yen(fixed)}${varn?` ＋ カード${varn}枚の利用額`:""}</span></div>` +
+      `<div class="days">${days}</div>` + need("smbc","27日") + need("docomo","月末") +
+      `<div class="dlist">${D.map(d=>`<div class="drow ${isOff(d.via)?'off':''}"><span class="d ${d.kind==='in'?'in':''}">${d.label}</span><span class="n">${esc(d.item)}<small>${esc(d.sub)}</small></span><span class="a">${d.amt!=null?yen(d.amt):'利用額<small>変動</small>'}</span></div>`).join("")}</div>` +
+      `<div class="toggle ${notify?'on':''}" id="notify"><span>前日に通知する<small>口座横断で「明日いくら必要か」を知らせる</small></span><span class="sw"></span></div>`;
+    document.getElementById("notify").addEventListener("click", ()=>{ notify=!notify; renderDebit(); toast(notify?"前日通知をオンにしました":"前日通知をオフにしました"); });
+  }
+
+  // ===== 共有 =====
+  function renderShare(){
+    document.getElementById("v-share").innerHTML =
+      `<div class="partner"><span class="av">家</span><div class="t"><span class="n">家族（閲覧のみ）</span><span class="s">最終共有 2026年9月1日 ・ 更新を通知済み</span></div><span class="chip ok">共有中</span></div>` +
+      `<div class="card"><h4><span class="sev ok"></span>相手に渡るもの</h4><ul class="yes"><li>お金の流れマップ（構造図）</li><li>口座・カード・アプリの一覧と役割</li><li>定期引き落としの一覧</li><li>もしもの時に見る順番</li></ul></div>` +
+      `<div class="card"><h4><span class="sev bad"></span>このアプリに保存しないもの</h4><ul class="no"><li>残高・取引明細</li><li>暗証番号・パスワード・秘密鍵</li><li>口座番号・カード番号</li></ul><p>「どこに何があるか」だけを渡します。手続きに必要な情報の所在は別に管理します。</p></div>` +
+      `<div class="card"><h4>もしもの時に見る順番</h4><ol class="steps"><li><span>メイン銀行 ── 給与と定期引き落としの中心<small>27日までに必要額を確認</small></span></li><li><span>サブ銀行 ── 生活費の振込元<small>月末の自動振込を確認</small></span></li><li><span>証券口座 ── 証券会社B・証券会社A<small>積立の停止・解約はここから</small></span></li><li><span>暗号資産 ── ウォレットと取引所<small>所在のみ。復旧手順は別紙</small></span></li></ol></div>` +
+      `<button class="btn pri blk" id="sendLink">閲覧リンクを送る</button><button class="btn blk" id="pdf">PDFで書き出す（2ページ）</button><div class="foot">共有先は閲覧のみ。あなたが図を更新すると相手に「更新されました」とだけ届きます。</div>`;
+    document.getElementById("sendLink").addEventListener("click", ()=>toast("閲覧リンクを家族に送りました（モック）"));
+    document.getElementById("pdf").addEventListener("click", ()=>toast("PDFを書き出しました（モック）"));
+  }
+
+  // ===== 画面切り替え =====
+  const META = {
+    map:   {t:"マップ", s:"2026年9月1日 更新", about:"<h2>マップ ── 可視化</h2><p>ハブ銀行ごとに縦の流れとして描きます。線は入金（緑）と出金（青）だけ。連携は文字チップ、未接続は破線、解約予定は薄く表示します。</p><ul><li>金額は任意。構造だけで成立させる</li><li>公式ロゴは使わず、ブランド色のイニシャル</li></ul>"},
+    clean: {t:"整理", s:"見直し候補", about:"<h2>整理 ── 不要を減らす</h2><p>図の「線」から機械的に出せる指摘だけを並べます。やめるチェックリストは、選んだ口座やカードに紐づく引き落とし・利用先・連携を列挙します。</p><ul><li>対象を選ぶと内容が変わる</li><li>「解約予定にする」でマップと引き落としに反映</li></ul>"},
+    debit: {t:"引き落とし", s:"2026年9月", about:"<h2>引き落とし ── 資金ショートを防ぐ</h2><p>銀行の通知と違い、口座横断で「何日までにいくら必要か」を出します。ここだけは金額を必須にします。</p><ul><li>解約予定のカードの引き落としは薄く表示</li><li>固定額の合計と、変動するカード利用額を分けて表示</li></ul>"},
+    share: {t:"共有", s:"もしもの時のために", about:"<h2>共有 ── パートナーへ</h2><p>渡すのは構造と見る順番だけ。残高・暗証番号・口座番号は保存しない前提を画面で明示します。相手側に操作を求めません。</p><ul><li>閲覧専用リンクとPDFの2本立て</li><li>更新時は「更新されました」とだけ通知</li></ul>"},
+  };
+  function show(v){
+    ["map","clean","debit","share"].forEach(k=>{ document.getElementById("v-"+k).hidden = (k!==v); });
+    document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on", b.dataset.v===v));
+    document.getElementById("ttl").textContent = META[v].t; document.getElementById("sub").textContent = META[v].s;
+    document.getElementById("about").innerHTML = META[v].about;
+    document.querySelector(".body").scrollTop = 0;
+  }
+  let tt; function toast(msg){ const el=document.getElementById("toast"); el.textContent=msg; el.classList.add("show"); clearTimeout(tt); tt=setTimeout(()=>el.classList.remove("show"),1800); }
+  function renderAll(){ renderMap(); renderClean(); renderDebit(); renderShare(); }
+  document.getElementById("tabs").addEventListener("click", e=>{ const b=e.target.closest("button"); if(b) show(b.dataset.v); });
+  renderAll(); show("map");
+})();
+</script>
+</body>
+</html>
