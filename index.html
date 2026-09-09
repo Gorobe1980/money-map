@@ -311,7 +311,7 @@
     if(r.par) conn += `<i class="pd"></i>`;
     const sub = n.sub || TYPES[n.type];
     const rk = r.child ? (r.ghost ? "ghost" : (r.jump>=0 ? "jump" : r.kind)) : (r.hub ? "hub" : "inc"); const par = r.child && r.anc ? r.anc[r.anc.length-1] : "";
-    return `<button class="${cls}" style="--d:${r.depth}" data-edit="${n.id}" data-eid="${r.eid||""}" data-par="${par}" data-depth="${r.depth}" data-rk="${rk}">${guides}${conn}${avatar(n)}<div class="t"><span class="n">${esc(n.name)}</span><span class="s">${esc(sub)}</span>${n.note && !r.ghost ? `<span class="nt">メモ: ${esc(n.note)}</span>` : ""}</div><div class="chips">${chips.join("")}</div></button>`;
+    return `<button class="${cls}" style="--d:${r.depth}" data-edit="${n.id}" data-eid="${r.eid||""}" data-par="${par}" data-depth="${r.depth}" data-rk="${rk}" data-anc="${(r.anc||[]).join(",")}">${guides}${conn}${avatar(n)}<div class="t"><span class="n">${esc(n.name)}</span><span class="s">${esc(sub)}</span>${n.note && !r.ghost ? `<span class="nt">メモ: ${esc(n.note)}</span>` : ""}</div><div class="chips">${chips.join("")}</div></button>`;
   }
   function renderMap(){
     const L = layout(); let h = reviewHtml(); seenIds = new Set();
@@ -464,7 +464,7 @@
     const aPar = A.dataset.par || null; let parent, afterEid;
     if(A.dataset.rk==="hub" || (B && B.dataset.par===A.dataset.edit)){ parent = A.dataset.edit; afterEid = null; }
     else { if(!aPar) return null; parent = aPar; afterEid = A.dataset.eid || null; }
-    if(parent===src || descendants(src).has(parent)) return null;
+    const pr = document.querySelector(`.row[data-edit="${parent}"]:not(.ghost)`); if(parent===src || (pr && (pr.dataset.anc||"").split(",").includes(src))) return null;
     return {parent, afterEid};
   };
   const showDrop = (y, plan, tree) => {
@@ -482,7 +482,7 @@
         const A = side==="before" ? (t.previousElementSibling && t.previousElementSibling.classList.contains("row") ? t.previousElementSibling : null) : t;
         const B = side==="before" ? t : (t.nextElementSibling && t.nextElementSibling.classList.contains("row") ? t.nextElementSibling : null);
         const plan = (t.dataset.edit!==src && !(A && A.dataset.edit===src) && !(B && B.dataset.edit===src)) ? gapPlan(A,B) : null;
-        if(plan){ clearTarget(); drop={row:t, side, plan}; showDrop(side==="before"? r.top : r.bottom, plan, tree); return; }
+        clearTarget(); drop={row:t, side, plan}; if(plan) showDrop(side==="before"? r.top : r.bottom, plan, tree); else dropline.classList.remove("on"); return;
       }
     }
     clearDrop();
@@ -512,8 +512,8 @@
   const finish = e => {
     if(!srcEl) return;
     if(!dragging){ clearTimeout(timer); timer=null; srcEl=null; return; }
-    const to = target ? target.dataset.edit : null; const from = src; const plan = drop ? drop.plan : null; const eid = srcEl.dataset.eid; endDrag(); srcEl=null;
-    if(plan && eid) moveEdge(eid, plan.parent, plan.afterEid);
+    const to = target ? target.dataset.edit : null; const from = src; const hadDrop = !!drop; const plan = drop ? drop.plan : null; const eid = srcEl.dataset.eid; endDrag(); srcEl=null;
+    if(hadDrop){ if(plan && eid) moveEdge(eid, plan.parent, plan.afterEid); }
     else if(to && to!==from) connect(from, to);
     setTimeout(()=>{ suppressClick=false; }, 50);
   };
