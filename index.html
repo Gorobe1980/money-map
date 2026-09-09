@@ -104,6 +104,8 @@
   .chart .col{ display:flex; flex-direction:column-reverse; justify-content:flex-start; gap:1px; height:100%; }
   .chart .seg{ display:block; border-radius:2px 2px 0 0; flex:none; }
   .chart .seg.var{ height:11px; border:1.5px dashed; box-sizing:border-box; }
+  .chart .seg.xf{ border:1.5px solid; box-sizing:border-box; }
+  .need .t .s.in{ color:var(--ok); }
   .chart .ref{ position:absolute; left:0; right:0; border-top:1px dashed #C9CFD8; pointer-events:none; } .chart .ref b{ position:absolute; right:0; top:-12px; font-size:9px; color:var(--mute); font-weight:400; }
   .chart .lab{ display:grid; grid-template-columns:repeat(31,1fr); gap:2px; height:14px; margin-top:2px; }
   .chart .lab i{ font-style:normal; font-size:9px; color:var(--mute); text-align:center; white-space:nowrap; line-height:14px; } .chart .lab i.on{ color:var(--ink); font-weight:700; }
@@ -186,7 +188,7 @@
       ["subbank","stable","out"],["stable","walleta","out"],["walleta","crypto","out"],["walleta","walletb","out"],["walletb","appa","link"],["walletb","appb","link"],["crypto","ic","out"],["crypto","shop","out"],["crypto","food","out"],["crypto","conv","out"]]
       .map(([from,to,kind],i)=>({id:"e"+i,from,to,kind,label:""}));
     const D = [
-      {id:"d1",source:"mainbank",day:1,item:"カード分割払い",amt:25000,rollover:false},{id:"d2",source:"mainbank",day:5,item:"サブ銀行へ自動入金",amt:150000,rollover:false},
+      {id:"d1",source:"mainbank",day:1,item:"カード分割払い",amt:25000,rollover:false},{id:"d2",source:"mainbank",day:5,item:"サブ銀行へ自動入金",amt:150000,rollover:false,via:"subbank",transfer:true},
       {id:"d3",source:"mainbank",day:15,item:"生命保険",amt:2500,rollover:true},{id:"d4",source:"mainbank",day:26,item:"iDeCo",amt:23000,rollover:true},
       {id:"d5",source:"mainbank",day:26,item:"クレジットカードA",amt:null,rollover:true,via:"carda"},{id:"d6",source:"mainbank",day:27,item:"クレジットカードB",amt:null,rollover:true,via:"cardb"},
       {id:"d7",source:"mainbank",day:27,item:"家賃",amt:100000,rollover:true},{id:"d8",source:"subbank",day:31,item:"家族の口座へ生活費",amt:100000,rollover:true,via:"family"},
@@ -310,24 +312,26 @@
   // ===== 引き落とし =====
   function renderDebit(){
     const live = S.debits.filter(d=>!viaOff(d));
-    const fixed = live.filter(d=>d.amt!=null).reduce((a,d)=>a+Number(d.amt),0), varn = live.filter(d=>d.amt==null).length;
+    const spend = live.filter(d=>!d.transfer);
+    const fixed = spend.filter(d=>d.amt!=null).reduce((a,d)=>a+Number(d.amt),0), varn = spend.filter(d=>d.amt==null).length;
+    const xfer = live.filter(d=>d.transfer && d.amt!=null).reduce((a,d)=>a+Number(d.amt),0), xfern = live.filter(d=>d.transfer).length;
     const byDay = {}; live.forEach(d=>{ (byDay[d.day]=byDay[d.day]||[]).push(d); });
     const dayFixed = d => (byDay[d]||[]).filter(x=>x.amt!=null).reduce((a,x)=>a+Number(x.amt),0);
     const max = Math.max(0, ...Object.keys(byDay).map(d=>dayFixed(+d)));
     const H = live.some(d=>d.amt==null) ? 52 : 64;
     const cols = Array.from({length:31},(_,i)=>i+1).map(day=>{ const segs=[...(byDay[day]||[])].sort((a,b)=>(a.amt==null)-(b.amt==null)).map(x=>{ const bk=byId(x.source); const col=bk?bk.col:"#94A3B8";
       if(x.amt==null) return `<i class="seg var" style="border-color:${esc(col)};background:${esc(col)}26"></i>`;
-      const hpx = max ? Math.max(3, Math.round(Number(x.amt)/max*H)) : 3; return `<i class="seg" style="height:${hpx}px;background:${esc(col)}"></i>`; }).join("");
+      const hpx = max ? Math.max(3, Math.round(Number(x.amt)/max*H)) : 3; return x.transfer ? `<i class="seg xf" style="height:${hpx}px;border-color:${esc(col)};background:${esc(col)}26"></i>` : `<i class="seg" style="height:${hpx}px;background:${esc(col)}"></i>`; }).join("");
       return `<div class="col">${segs}</div>`; }).join("");
     const refv = [1e4,2e4,5e4,1e5,2e5,5e5,1e6,2e6].filter(v=>v<=max).pop();
     const ref = refv ? `<div class="ref" style="bottom:${Math.round(refv/max*H)}px"><b>${refv/1e4}万</b></div>` : "";
     let labs=""; for(let d=1; d<=31; ){ const on=!!byDay[d]; if(on){ let e=d; while(e<31 && byDay[e+1]) e++; const n=e-d+1; const txt = n===1 ? (d===31?"末":d) : `${d}${n===2?"·":"–"}${e===31?"末":e}`; labs += `<i class="on" style="grid-column:span ${n}">${txt}</i>`; d=e+1; } else { labs += `<i>${d===1||d===10||d===20?d:(d===31?"末":"")}</i>`; d++; } }
     const chart = `<div class="chart"><div class="bars">${ref}${cols}</div><div class="lab">${labs}</div></div>`;
     const banks = S.nodes.filter(n=>n.type==="bank" && S.debits.some(d=>d.source===n.id));
-    const need = banks.map(b=>{ const l=live.filter(d=>d.source===b.id); if(!l.length) return ""; const f=l.filter(d=>d.amt!=null).reduce((a,d)=>a+Number(d.amt),0); const v=l.filter(d=>d.amt==null).length; const last=Math.max(...l.map(d=>d.day)); return `<div class="need">${avatar(b)}<div class="t"><span class="n">${esc(b.name)}</span><span class="s">${dayLabel(last)}までに必要</span></div><div class="amt">${yen(f)}${v?`<small>＋ 変動 ${v}件</small>`:""}</div></div>`; }).join("");
-    const rows = [...S.debits].sort((a,b)=>a.day-b.day).map(d=>`<button class="drow" data-editd="${d.id}" data-day="${d.day}" style="${viaOff(d)?'opacity:.45':''}"><span class="d">${dayLabel(d.day)}</span><span class="n">${esc(d.item)}<small>${esc([byId(d.source)?.name, d.rollover?"休業日は翌営業日":""].filter(Boolean).join(" ・ "))}</small></span><span class="a">${d.amt!=null?yen(d.amt):'変動<small>金額未設定</small>'}</span></button>`).join("");
+    const need = banks.map(b=>{ const l=live.filter(d=>d.source===b.id); if(!l.length) return ""; const f=l.filter(d=>d.amt!=null).reduce((a,d)=>a+Number(d.amt),0); const v=l.filter(d=>d.amt==null).length; const last=Math.max(...l.map(d=>d.day)); const inc = live.filter(d=>d.transfer && d.via===b.id && d.amt!=null).map(d=>`<span class="s in">${dayLabel(d.day)}に${esc(byId(d.source)?.name||"")}から ${yen(d.amt)} 入金</span>`).join(""); return `<div class="need">${avatar(b)}<div class="t"><span class="n">${esc(b.name)}</span><span class="s">${dayLabel(last)}までに必要</span>${inc}</div><div class="amt">${yen(f)}${v?`<small>＋ 変動 ${v}件</small>`:""}</div></div>`; }).join("");
+    const rows = [...S.debits].sort((a,b)=>a.day-b.day).map(d=>`<button class="drow" data-editd="${d.id}" data-day="${d.day}" style="${viaOff(d)?'opacity:.45':''}"><span class="d">${dayLabel(d.day)}</span><span class="n">${esc(d.item)}<small>${esc([byId(d.source)?.name, d.rollover?"休業日は翌営業日":""].filter(Boolean).join(" ・ "))}</small></span><span class="a">${d.amt!=null?yen(d.amt):'変動<small>金額未設定</small>'}${d.transfer?'<small>自分の口座へ振替</small>':''}</span></button>`).join("");
     document.getElementById("v-debit").innerHTML =
-      `<div class="month"><b>毎月の予定 ${S.debits.length}件</b><span>固定額 ${yen(fixed)}${varn?` ＋ 変動 ${varn}件`:""}</span></div>${chart}` + need +
+      `<div class="month"><b>毎月の予定 ${S.debits.length}件</b><span>支出 ${yen(fixed)}${varn?` ＋ 変動 ${varn}件`:""}${xfern?` ・ 振替 ${yen(xfer)}`:""}</span></div>${chart}` + need +
       (S.debits.length ? `<div class="dlist">${rows}</div>` : `<div class="empty">まだありません。右下の「＋」から追加してください。</div>`) + `<div class="hint">タップで編集。</div>`;
   }
 
@@ -402,10 +406,13 @@
       <div class="f"><label>引き落とし元の銀行</label><select id="dsrc">${opt(banks, d.source||banks[0][0])}</select></div>
       <div class="f2"><div class="f"><label>日（31＝月末）</label><input type="number" id="dday" min="1" max="31" value="${d.day||27}"></div><div class="f"><label>金額（空欄＝変動）</label><input type="number" id="damt" value="${d.amt==null?"":d.amt}" placeholder="例: 100000"></div></div>
       <div class="sw ${d.rollover?'on':''}" id="droll">銀行休業日は翌営業日<i></i></div>
+      <div class="sw ${d.transfer?'on':''}" id="dxfer">自分の口座への振替（支出に数えない）<i></i></div>
+      <div class="f" id="dxto" ${d.transfer?"":"hidden"}><label>振替先の口座</label><select id="dto">${opt(banks, d.via||banks[0][0])}</select></div>
       <div class="actions"><button class="btn pri" id="saveD">保存</button>${isNew?"":`<button class="btn danger" id="delD">削除</button>`}</div>`);
     document.getElementById("close").addEventListener("click", closeSheet);
     document.getElementById("droll").addEventListener("click", e=>e.currentTarget.classList.toggle("on"));
-    document.getElementById("saveD").addEventListener("click", ()=>{ d.item=document.getElementById("ditem").value.trim()||"名称未設定"; d.source=document.getElementById("dsrc").value; d.day=Math.min(31,Math.max(1,parseInt(document.getElementById("dday").value)||1)); const a=document.getElementById("damt").value.trim(); d.amt=a===""?null:Number(a); d.rollover=document.getElementById("droll").classList.contains("on"); if(isNew) S.debits.push(d); S.settings.sample=false; save(); closeSheet(); renderAll(); toast("保存しました"); });
+    document.getElementById("dxfer").addEventListener("click", e=>{ e.currentTarget.classList.toggle("on"); document.getElementById("dxto").hidden = !e.currentTarget.classList.contains("on"); });
+    document.getElementById("saveD").addEventListener("click", ()=>{ d.item=document.getElementById("ditem").value.trim()||"名称未設定"; d.source=document.getElementById("dsrc").value; d.day=Math.min(31,Math.max(1,parseInt(document.getElementById("dday").value)||1)); const a=document.getElementById("damt").value.trim(); d.amt=a===""?null:Number(a); d.rollover=document.getElementById("droll").classList.contains("on"); d.transfer=document.getElementById("dxfer").classList.contains("on"); if(d.transfer) d.via=document.getElementById("dto").value; if(isNew) S.debits.push(d); S.settings.sample=false; save(); closeSheet(); renderAll(); toast("保存しました"); });
     if(!isNew) document.getElementById("delD").addEventListener("click", ()=>{ if(!confirm("この引き落としを削除します。")) return; S.debits=S.debits.filter(x=>x.id!==d.id); save(); closeSheet(); renderAll(); });
   }
 
