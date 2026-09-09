@@ -119,6 +119,10 @@
   .chart .lab i{ font-style:normal; font-size:9px; color:var(--mute); text-align:center; white-space:nowrap; line-height:14px; } .chart .lab i.on{ color:var(--ink); font-weight:700; }
   .drow.new{ animation:pulse 1.2s ease-out 1; }
   .dlist{ display:flex; flex-direction:column; gap:5px; }
+  .dwrap{ position:relative; overflow:hidden; border-radius:9px; }
+  .dwrap .ddel{ position:absolute; top:0; right:0; bottom:0; width:72px; border:0; background:var(--danger); color:#fff; font-weight:700; font-size:13px; font-family:inherit; cursor:pointer; }
+  .dwrap .drow{ position:relative; z-index:1; transition:transform .2s; touch-action:pan-y; -webkit-touch-callout:none; user-select:none; -webkit-user-select:none; }
+  .dwrap .drow.sw{ transition:none; }
   .drow{ background:var(--tile); border:1px solid var(--edge); border-radius:9px; padding:7px 9px; display:grid; grid-template-columns:40px 1fr auto; align-items:center; gap:8px; cursor:pointer; width:100%; text-align:left; font-family:inherit; color:var(--text); }
   .drow .d{ background:var(--ink); color:#fff; font-size:10px; font-weight:700; border-radius:6px; text-align:center; padding:3px 0; }
   .drow .n{ font-weight:700; font-size:12px; color:var(--ink); line-height:1.25; } .drow .n small{ display:block; font-weight:400; color:var(--mute); font-size:9.5px; }
@@ -347,11 +351,11 @@
     const chart = `<div class="chart"><div class="bars">${ref}${cols}${tdy}</div><div class="lab">${labs}</div>${lg}</div>`;
     const banks = S.nodes.filter(n=>n.type==="bank" && S.debits.some(d=>d.source===n.id));
     const need = banks.map(b=>{ const l=live.filter(d=>d.source===b.id); if(!l.length) return ""; const f=l.filter(d=>d.amt!=null).reduce((a,d)=>a+Number(d.amt),0); const v=l.filter(d=>d.amt==null).length; const ap=l.filter(d=>d.amt!=null && d.approx).length; const last=Math.max(...l.map(d=>d.day)); const inc = live.filter(d=>d.transfer && d.via===b.id && d.amt!=null).map(d=>`<span class="s in">${dayLabel(d.day)}に${esc(byId(d.source)?.name||"")}から ${yen(d.amt)} 入金</span>`).join(""); return `<div class="need">${avatar(b)}<div class="t"><span class="n">${esc(b.name)}</span><span class="s">${dayLabel(last)}までに必要</span>${inc}</div><div class="amt">${ap?"約":""}${yen(f)}${ap?`<small>目安 ${ap}件を含む</small>`:""}${v?`<small>＋ 未設定 ${v}件</small>`:""}</div></div>`; }).join("");
-    const rows = [...S.debits].sort((a,b)=>a.day-b.day).map(d=>`<button class="drow" data-editd="${d.id}" data-day="${d.day}" style="${viaOff(d)?'opacity:.45':''}"><span class="d">${dayLabel(d.day)}</span><span class="n">${esc(d.item)}<small>${esc([byId(d.source)?.name, d.rollover?"休業日は翌営業日":""].filter(Boolean).join(" ・ "))}</small></span><span class="a">${d.amt!=null?(d.approx?"約":"")+yen(d.amt):'未設定'}${d.approx&&d.amt!=null?'<small>目安</small>':''}${d.transfer?'<small>自分の口座へ振替</small>':''}</span></button>`).join("");
+    const rows = [...S.debits].sort((a,b)=>a.day-b.day).map(d=>`<div class="dwrap"><button class="ddel" data-del="${d.id}" tabindex="-1">削除</button><button class="drow" data-editd="${d.id}" data-day="${d.day}" style="${viaOff(d)?'opacity:.45':''}"><span class="d">${dayLabel(d.day)}</span><span class="n">${esc(d.item)}<small>${esc([byId(d.source)?.name, d.rollover?"休業日は翌営業日":""].filter(Boolean).join(" ・ "))}</small></span><span class="a">${d.amt!=null?(d.approx?"約":"")+yen(d.amt):'未設定'}${d.approx&&d.amt!=null?'<small>目安</small>':''}${d.transfer?'<small>自分の口座へ振替</small>':''}</span></button></div>`).join("");
     document.getElementById("v-debit").innerHTML =
       `<div class="month"><b>毎月の予定 ${S.debits.length}件</b><span>支出 ${apxn?"約":""}${yen(fixed)}${varn?` ＋ 未設定 ${varn}件`:""}${xfern?` ・ 振替 ${yen(xfer)}`:""}</span></div>`
       + `<div class="today">今日（${today}日）以降の支出 <b>${rest.length}件 ・ ${restApx?"約":""}${yen(restFixed)}</b>${restVar?` ＋ 未設定 ${restVar}件`:""}</div>${chart}` + need +
-      (S.debits.length ? `<div class="dlist">${rows}</div>` : `<div class="empty">まだありません。右下の「＋」から追加してください。</div>`) + `<div class="hint">タップで編集。</div>`;
+      (S.debits.length ? `<div class="dlist">${rows}</div>` : `<div class="empty">まだありません。右下の「＋」から追加してください。</div>`) + `<div class="hint">タップで編集。左にスワイプで削除。</div>`;
   }
 
   // ===== 共有 =====
@@ -478,6 +482,22 @@
     S.edges.push(e); S.settings.sample=false; save(); newEid=e.id; renderAll();
     toastAction(`${a.name} → ${b.name}（${KINDS[kind]}）`, "変更", ()=>edgeForm(e.id));
   }
+
+  // ===== 引き落としの左スワイプ削除 =====
+  function deleteDebit(id){ const i=S.debits.findIndex(x=>x.id===id); if(i<0) return; const d=S.debits[i]; S.debits.splice(i,1); save(); renderAll(); toastAction("削除しました", "元に戻す", ()=>{ S.debits.splice(Math.min(i,S.debits.length),0,d); save(); renderAll(); }); }
+  let swEl=null, swStart=null, swMode=null, swOpen=null, swBase=0;
+  const swSet = (el,x) => { el.style.transform = x ? `translateX(${x}px)` : ""; };
+  const swClose = () => { if(swOpen){ swOpen.classList.remove("sw"); swSet(swOpen,0); swOpen=null; } };
+  document.addEventListener("pointerdown", e=>{ const el=e.target.closest(".dwrap .drow"); if(!el || e.button>0 || sheet.classList.contains("on")){ if(!e.target.closest(".dwrap")) swClose(); return; } if(swOpen && swOpen!==el) swClose(); swEl=el; swStart={x:e.clientX,y:e.clientY}; swMode="pending"; swBase = (swOpen===el) ? -72 : 0; }, {passive:true});
+  document.addEventListener("pointermove", e=>{ if(!swEl || swMode==="off") return; const dx=e.clientX-swStart.x, dy=e.clientY-swStart.y;
+    if(swMode==="pending"){ if(Math.abs(dy)>10 && Math.abs(dy)>Math.abs(dx)){ swMode="off"; return; } if(Math.abs(dx)>10 && Math.abs(dx)>Math.abs(dy)){ swMode="swipe"; suppressClick=true; swEl.classList.add("sw"); try{ swEl.setPointerCapture(e.pointerId); }catch(x){} } else return; }
+    swSet(swEl, Math.max(-72, Math.min(0, swBase+dx))); }, {passive:true});
+  const swEnd = e => { if(!swEl) return; const el=swEl; const mode=swMode; swEl=null; swMode=null; if(mode!=="swipe") return; const dx=e.clientX-swStart.x; const x=swBase+dx; el.classList.remove("sw");
+    if(x<=-36){ swSet(el,-72); swOpen=el; } else { swSet(el,0); if(swOpen===el) swOpen=null; }
+    setTimeout(()=>{ suppressClick=false; }, 50); };
+  document.addEventListener("pointerup", swEnd); document.addEventListener("pointercancel", swEnd);
+  window.addEventListener("scroll", ()=>{ if(swOpen && !swEl) swClose(); }, {passive:true});
+  document.body.addEventListener("click", e=>{ const d=e.target.closest("[data-del]"); if(d){ e.stopPropagation(); swOpen=null; deleteDebit(d.dataset.del); } }, true);
 
   // ===== 共通 =====
   let view="map";
