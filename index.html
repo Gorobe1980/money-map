@@ -146,6 +146,7 @@
   .hint{ font-size:10.5px; color:var(--mute); }
   body.dragging{ overflow:hidden; }
   #dragline{ position:fixed; inset:0; width:100vw; height:100vh; pointer-events:none; z-index:25; display:none; } #dragline.on{ display:block; }
+  #dropline{ position:fixed; height:3px; border-radius:2px; background:var(--outflow); z-index:26; pointer-events:none; display:none; } #dropline::before{ content:""; position:absolute; left:-5px; top:-3px; width:9px; height:9px; border-radius:50%; background:var(--outflow); } #dropline.on{ display:block; }
   .draghint{ position:fixed; left:50%; top:calc(12px + env(safe-area-inset-top)); transform:translateX(-50%); background:var(--ink); color:#fff; font-size:12px; padding:7px 14px; border-radius:999px; z-index:26; display:none; white-space:nowrap; } .draghint.on{ display:block; }
   @media print{ body{ background:#fff; } .tabs, .fab, .banner, .toast, .scrim, .sheet, .review, .appbar, .hint, .chip.up, .chip.more, .seg2{ display:none !important; } #app{ max-width:none; } .body{ padding:0; } .view[hidden]{ display:flex !important; } #v-share{ display:none !important; } .tile, .drow, .row{ break-inside:avoid; }
     #prhead{ display:block; font-size:16px; font-weight:700; color:var(--ink); margin:0 0 8px; } #prhead small{ font-weight:400; color:var(--mute); font-size:11px; margin-left:8px; }
@@ -309,7 +310,8 @@
     let conn = r.child ? `<i class="l"></i><i class="v"></i><b class="ah"></b>` : (r.inc ? `<i class="dn"></i>` : (r.hasin ? `<i class="up"></i><b class="dh"></b>` : ""));
     if(r.par) conn += `<i class="pd"></i>`;
     const sub = n.sub || TYPES[n.type];
-    return `<button class="${cls}" style="--d:${r.depth}" data-edit="${n.id}">${guides}${conn}${avatar(n)}<div class="t"><span class="n">${esc(n.name)}</span><span class="s">${esc(sub)}</span>${n.note && !r.ghost ? `<span class="nt">メモ: ${esc(n.note)}</span>` : ""}</div><div class="chips">${chips.join("")}</div></button>`;
+    const rk = r.child ? (r.ghost ? "ghost" : (r.jump>=0 ? "jump" : r.kind)) : (r.hub ? "hub" : "inc"); const par = r.child && r.anc ? r.anc[r.anc.length-1] : "";
+    return `<button class="${cls}" style="--d:${r.depth}" data-edit="${n.id}" data-eid="${r.eid||""}" data-par="${par}" data-depth="${r.depth}" data-rk="${rk}">${guides}${conn}${avatar(n)}<div class="t"><span class="n">${esc(n.name)}</span><span class="s">${esc(sub)}</span>${n.note && !r.ghost ? `<span class="nt">メモ: ${esc(n.note)}</span>` : ""}</div><div class="chips">${chips.join("")}</div></button>`;
   }
   function renderMap(){
     const L = layout(); let h = reviewHtml(); seenIds = new Set();
@@ -442,40 +444,91 @@
     if(!isNew) document.getElementById("delD").addEventListener("click", ()=>{ if(!confirm("この引き落としを削除します。")) return; S.debits=S.debits.filter(x=>x.id!==d.id); save(); closeSheet(); renderAll(); });
   }
 
-  // ===== 長押しドラッグでつなぐ =====
+  // ===== 長押しドラッグ: 行の上で離す＝つなぐ ／ 行の間で離す＝移動 =====
   const svg = document.createElementNS("http://www.w3.org/2000/svg","svg"); svg.id="dragline";
   svg.innerHTML = '<line x1="0" y1="0" x2="0" y2="0" stroke="#3B6FD8" stroke-width="3" stroke-linecap="round" stroke-dasharray="6 5"/><circle r="7" fill="#3B6FD8"/>';
   document.body.appendChild(svg);
-  const hint = document.createElement("div"); hint.className="draghint"; hint.textContent="相手のタイルまで動かして離す"; document.body.appendChild(hint);
+  const hint = document.createElement("div"); hint.className="draghint"; hint.textContent="相手の上で離すとつなぐ ・ 行の間で離すと移動"; document.body.appendChild(hint);
+  const dropline = document.createElement("div"); dropline.id="dropline"; document.body.appendChild(dropline);
   const line = svg.querySelector("line"), dotEl = svg.querySelector("circle");
-  let timer=null, src=null, srcEl=null, start=null, dragging=false, target=null, suppressClick=false;
+  let timer=null, src=null, srcEl=null, start=null, dragging=false, target=null, suppressClick=false, drop=null, lastPt=null, asDir=0;
   const tileAt = (x,y) => { const el = document.elementFromPoint(x,y); return el ? el.closest("[data-edit]") : null; };
   const clearTarget = () => { if(target){ target.classList.remove("target"); target=null; } };
-  const endDrag = () => { dragging=false; clearTimeout(timer); timer=null; document.body.classList.remove("dragging"); svg.classList.remove("on"); hint.classList.remove("on"); if(srcEl) srcEl.classList.remove("lift"); clearTarget(); };
+  const clearDrop = () => { drop=null; dropline.classList.remove("on"); };
+  const endDrag = () => { dragging=false; asDir=0; clearTimeout(timer); timer=null; document.body.classList.remove("dragging"); svg.classList.remove("on"); hint.classList.remove("on"); if(srcEl) srcEl.classList.remove("lift"); clearTarget(); clearDrop(); };
+  const descendants = id => { const s=new Set(); const q=[id]; while(q.length){ const x=q.shift(); outOf(x).filter(e=>e.kind!=="link").forEach(e=>{ if(!s.has(e.to)){ s.add(e.to); q.push(e.to); } }); } return s; };
+  const srcMovable = el => el && el.classList.contains("row") && (el.dataset.rk==="out" || el.dataset.rk==="in");
+  // 隙間の上の行 A から「移動先の親」と「A の直後」を決める
+  const gapPlan = (A, B) => {
+    if(!A || A.dataset.rk==="inc") return null;
+    const aPar = A.dataset.par || null; let parent, afterEid;
+    if(A.dataset.rk==="hub" || (B && B.dataset.par===A.dataset.edit)){ parent = A.dataset.edit; afterEid = null; }
+    else { if(!aPar) return null; parent = aPar; afterEid = A.dataset.eid || null; }
+    if(parent===src || descendants(src).has(parent)) return null;
+    return {parent, afterEid};
+  };
+  const showDrop = (y, plan, tree) => {
+    const pr = document.querySelector(`.row[data-edit="${plan.parent}"]:not(.ghost)`); const pd = pr ? +pr.dataset.depth : 0;
+    const tr = tree.getBoundingClientRect(); const left = tr.left + 12 + (Math.min(pd,3)+1)*28 - 15;
+    dropline.style.left = left+"px"; dropline.style.width = Math.max(40, tr.right-12-left)+"px"; dropline.style.top = (y-2)+"px"; dropline.classList.add("on");
+  };
+  const updateDrop = (x,y) => {
+    const t = tileAt(x,y); const tree = t ? t.closest(".tree") : null;
+    if(t && tree && t.classList.contains("row")){
+      const r = t.getBoundingClientRect(); const rel = (y-r.top)/r.height;
+      const sameGap = drop && drop.row===t; const lo = sameGap && drop.side==="before" ? 0.34 : 0.30, hi = sameGap && drop.side==="after" ? 0.66 : 0.70;
+      let side = rel<lo ? "before" : rel>hi ? "after" : null;
+      if(side){
+        const A = side==="before" ? (t.previousElementSibling && t.previousElementSibling.classList.contains("row") ? t.previousElementSibling : null) : t;
+        const B = side==="before" ? t : (t.nextElementSibling && t.nextElementSibling.classList.contains("row") ? t.nextElementSibling : null);
+        const plan = (t.dataset.edit!==src && !(A && A.dataset.edit===src) && !(B && B.dataset.edit===src)) ? gapPlan(A,B) : null;
+        if(plan){ clearTarget(); drop={row:t, side, plan}; showDrop(side==="before"? r.top : r.bottom, plan, tree); return; }
+      }
+    }
+    clearDrop();
+    if(t !== target){ clearTarget(); if(t && t.dataset.edit !== src){ target=t; t.classList.add("target"); } }
+  };
+  const autoScroll = () => { if(!dragging) return; if(asDir){ window.scrollBy(0, asDir*6); if(lastPt) updateDrop(lastPt.x, lastPt.y); } requestAnimationFrame(autoScroll); };
   document.addEventListener("pointerdown", e=>{
     const el = e.target.closest("[data-edit]"); if(!el || e.button>0 || sheet.classList.contains("on")) return;
     src = el.dataset.edit; srcEl = el; start = {x:e.clientX, y:e.clientY}; dragging=false; clearTimeout(timer);
-    timer = setTimeout(()=>{ dragging=true; suppressClick=true; document.body.classList.add("dragging"); srcEl.classList.add("lift"); svg.classList.add("on"); hint.classList.add("on");
+    timer = setTimeout(()=>{ dragging=true; suppressClick=true; lastPt={x:start.x,y:start.y};
+      if(UI.mode!=="full"){ setMode("full"); srcEl = document.querySelector(`.row[data-edit="${src}"]:not(.ghost)`) || srcEl; }
+      document.body.classList.add("dragging"); srcEl.classList.add("lift"); svg.classList.add("on"); hint.classList.add("on");
       const r = srcEl.getBoundingClientRect(); line.setAttribute("x1", r.left+r.width/2); line.setAttribute("y1", r.top+r.height/2); line.setAttribute("x2", start.x); line.setAttribute("y2", start.y); dotEl.setAttribute("cx", start.x); dotEl.setAttribute("cy", start.y);
-      if(navigator.vibrate) navigator.vibrate(15); }, 400);
+      if(navigator.vibrate) navigator.vibrate(15); requestAnimationFrame(autoScroll); }, 400);
   }, {passive:true});
   document.addEventListener("pointermove", e=>{
     if(!srcEl) return;
     if(!dragging){ if(start && Math.hypot(e.clientX-start.x, e.clientY-start.y) > 8){ clearTimeout(timer); timer=null; srcEl=null; } return; }
+    lastPt={x:e.clientX, y:e.clientY};
     line.setAttribute("x2", e.clientX); line.setAttribute("y2", e.clientY); dotEl.setAttribute("cx", e.clientX); dotEl.setAttribute("cy", e.clientY);
-    const t = tileAt(e.clientX, e.clientY); if(t !== target){ clearTarget(); if(t && t.dataset.edit !== src){ target=t; t.classList.add("target"); } }
+    const bottomEdge = window.innerHeight - 74 - 60; asDir = e.clientY < 80 ? -1 : (e.clientY > bottomEdge ? 1 : 0);
+    if(srcMovable(srcEl)) updateDrop(e.clientX, e.clientY);
+    else { const t = tileAt(e.clientX, e.clientY); if(t !== target){ clearTarget(); if(t && t.dataset.edit !== src){ target=t; t.classList.add("target"); } } }
   }, {passive:true});
   document.addEventListener("touchmove", e=>{ if(dragging) e.preventDefault(); }, {passive:false});
   document.addEventListener("contextmenu", e=>{ if(e.target.closest("[data-edit]")) e.preventDefault(); });
   const finish = e => {
     if(!srcEl) return;
     if(!dragging){ clearTimeout(timer); timer=null; srcEl=null; return; }
-    const to = target ? target.dataset.edit : null; const from = src; endDrag(); srcEl=null;
-    if(to && to!==from) connect(from, to);
+    const to = target ? target.dataset.edit : null; const from = src; const plan = drop ? drop.plan : null; const eid = srcEl.dataset.eid; endDrag(); srcEl=null;
+    if(plan && eid) moveEdge(eid, plan.parent, plan.afterEid);
+    else if(to && to!==from) connect(from, to);
     setTimeout(()=>{ suppressClick=false; }, 50);
   };
   document.addEventListener("pointerup", finish); document.addEventListener("pointercancel", finish);
   document.addEventListener("click", e=>{ if(suppressClick){ e.stopPropagation(); e.preventDefault(); } }, true);
+  function moveEdge(eid, parent, afterEid){
+    const i = S.edges.findIndex(e=>e.id===eid); if(i<0) return; const e = S.edges[i]; const undo = {from:e.from, index:i};
+    S.edges.splice(i,1); e.from = parent;
+    let at; if(afterEid){ const j = S.edges.findIndex(x=>x.id===afterEid); at = j<0 ? S.edges.length : j+1; }
+    else { const j = S.edges.findIndex(x=>x.from===parent && x.kind!=="link"); at = j<0 ? S.edges.length : j; }
+    if(at===undo.index && e.from===undo.from){ S.edges.splice(at,0,e); return; }
+    S.edges.splice(at,0,e); S.settings.sample=false; save(); newEid=eid; renderAll();
+    const p = byId(parent), n = byId(e.to);
+    toastAction(`${n?n.name:""} を ${p?p.name:""} の下へ移動しました`, "元に戻す", ()=>{ const k=S.edges.findIndex(x=>x.id===eid); if(k<0) return; S.edges.splice(k,1); e.from=undo.from; S.edges.splice(Math.min(undo.index,S.edges.length),0,e); save(); renderAll(); });
+  }
   function connect(from, to){
     const a=byId(from), b=byId(to); if(!a||!b) return;
     const kind = AUTO_KIND(a,b); const e = {id:uid("e"), from:a.id, to:b.id, kind, label:""};
