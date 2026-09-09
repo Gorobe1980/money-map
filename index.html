@@ -127,6 +127,12 @@
   .drow .d{ background:var(--ink); color:#fff; font-size:10px; font-weight:700; border-radius:6px; text-align:center; padding:3px 0; }
   .drow .n{ font-weight:700; font-size:12px; color:var(--ink); line-height:1.25; } .drow .n small{ display:block; font-weight:400; color:var(--mute); font-size:9.5px; }
   .drow .a{ font-variant-numeric:tabular-nums; font-size:12px; color:var(--ink); text-align:right; } .drow .a small{ display:block; color:var(--mute); font-size:9px; }
+  .pf{ background:var(--tile); border:1px solid var(--edge); border-radius:10px; padding:10px 12px 8px; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .pf h4{ margin:0 0 8px; font-size:12px; color:var(--ink); display:flex; justify-content:space-between; align-items:baseline; } .pf h4 small{ font-weight:400; color:var(--mute); font-size:10px; }
+  .pf .bar{ display:flex; height:18px; border-radius:6px; overflow:hidden; gap:1px; } .pf .bar i{ display:block; min-width:3px; cursor:pointer; } .pf .bar i.dim{ opacity:.3; }
+  .pf .lg2{ display:grid; grid-template-columns:1fr 1fr; gap:3px 12px; margin-top:8px; } .pf .lg2 button{ display:flex; align-items:center; gap:6px; font-family:inherit; font-size:11px; color:var(--ink); background:none; border:0; padding:2px 0; cursor:pointer; text-align:left; }
+  .pf .lg2 button i{ width:10px; height:10px; border-radius:3px; flex:none; } .pf .lg2 button b{ margin-left:auto; font-variant-numeric:tabular-nums; font-weight:700; } .pf .lg2 button small{ color:var(--mute); font-size:10px; width:30px; text-align:right; } .pf .lg2 button.dim{ opacity:.35; }
+  .pf .flt{ margin-top:6px; font-size:11px; color:var(--mute); } .pf .flt b{ color:var(--ink); }
   .need{ background:var(--tile); border:1px solid var(--edge); border-left:4px solid var(--outflow); border-radius:10px; padding:8px 10px; display:flex; align-items:center; gap:9px; }
   .need .amt{ margin-left:auto; text-align:right; font-variant-numeric:tabular-nums; font-weight:700; color:var(--ink); font-size:13px; line-height:1.15; } .need .amt small{ display:block; font-weight:400; color:var(--mute); font-size:9.5px; }
   .toast{ position:fixed; left:50%; bottom:calc(140px + env(safe-area-inset-bottom)); transform:translateX(-50%); background:var(--ink); color:#fff; font-size:12px; padding:8px 14px; border-radius:999px; opacity:0; transition:opacity .2s; pointer-events:none; white-space:nowrap; z-index:40; }
@@ -181,6 +187,8 @@
   const TYPES = { income:"収入", bank:"銀行口座", card:"カード", securities:"証券・取引所", wallet:"ウォレット", pay:"QR・電子マネー", app:"アプリ・サービス", use:"利用先" };
   const TYPE_STYLE = { income:["#1F9D6A",false], bank:["#1F4E79",false], card:["#374151",true], securities:["#0B5AA5",false], wallet:["#F6851B",true], pay:["#BF0000",true], app:["#8B5CF6",true], use:["#4B5563",true] };
   const KINDS = { in:"入金", out:"出金", link:"連携" };
+  const CATS = { housing:["住居","#5B6B8C"], insurance:["保険","#7A9A7E"], invest:["投資・貯蓄","#1F9D6A"], card:["カード","#C08457"], utility:["通信・光熱","#D9A441"], subs:["サブスク","#9B6BFF"], living:["生活費","#E07A5F"], other:["その他","#A0A7B4"] };
+  const catOf = d => CATS[d.cat] ? d.cat : "other";
   const AUTO_KIND = (a,b) => { if(a.type==="income") return "in"; if(a.type==="securities" && b.type==="bank") return "in"; if(a.type==="bank" && b.type==="securities") return "link"; if(a.type==="wallet" && b.type==="app") return "link"; if(a.type===b.type && (a.type==="securities"||a.type==="app")) return "link"; return "out"; };
 
   function sample(){
@@ -204,10 +212,10 @@
       ["subbank","stable","out"],["stable","walleta","out"],["walleta","crypto","out"],["walleta","walletb","out"],["walletb","appa","link"],["walletb","appb","link"],["crypto","ic","out"],["crypto","shop","out"],["crypto","food","out"],["crypto","conv","out"]]
       .map(([from,to,kind],i)=>({id:"e"+i,from,to,kind,label:""}));
     const D = [
-      {id:"d1",source:"mainbank",day:1,item:"カード分割払い",amt:25000,rollover:false},{id:"d2",source:"mainbank",day:5,item:"サブ銀行へ自動入金",amt:150000,rollover:false,via:"subbank",transfer:true},
-      {id:"d3",source:"mainbank",day:15,item:"生命保険",amt:2500,rollover:true},{id:"d4",source:"mainbank",day:26,item:"iDeCo",amt:23000,rollover:true},
-      {id:"d5",source:"mainbank",day:26,item:"クレジットカードA",amt:80000,approx:true,rollover:true,via:"carda"},{id:"d6",source:"mainbank",day:27,item:"クレジットカードB",amt:null,rollover:true,via:"cardb"},
-      {id:"d7",source:"mainbank",day:27,item:"家賃",amt:100000,rollover:true},{id:"d8",source:"subbank",day:31,item:"家族の口座へ生活費",amt:100000,rollover:true,via:"family"},
+      {id:"d1",source:"mainbank",day:1,item:"カード分割払い",amt:25000,rollover:false,cat:"card"},{id:"d2",source:"mainbank",day:5,item:"サブ銀行へ自動入金",amt:150000,rollover:false,via:"subbank",transfer:true},
+      {id:"d3",source:"mainbank",day:15,item:"生命保険",amt:2500,rollover:true,cat:"insurance"},{id:"d4",source:"mainbank",day:26,item:"iDeCo",amt:23000,rollover:true,cat:"invest"},
+      {id:"d5",source:"mainbank",day:26,item:"クレジットカードA",amt:80000,approx:true,rollover:true,via:"carda",cat:"card"},{id:"d6",source:"mainbank",day:27,item:"クレジットカードB",amt:null,rollover:true,via:"cardb",cat:"card"},
+      {id:"d7",source:"mainbank",day:27,item:"家賃",amt:100000,rollover:true,cat:"housing"},{id:"d8",source:"subbank",day:31,item:"家族の口座へ生活費",amt:100000,rollover:true,via:"family",cat:"living"},
     ];
     return { version:1, nodes:N, edges:E, debits:D, settings:{ sample:true, updated:new Date().toISOString().slice(0,10) } };
   }
@@ -328,6 +336,7 @@
   }
 
   // ===== 引き落とし =====
+  let debitFilter = null;
   function renderDebit(){
     const live = S.debits.filter(d=>!viaOff(d));
     const spend = live.filter(d=>!d.transfer);
@@ -353,11 +362,18 @@
     const chart = `<div class="chart"><div class="bars">${ref}${cols}${tdy}</div><div class="lab">${labs}</div>${lg}</div>`;
     const banks = S.nodes.filter(n=>n.type==="bank" && S.debits.some(d=>d.source===n.id));
     const need = banks.map(b=>{ const l=live.filter(d=>d.source===b.id); if(!l.length) return ""; const f=l.filter(d=>d.amt!=null).reduce((a,d)=>a+Number(d.amt),0); const v=l.filter(d=>d.amt==null).length; const ap=l.filter(d=>d.amt!=null && d.approx).length; const last=Math.max(...l.map(d=>d.day)); const inc = live.filter(d=>d.transfer && d.via===b.id && d.amt!=null).map(d=>`<span class="s in">${dayLabel(d.day)}に${esc(byId(d.source)?.name||"")}から ${yen(d.amt)} 入金</span>`).join(""); return `<div class="need">${avatar(b)}<div class="t"><span class="n">${esc(b.name)}</span><span class="s">${dayLabel(last)}までに必要</span>${inc}</div><div class="amt">${ap?"約":""}${yen(f)}${ap?`<small>目安 ${ap}件を含む</small>`:""}${v?`<small>＋ 未設定 ${v}件</small>`:""}</div></div>`; }).join("");
-    const rows = [...S.debits].sort((a,b)=>a.day-b.day).map(d=>`<div class="dwrap"><button class="ddel" data-del="${d.id}" tabindex="-1">削除</button><button class="drow" data-editd="${d.id}" data-day="${d.day}" style="${viaOff(d)?'opacity:.45':''}"><span class="d">${dayLabel(d.day)}</span><span class="n">${esc(d.item)}<small>${esc([byId(d.source)?.name, d.rollover?"休業日は翌営業日":""].filter(Boolean).join(" ・ "))}</small></span><span class="a">${d.amt!=null?(d.approx?"約":"")+yen(d.amt):'未設定'}${d.approx&&d.amt!=null?'<small>目安</small>':''}${d.transfer?'<small>自分の口座へ振替</small>':''}</span></button></div>`).join("");
+    const sums = {}; spend.filter(d=>d.amt!=null).forEach(d=>{ const c=catOf(d); sums[c]=(sums[c]||0)+Number(d.amt); }); const total = Object.values(sums).reduce((a,v)=>a+v,0);
+    const catList = Object.keys(CATS).filter(c=>sums[c]).sort((a,c)=>sums[c]-sums[a]);
+    const pf = total ? `<div class="pf"><h4>内訳<small>${apxn?"目安を含む":""}${varn?`${apxn?" ・ ":""}未設定 ${varn}件は含まず`:""}</small></h4>`
+      + `<div class="bar">${catList.map(c=>`<i class="${debitFilter&&debitFilter!==c?'dim':''}" data-cat="${c}" style="flex:${sums[c]};background:${CATS[c][1]}" title="${CATS[c][0]}"></i>`).join("")}</div>`
+      + `<div class="lg2">${catList.map(c=>`<button class="${debitFilter&&debitFilter!==c?'dim':''}" data-cat="${c}"><i style="background:${CATS[c][1]}"></i>${CATS[c][0]}<b>${yen(sums[c])}</b><small>${Math.round(sums[c]/total*100)}%</small></button>`).join("")}</div>`
+      + (debitFilter ? `<div class="flt">一覧を <b>${CATS[debitFilter][0]}</b> だけに絞っています。もう一度タップで解除。</div>` : "") + `</div>` : "";
+    const rows = [...S.debits].filter(d=>!debitFilter || catOf(d)===debitFilter).sort((a,b)=>a.day-b.day).map(d=>`<div class="dwrap"><button class="ddel" data-del="${d.id}" tabindex="-1">削除</button><button class="drow" data-editd="${d.id}" data-day="${d.day}" style="${viaOff(d)?'opacity:.45':''}"><span class="d">${dayLabel(d.day)}</span><span class="n">${esc(d.item)}<small>${esc([byId(d.source)?.name, d.rollover?"休業日は翌営業日":""].filter(Boolean).join(" ・ "))}${d.transfer?"":` ・ <i style="display:inline-block;width:7px;height:7px;border-radius:2px;background:${CATS[catOf(d)][1]};vertical-align:0"></i> ${CATS[catOf(d)][0]}`}</small></span><span class="a">${d.amt!=null?(d.approx?"約":"")+yen(d.amt):'未設定'}${d.approx&&d.amt!=null?'<small>目安</small>':''}${d.transfer?'<small>自分の口座へ振替</small>':''}</span></button></div>`).join("");
     document.getElementById("v-debit").innerHTML =
       `<div class="month"><b>毎月の予定 ${S.debits.length}件</b><span>支出 ${apxn?"約":""}${yen(fixed)}${varn?` ＋ 未設定 ${varn}件`:""}${xfern?` ・ 振替 ${yen(xfer)}`:""}</span></div>`
       + `<div class="today">今日（${today}日）以降の支出 <b>${rest.length}件 ・ ${restApx?"約":""}${yen(restFixed)}</b>${restVar?` ＋ 未設定 ${restVar}件`:""}</div>${chart}` + need +
-      (S.debits.length ? `<div class="dlist">${rows}</div>` : `<div class="empty">まだありません。右下の「＋」から追加してください。</div>`) + `<div class="hint">タップで編集。左にスワイプで削除。</div>`;
+      pf + (S.debits.length ? `<div class="dlist">${rows}</div>` : `<div class="empty">まだありません。右下の「＋」から追加してください。</div>`) + `<div class="hint">タップで編集。左にスワイプで削除。</div>`;
+    document.querySelectorAll("#v-debit [data-cat]").forEach(el=>el.addEventListener("click", ()=>{ debitFilter = debitFilter===el.dataset.cat ? null : el.dataset.cat; renderDebit(); }));
   }
 
   // ===== 共有 =====
@@ -429,6 +445,7 @@
     if(!banks.length){ toast("先に銀行口座を追加してください"); return; }
     openSheet(`<h2>${isNew?"引き落としを追加":"引き落としを編集"}<button id="close" aria-label="閉じる">×</button></h2>
       <div class="f"><label>項目</label><input type="text" id="ditem" value="${esc(d.item||"")}" placeholder="例: 家賃 ／ クレジットカードA" autocomplete="off"></div>
+      <div class="f"><label>ジャンル</label><select id="dcat">${opt(Object.entries(CATS).map(([k,v])=>[k,v[0]]), catOf(d))}</select></div>
       <div class="f"><label>引き落とし元の銀行</label><select id="dsrc">${opt(banks, d.source||banks[0][0])}</select></div>
       <div class="f2"><div class="f"><label>日（31＝月末）</label><input type="number" id="dday" min="1" max="31" value="${d.day||27}"></div><div class="f"><label>金額（空欄＝未設定）</label><input type="number" id="damt" value="${d.amt==null?"":d.amt}" placeholder="例: 100000"></div></div>
       <div class="sw ${d.approx?'on':''}" id="dapx">金額はおおよそ（毎月変わる）<i></i></div><div class="hint">多めに入れておくと安心です。</div>
@@ -440,7 +457,7 @@
     document.getElementById("droll").addEventListener("click", e=>e.currentTarget.classList.toggle("on"));
     document.getElementById("dapx").addEventListener("click", e=>e.currentTarget.classList.toggle("on"));
     document.getElementById("dxfer").addEventListener("click", e=>{ e.currentTarget.classList.toggle("on"); document.getElementById("dxto").hidden = !e.currentTarget.classList.contains("on"); });
-    document.getElementById("saveD").addEventListener("click", ()=>{ d.item=document.getElementById("ditem").value.trim()||"名称未設定"; d.source=document.getElementById("dsrc").value; d.day=Math.min(31,Math.max(1,parseInt(document.getElementById("dday").value)||1)); const a=document.getElementById("damt").value.trim(); d.amt=a===""?null:Number(a); d.approx=document.getElementById("dapx").classList.contains("on"); d.rollover=document.getElementById("droll").classList.contains("on"); d.transfer=document.getElementById("dxfer").classList.contains("on"); if(d.transfer) d.via=document.getElementById("dto").value; if(isNew) S.debits.push(d); S.settings.sample=false; save(); closeSheet(); renderAll(); toast("保存しました"); });
+    document.getElementById("saveD").addEventListener("click", ()=>{ d.item=document.getElementById("ditem").value.trim()||"名称未設定"; d.cat=document.getElementById("dcat").value; d.source=document.getElementById("dsrc").value; d.day=Math.min(31,Math.max(1,parseInt(document.getElementById("dday").value)||1)); const a=document.getElementById("damt").value.trim(); d.amt=a===""?null:Number(a); d.approx=document.getElementById("dapx").classList.contains("on"); d.rollover=document.getElementById("droll").classList.contains("on"); d.transfer=document.getElementById("dxfer").classList.contains("on"); if(d.transfer) d.via=document.getElementById("dto").value; if(isNew) S.debits.push(d); S.settings.sample=false; save(); closeSheet(); renderAll(); toast("保存しました"); });
     if(!isNew) document.getElementById("delD").addEventListener("click", ()=>{ if(!confirm("この引き落としを削除します。")) return; S.debits=S.debits.filter(x=>x.id!==d.id); save(); closeSheet(); renderAll(); });
   }
 
