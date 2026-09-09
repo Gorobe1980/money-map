@@ -21,9 +21,12 @@
   html,body{ margin:0; height:100%; }
   body{ background:var(--bg); color:var(--text); font-family:"BIZ UDPGothic","Hiragino Sans","Yu Gothic UI",system-ui,sans-serif; font-size:13px; line-height:1.45; -webkit-text-size-adjust:100%; }
   #app{ max-width:520px; margin:0 auto; min-height:100dvh; display:flex; flex-direction:column; padding-top:env(safe-area-inset-top); }
-  .appbar{ padding:14px 16px 8px; display:flex; align-items:baseline; justify-content:space-between; gap:8px; }
+  .appbar{ padding:14px 16px 8px; display:flex; align-items:center; justify-content:space-between; gap:8px; }
   .appbar h1{ margin:0; font-size:19px; font-weight:700; color:var(--ink); }
   .appbar .sub{ font-size:11px; color:var(--mute); }
+  .seg2{ display:inline-flex; border:1px solid var(--edge); border-radius:999px; overflow:hidden; height:26px; background:var(--tile); }
+  .seg2 button{ font-family:inherit; font-size:11px; padding:0 11px; border:0; background:transparent; color:var(--mute); cursor:pointer; }
+  .seg2 button.on{ background:var(--ink); color:#fff; font-weight:700; }
   .body{ flex:1; padding:0 12px 96px; display:flex; flex-direction:column; gap:10px; }
   .view[hidden]{ display:none; } .view{ display:flex; flex-direction:column; gap:10px; }
   .tabs{ position:fixed; left:0; right:0; bottom:0; margin:0 auto; max-width:520px; display:grid; grid-template-columns:repeat(3,1fr); border-top:1px solid var(--edge); background:var(--tile); padding:8px 6px calc(10px + env(safe-area-inset-bottom)); z-index:20; }
@@ -54,6 +57,8 @@
   .row.child .ah{ position:absolute; left:calc(var(--d,0) * 28px - 6px); top:22px; width:0; height:0; border-left:6px solid var(--lc); border-top:4px solid transparent; border-bottom:4px solid transparent; pointer-events:none; }
   .row.par .pd{ position:absolute; left:calc(var(--d,0) * 28px + 13px); top:40px; bottom:-1px; width:2px; background:var(--outflow); pointer-events:none; }
   .row.par.pk-link .pd{ background:var(--link); }
+  .row.fold .pd{ display:none; }
+  .chip.more{ background:var(--chip); color:var(--ink); font-weight:700; }
   .row.out{ --lc:var(--outflow); } .row.in{ --lc:var(--inflow); }
   .row.link{ --lc:var(--link); } .row.link .l{ border-left-style:dashed; border-bottom-style:dashed; } .row.link .ah{ display:none; }
   .row .g{ position:absolute; top:0; bottom:-1px; width:2px; background:var(--outflow); pointer-events:none; opacity:.9; }
@@ -93,10 +98,15 @@
   select, input[type=text], input[type=number], textarea{ font-family:inherit; font-size:14px; padding:9px 10px; border-radius:9px; border:1px solid var(--edge); background:var(--tile); color:var(--ink); width:100%; }
   .empty{ color:var(--mute); font-size:11px; background:var(--okbg); border-radius:8px; padding:8px 10px; }
   .month{ display:flex; align-items:baseline; justify-content:space-between; } .month b{ font-size:15px; color:var(--ink); } .month span{ font-size:11px; color:var(--mute); }
-  .days{ display:grid; grid-template-columns:repeat(31,1fr); gap:2px; background:var(--tile); border:1px solid var(--edge); border-radius:10px; padding:8px 8px 6px; }
-  .days i{ display:block; height:26px; border-radius:4px; position:relative; }
-  .days i::after{ content:attr(data-d); position:absolute; left:50%; bottom:-1px; transform:translateX(-50%); font-size:7px; color:var(--link); font-style:normal; }
-  .days i.on{ background:var(--outflow); } .days i.on::after{ color:var(--ink); font-weight:700; }
+  .chart{ background:var(--tile); border:1px solid var(--edge); border-radius:10px; padding:12px 8px 4px; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .chart .bars{ position:relative; display:grid; grid-template-columns:repeat(31,1fr); gap:2px; height:64px; align-items:end; border-bottom:1px solid var(--edge); cursor:pointer; }
+  .chart .col{ display:flex; flex-direction:column-reverse; justify-content:flex-start; gap:1px; height:100%; }
+  .chart .seg{ display:block; border-radius:2px 2px 0 0; flex:none; }
+  .chart .seg.var{ height:11px; border:1.5px dashed; box-sizing:border-box; }
+  .chart .ref{ position:absolute; left:0; right:0; border-top:1px dashed #C9CFD8; pointer-events:none; } .chart .ref b{ position:absolute; right:0; top:-12px; font-size:9px; color:var(--mute); font-weight:400; }
+  .chart .lab{ display:grid; grid-template-columns:repeat(31,1fr); gap:2px; height:14px; margin-top:2px; }
+  .chart .lab i{ font-style:normal; font-size:9px; color:var(--mute); text-align:center; white-space:nowrap; line-height:14px; } .chart .lab i.on{ color:var(--ink); font-weight:700; }
+  .drow.new{ animation:pulse 1.2s ease-out 1; }
   .dlist{ display:flex; flex-direction:column; gap:5px; }
   .drow{ background:var(--tile); border:1px solid var(--edge); border-radius:9px; padding:7px 9px; display:grid; grid-template-columns:40px 1fr auto; align-items:center; gap:8px; cursor:pointer; width:100%; text-align:left; font-family:inherit; color:var(--text); }
   .drow .d{ background:var(--ink); color:#fff; font-size:10px; font-weight:700; border-radius:6px; text-align:center; padding:3px 0; }
@@ -127,7 +137,7 @@
 </head>
 <body>
 <div id="app">
-  <div class="appbar"><h1 id="ttl">マップ</h1><span class="sub" id="sub"></span></div>
+  <div class="appbar"><h1 id="ttl">マップ</h1><span class="sub" id="sub" hidden></span><div class="seg2" id="seg2"><button data-m="brief">ざっくり</button><button data-m="full" class="on">詳しく</button></div></div>
   <div class="body">
     <div id="banner"></div>
     <div class="view" id="v-map"></div>
@@ -184,6 +194,9 @@
   }
 
   let S;
+  let UI = {mode:"full"}; try{ UI = Object.assign(UI, JSON.parse(localStorage.getItem("moneymap.ui")||"{}")); }catch(e){}
+  function saveUI(){ try{ localStorage.setItem("moneymap.ui", JSON.stringify(UI)); }catch(e){} }
+  function setMode(m, rerender){ UI.mode = m; saveUI(); document.querySelectorAll("#seg2 button").forEach(x=>x.classList.toggle("on", x.dataset.m===m)); if(rerender!==false) renderMap(); }
   function load(){ try{ const raw=localStorage.getItem(KEY); S = raw ? JSON.parse(raw) : sample(); }catch(e){ S = sample(); } if(!S.settings) S.settings={sample:false}; }
   function save(){ S.settings.updated = new Date().toISOString().slice(0,10); try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){ toast("保存できませんでした"); } }
   const byId = id => S.nodes.find(n=>n.id===id);
@@ -221,16 +234,16 @@
         S.edges.filter(e=>e.kind==="link" && (e.from===x||e.to===x)).forEach(e=>push(e.from===x?e.to:e.from, "link", e.id));
         return out;
       };
-      const walk=(x, depth, guides, offb)=>{
+      const walk=(x, depth, guides, offb, anc)=>{
         const cs = children(x);
         cs.forEach(c=>{ if(!c.ghost && c.jump<0){ placed.add(c.id); parentOf[c.id]=x; } });
         if(cs.length){ const pr = rows.find(r=>r.id===x && !r.ghost); if(pr){ pr.par=true; pr.pk=cs[0].kind; } }
         cs.forEach((c,i)=>{ const n=byId(c.id); const last = i===cs.length-1; const real = !c.ghost && c.jump<0;
-          rows.push({id:c.id, eid:c.eid, depth:Math.min(depth,4), kind:c.kind, child:true, last, guides:guides.slice(), offb, jump:c.jump, ghost:c.ghost, back: S.edges.some(e=>e.kind!=="link" && e.from===c.id && e.to===x)});
-          if(real && depth<4) walk(c.id, depth+1, [...guides, {on:!last, kind:c.kind}], offb || !!n.off);
+          rows.push({id:c.id, eid:c.eid, depth:Math.min(depth,4), kind:c.kind, child:true, last, guides:guides.slice(), offb, jump:c.jump, ghost:c.ghost, anc:anc, back: S.edges.some(e=>e.kind!=="link" && e.from===c.id && e.to===x)});
+          if(real && depth<4) walk(c.id, depth+1, [...guides, {on:!last, kind:c.kind}], offb || !!n.off, [...anc, c.id]);
         });
       };
-      walk(h.id, 1, [], !!h.off);
+      walk(h.id, 1, [], !!h.off, [h.id]);
       placed.forEach(id=>placedAll.add(id));
       return {hub:h, rows};
     });
@@ -260,7 +273,7 @@
   }
 
   // ===== マップ =====
-  let newEid = null, seenIds = new Set();
+  let newEid = null, seenIds = new Set(), curRows = [];
   function rowHtml(r){
     const n = byId(r.id); const chips=[];
     const dc = S.debits.filter(d=>d.source===n.id).length; if(dc) chips.push(`<span class="chip">定期引落 ${dc}件</span>`);
@@ -270,7 +283,9 @@
     if(n.off) chips.push(`<span class="chip off">解約予定</span>`);
     if(r.kind==="link") chips.push(`<span class="chip lk">連携</span>`);
     if(r.ghost) chips.push(`<span class="chip up" data-goto="${n.id}">${seenIds.has(n.id)?"上にもあり ↑":"下にもあり ↓"}</span>`); else seenIds.add(n.id);
-    const cls = ["row", `d${r.depth}`, r.kind, r.child?"child":"", r.child&&!r.last?"cont":"", r.hub?"hub":"", r.inc?"inc":"", r.hasin?"hasin":"", n.off?"off":"", r.offb?"offb":"", r.ghost?"ghost":"", r.eid && r.eid===newEid?"new":"", r.par?"par pk-"+r.pk:""].join(" ");
+    const fold = UI.mode!=="full" && r.par && !r.ghost && r.depth>=1; const hid = fold ? curRows.filter(o=>o.anc && o.anc.includes(n.id)).length : 0;
+    if(fold && hid) chips.push(`<span class="chip more" data-more="${n.id}">＋${hid}</span>`);
+    const cls = ["row", `d${r.depth}`, r.kind, r.child?"child":"", r.child&&!r.last?"cont":"", r.hub?"hub":"", r.inc?"inc":"", r.hasin?"hasin":"", n.off?"off":"", r.offb?"offb":"", r.ghost?"ghost":"", r.eid && r.eid===newEid?"new":"", r.par?"par pk-"+r.pk:"", fold&&hid?"fold":""].join(" ");
     const guides = (r.guides||[]).map((g,k)=> g.on ? `<i class="g ${g.kind==='link'?'gl':''}" style="left:${k*28+13}px"></i>` : "").join("");
     let conn = r.child ? `<i class="l"></i><i class="v"></i><b class="ah"></b>` : (r.inc ? `<i class="dn"></i>` : (r.hasin ? `<i class="up"></i><b class="dh"></b>` : ""));
     if(r.par) conn += `<i class="pd"></i>`;
@@ -281,25 +296,37 @@
     const L = layout(); let h = reviewHtml(); seenIds = new Set();
     if(!S.nodes.length) h += `<div class="empty">まだ何もありません。右下の「＋」から銀行を追加してください。最初の銀行が起点になります。</div>`;
     L.sections.forEach((sec,i)=>{
-      h += `<div class="sec"><span class="num">${String(i+1).padStart(2,"0")}</span><h3>${esc(sec.hub.name)}系統</h3></div><div class="tree">` + sec.rows.map(rowHtml).join("") + `</div>`;
+      curRows = sec.rows;
+      h += `<div class="sec"><span class="num">${String(i+1).padStart(2,"0")}</span><h3>${esc(sec.hub.name)}系統</h3></div><div class="tree">` + sec.rows.map(r=>{ const x=rowHtml(r); return (UI.mode==="full" || r.depth<=1) ? x : ""; }).join("") + `</div>`;
     });
     if(L.unplaced.length) h += `<div class="lbl">つながり未登録</div><div class="row2">${L.unplaced.map(n=>`<button class="mini ${n.off?'off':''}" data-edit="${n.id}">${avatar(n)}${esc(n.name)}<small>${esc(TYPES[n.type]||"")}</small></button>`).join("")}</div>`;
     h += `<div class="hint">タップで編集。長押しして相手まで動かすとつながります。</div>`;
     document.getElementById("v-map").innerHTML = h;
     const rb=document.getElementById("reviewBtn"); if(rb) rb.addEventListener("click", ()=>{ reviewOpen=!reviewOpen; renderMap(); });
-    if(newEid){ const el=document.querySelector(`.row.new`); if(el) el.scrollIntoView({block:"center", behavior:"smooth"}); newEid=null; }
+    if(newEid){ const el=document.querySelector(`.row.new`); if(!el && UI.mode!=="full"){ setMode("full"); return; } if(el) el.scrollIntoView({block:"center", behavior:"smooth"}); newEid=null; }
   }
 
   // ===== 引き落とし =====
   function renderDebit(){
     const live = S.debits.filter(d=>!viaOff(d));
     const fixed = live.filter(d=>d.amt!=null).reduce((a,d)=>a+Number(d.amt),0), varn = live.filter(d=>d.amt==null).length;
-    const days = Array.from({length:31},(_,i)=>i+1).map(d=>{ const hit=live.some(x=>x.day===d); const lab=(hit||d===1||d%5===0||d===31)?(d===31?"末":d):""; return `<i data-d="${lab}" class="${hit?'on':''}"></i>`; }).join("");
+    const byDay = {}; live.forEach(d=>{ (byDay[d.day]=byDay[d.day]||[]).push(d); });
+    const dayFixed = d => (byDay[d]||[]).filter(x=>x.amt!=null).reduce((a,x)=>a+Number(x.amt),0);
+    const max = Math.max(0, ...Object.keys(byDay).map(d=>dayFixed(+d)));
+    const H = live.some(d=>d.amt==null) ? 52 : 64;
+    const cols = Array.from({length:31},(_,i)=>i+1).map(day=>{ const segs=(byDay[day]||[]).map(x=>{ const bk=byId(x.source); const col=bk?bk.col:"#94A3B8";
+      if(x.amt==null) return `<i class="seg var" style="border-color:${esc(col)};background:${esc(col)}26"></i>`;
+      const hpx = max ? Math.max(3, Math.round(Number(x.amt)/max*H)) : 3; return `<i class="seg" style="height:${hpx}px;background:${esc(col)}"></i>`; }).join("");
+      return `<div class="col">${segs}</div>`; }).join("");
+    const refv = [1e4,2e4,5e4,1e5,2e5,5e5,1e6,2e6].filter(v=>v<=max).pop();
+    const ref = refv ? `<div class="ref" style="bottom:${Math.round(refv/max*H)}px"><b>${refv/1e4}万</b></div>` : "";
+    let labs=""; for(let d=1; d<=31; ){ const on=!!byDay[d]; if(on){ let e=d; while(e<31 && byDay[e+1]) e++; const n=e-d+1; const txt = n===1 ? (d===31?"末":d) : `${d}${n===2?"·":"–"}${e===31?"末":e}`; labs += `<i class="on" style="grid-column:span ${n}">${txt}</i>`; d=e+1; } else { labs += `<i>${d===1||d===10||d===20?d:(d===31?"末":"")}</i>`; d++; } }
+    const chart = `<div class="chart"><div class="bars">${ref}${cols}</div><div class="lab">${labs}</div></div>`;
     const banks = S.nodes.filter(n=>n.type==="bank" && S.debits.some(d=>d.source===n.id));
     const need = banks.map(b=>{ const l=live.filter(d=>d.source===b.id); if(!l.length) return ""; const f=l.filter(d=>d.amt!=null).reduce((a,d)=>a+Number(d.amt),0); const v=l.filter(d=>d.amt==null).length; const last=Math.max(...l.map(d=>d.day)); return `<div class="need">${avatar(b)}<div class="t"><span class="n">${esc(b.name)}</span><span class="s">${dayLabel(last)}までに必要</span></div><div class="amt">${yen(f)}${v?`<small>＋ 変動 ${v}件</small>`:""}</div></div>`; }).join("");
-    const rows = [...S.debits].sort((a,b)=>a.day-b.day).map(d=>`<button class="drow" data-editd="${d.id}" style="${viaOff(d)?'opacity:.45':''}"><span class="d">${dayLabel(d.day)}</span><span class="n">${esc(d.item)}<small>${esc([byId(d.source)?.name, d.rollover?"休業日は翌営業日":""].filter(Boolean).join(" ・ "))}</small></span><span class="a">${d.amt!=null?yen(d.amt):'変動<small>金額未設定</small>'}</span></button>`).join("");
+    const rows = [...S.debits].sort((a,b)=>a.day-b.day).map(d=>`<button class="drow" data-editd="${d.id}" data-day="${d.day}" style="${viaOff(d)?'opacity:.45':''}"><span class="d">${dayLabel(d.day)}</span><span class="n">${esc(d.item)}<small>${esc([byId(d.source)?.name, d.rollover?"休業日は翌営業日":""].filter(Boolean).join(" ・ "))}</small></span><span class="a">${d.amt!=null?yen(d.amt):'変動<small>金額未設定</small>'}</span></button>`).join("");
     document.getElementById("v-debit").innerHTML =
-      `<div class="month"><b>毎月の予定 ${S.debits.length}件</b><span>固定額 ${yen(fixed)}${varn?` ＋ 変動 ${varn}件`:""}</span></div><div class="days">${days}</div>` + need +
+      `<div class="month"><b>毎月の予定 ${S.debits.length}件</b><span>固定額 ${yen(fixed)}${varn?` ＋ 変動 ${varn}件`:""}</span></div>${chart}` + need +
       (S.debits.length ? `<div class="dlist">${rows}</div>` : `<div class="empty">まだありません。右下の「＋」から追加してください。</div>`) + `<div class="hint">タップで編集。</div>`;
   }
 
@@ -425,15 +452,18 @@
   // ===== 共通 =====
   let view="map";
   const META = { map:["マップ", ()=>`${S.nodes.length}機関`], debit:["引き落とし", ()=>"毎月の予定"], share:["共有", ()=>"もしもの時のために"] };
-  function show(v){ view=v; ["map","debit","share"].forEach(k=>{ document.getElementById("v-"+k).hidden=(k!==v); }); document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on", b.dataset.v===v)); document.getElementById("ttl").textContent=META[v][0]; document.getElementById("sub").textContent=META[v][1](); document.getElementById("fab").hidden = (v==="share"); window.scrollTo(0,0); }
+  function show(v){ view=v; ["map","debit","share"].forEach(k=>{ document.getElementById("v-"+k).hidden=(k!==v); }); document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on", b.dataset.v===v)); document.getElementById("ttl").textContent=META[v][0]; document.getElementById("sub").textContent=META[v][1](); document.getElementById("sub").hidden=(v==="map"); document.getElementById("seg2").hidden=(v!=="map"); document.getElementById("fab").hidden = (v==="share"); window.scrollTo(0,0); }
   let tt, ta; function toast(msg){ const el=document.getElementById("toast"); el.classList.remove("act"); el.textContent=msg; el.classList.add("show"); clearTimeout(tt); clearTimeout(ta); tt=setTimeout(()=>el.classList.remove("show"),1800); }
   function toastAction(msg, label, fn){ const el=document.getElementById("toast"); el.classList.add("act"); el.innerHTML=`<span>${esc(msg)}</span><button>${esc(label)}</button>`; el.querySelector("button").addEventListener("click", ()=>{ el.classList.remove("show","act"); fn(); }); el.classList.add("show"); clearTimeout(tt); clearTimeout(ta); ta=setTimeout(()=>{ el.classList.remove("show","act"); }, 5000); }
   function renderBanner(){ document.getElementById("banner").innerHTML = S.settings.sample ? `<div class="banner">架空のサンプルです。編集すると自分のデータになります。<button class="btn sm" id="startEmpty">空にする</button></div>` : ""; const b=document.getElementById("startEmpty"); if(b) b.addEventListener("click", ()=>{ if(!confirm("サンプルを消して空から始めます。")) return; S={version:1,nodes:[],edges:[],debits:[],settings:{sample:false}}; save(); renderAll(); }); }
   function renderAll(){ renderBanner(); renderMap(); renderDebit(); renderShare(); document.getElementById("sub").textContent=META[view][1](); }
   document.getElementById("tabs").addEventListener("click", e=>{ const b=e.target.closest("button"); if(b) show(b.dataset.v); });
   document.getElementById("fab").addEventListener("click", ()=>{ if(view==="debit") debitForm({id:uid("d"),day:27,amt:null,rollover:true}, true); else nodeForm({id:uid("n"),name:"",sub:"",type:"bank",av:"?",col:TYPE_STYLE.bank[0],sq:false,hub:false,ap:false,off:false}, true); });
-  document.body.addEventListener("click", e=>{ const g=e.target.closest("[data-goto]"); if(g){ e.stopPropagation(); const id=g.dataset.goto; const o=document.querySelector(`.row[data-edit="${id}"]:not(.ghost), .mini[data-edit="${id}"]`); if(o){ o.scrollIntoView({block:"center", behavior:"smooth"}); o.classList.remove("new"); void o.offsetWidth; o.classList.add("new"); } return; } const t=e.target.closest("[data-edit]"); if(t){ const n=byId(t.dataset.edit); if(n) nodeForm(n,false); return; } const d=e.target.closest("[data-editd]"); if(d){ const x=S.debits.find(y=>y.id===d.dataset.editd); if(x) debitForm(x,false); } });
-  load(); renderAll(); show("map");
+  function flashTo(o){ if(!o) return; o.scrollIntoView({block:"center", behavior:"smooth"}); o.classList.remove("new"); void o.offsetWidth; o.classList.add("new"); }
+  function jumpTo(id){ const q=()=>document.querySelector(`.row[data-edit="${id}"]:not(.ghost), .mini[data-edit="${id}"]`); let o=q(); if(!o && UI.mode!=="full"){ setMode("full"); o=q(); } flashTo(o); }
+  document.getElementById("seg2").addEventListener("click", e=>{ const x=e.target.closest("button"); if(x) setMode(x.dataset.m); });
+  document.body.addEventListener("click", e=>{ const g=e.target.closest("[data-goto]"); if(g){ e.stopPropagation(); jumpTo(g.dataset.goto); return; } const m=e.target.closest("[data-more]"); if(m){ e.stopPropagation(); const id=m.dataset.more; setMode("full"); flashTo(document.querySelector(`.row[data-edit="${id}"]:not(.ghost)`)); return; } const c=e.target.closest(".chart .bars"); if(c){ const r=c.getBoundingClientRect(); const day=Math.min(31, Math.max(1, Math.floor((e.clientX-r.left)/r.width*31)+1)); const cand=[...document.querySelectorAll(".drow[data-day]")].map(x=>[Math.abs(+x.dataset.day-day), x]).sort((a,b)=>a[0]-b[0])[0]; if(cand && cand[0]<=2) flashTo(cand[1]); return; } const t=e.target.closest("[data-edit]"); if(t){ const n=byId(t.dataset.edit); if(n) nodeForm(n,false); return; } const d=e.target.closest("[data-editd]"); if(d){ const x=S.debits.find(y=>y.id===d.dataset.editd); if(x) debitForm(x,false); } });
+  load(); setMode(UI.mode, false); renderAll(); show("map");
 })();
 </script>
 </body>
