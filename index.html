@@ -27,6 +27,7 @@
   .seg2{ display:inline-flex; border:1px solid var(--edge); border-radius:999px; overflow:hidden; height:26px; background:var(--tile); }
   .seg2 button{ font-family:inherit; font-size:11px; padding:0 11px; border:0; background:transparent; color:var(--mute); cursor:pointer; }
   .seg2 button.on{ background:var(--ink); color:#fff; font-weight:700; }
+  .seg2[hidden]{ display:none; }
   .body{ flex:1; padding:0 12px 96px; display:flex; flex-direction:column; gap:10px; }
   .view[hidden]{ display:none; } .view{ display:flex; flex-direction:column; gap:10px; }
   .tabs{ position:fixed; left:0; right:0; bottom:0; margin:0 auto; max-width:520px; display:grid; grid-template-columns:repeat(3,1fr); border-top:1px solid var(--edge); background:var(--tile); padding:8px 6px calc(10px + env(safe-area-inset-bottom)); z-index:20; }
@@ -314,7 +315,7 @@
     const dayFixed = d => (byDay[d]||[]).filter(x=>x.amt!=null).reduce((a,x)=>a+Number(x.amt),0);
     const max = Math.max(0, ...Object.keys(byDay).map(d=>dayFixed(+d)));
     const H = live.some(d=>d.amt==null) ? 52 : 64;
-    const cols = Array.from({length:31},(_,i)=>i+1).map(day=>{ const segs=(byDay[day]||[]).map(x=>{ const bk=byId(x.source); const col=bk?bk.col:"#94A3B8";
+    const cols = Array.from({length:31},(_,i)=>i+1).map(day=>{ const segs=[...(byDay[day]||[])].sort((a,b)=>(a.amt==null)-(b.amt==null)).map(x=>{ const bk=byId(x.source); const col=bk?bk.col:"#94A3B8";
       if(x.amt==null) return `<i class="seg var" style="border-color:${esc(col)};background:${esc(col)}26"></i>`;
       const hpx = max ? Math.max(3, Math.round(Number(x.amt)/max*H)) : 3; return `<i class="seg" style="height:${hpx}px;background:${esc(col)}"></i>`; }).join("");
       return `<div class="col">${segs}</div>`; }).join("");
