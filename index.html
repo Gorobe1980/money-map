@@ -105,6 +105,14 @@
   .chart .seg{ display:block; border-radius:2px 2px 0 0; flex:none; }
   .chart .seg.var{ height:11px; border:1.5px dashed; box-sizing:border-box; }
   .chart .seg.xf{ border:1.5px solid; box-sizing:border-box; }
+  .chart .seg.apx{ border:1.5px dashed; box-sizing:border-box; }
+  .chart .tdy{ position:absolute; top:-4px; bottom:0; width:1px; background:var(--ok); pointer-events:none; } .chart .tdy::after{ content:"今日"; position:absolute; top:-9px; left:2px; font-size:8px; color:var(--ok); white-space:nowrap; }
+  .chart .col.past{ opacity:.35; }
+  .chart .lg{ display:flex; gap:10px; justify-content:flex-end; font-size:9px; color:var(--mute); margin-top:3px; } .chart .lg i{ display:inline-block; width:9px; height:9px; border-radius:2px; vertical-align:-1px; margin-right:3px; background:var(--ink); box-sizing:border-box; }
+  .chart .lg i.a{ background:#11182399; border:1px dashed var(--ink); } .chart .lg i.x{ background:#1118231a; border:1px solid var(--ink); } .chart .lg i.u{ background:transparent; border:1px dashed var(--ink); }
+  .today{ font-size:11px; color:var(--mute); margin-top:-2px; } .today b{ color:var(--ink); }
+  .row .nt{ display:none; }
+  #prhead{ display:none; }
   .need .t .s.in{ color:var(--ok); }
   .chart .ref{ position:absolute; left:0; right:0; border-top:1px dashed #C9CFD8; pointer-events:none; } .chart .ref b{ position:absolute; right:0; top:-12px; font-size:9px; color:var(--mute); font-weight:400; }
   .chart .lab{ display:grid; grid-template-columns:repeat(31,1fr); gap:2px; height:14px; margin-top:2px; }
@@ -135,11 +143,14 @@
   body.dragging{ overflow:hidden; }
   #dragline{ position:fixed; inset:0; width:100vw; height:100vh; pointer-events:none; z-index:25; display:none; } #dragline.on{ display:block; }
   .draghint{ position:fixed; left:50%; top:calc(12px + env(safe-area-inset-top)); transform:translateX(-50%); background:var(--ink); color:#fff; font-size:12px; padding:7px 14px; border-radius:999px; z-index:26; display:none; white-space:nowrap; } .draghint.on{ display:block; }
-  @media print{ body{ background:#fff; } .tabs, .fab, .banner, .toast, .scrim, .sheet, .review{ display:none !important; } #app{ max-width:none; } .body{ padding:0; } .view[hidden]{ display:flex !important; } #v-share{ display:none !important; } .tile, .drow{ break-inside:avoid; } }
+  @media print{ body{ background:#fff; } .tabs, .fab, .banner, .toast, .scrim, .sheet, .review, .appbar, .hint, .chip.up, .chip.more, .seg2{ display:none !important; } #app{ max-width:none; } .body{ padding:0; } .view[hidden]{ display:flex !important; } #v-share{ display:none !important; } .tile, .drow, .row{ break-inside:avoid; }
+    #prhead{ display:block; font-size:16px; font-weight:700; color:var(--ink); margin:0 0 8px; } #prhead small{ font-weight:400; color:var(--mute); font-size:11px; margin-left:8px; }
+    #v-debit{ break-before:page; } .row{ height:auto; min-height:52px; padding-top:4px; padding-bottom:4px; } .row .nt{ display:block; font-size:9.5px; color:#444; white-space:normal; margin-top:2px; } .row.fold .pd{ display:block; } }
 </style>
 </head>
 <body>
 <div id="app">
+  <div id="prhead"></div>
   <div class="appbar"><h1 id="ttl">マップ</h1><span class="sub" id="sub" hidden></span><div class="seg2" id="seg2"><button data-m="brief">ざっくり</button><button data-m="full" class="on">詳しく</button></div></div>
   <div class="body">
     <div id="banner"></div>
@@ -190,7 +201,7 @@
     const D = [
       {id:"d1",source:"mainbank",day:1,item:"カード分割払い",amt:25000,rollover:false},{id:"d2",source:"mainbank",day:5,item:"サブ銀行へ自動入金",amt:150000,rollover:false,via:"subbank",transfer:true},
       {id:"d3",source:"mainbank",day:15,item:"生命保険",amt:2500,rollover:true},{id:"d4",source:"mainbank",day:26,item:"iDeCo",amt:23000,rollover:true},
-      {id:"d5",source:"mainbank",day:26,item:"クレジットカードA",amt:null,rollover:true,via:"carda"},{id:"d6",source:"mainbank",day:27,item:"クレジットカードB",amt:null,rollover:true,via:"cardb"},
+      {id:"d5",source:"mainbank",day:26,item:"クレジットカードA",amt:80000,approx:true,rollover:true,via:"carda"},{id:"d6",source:"mainbank",day:27,item:"クレジットカードB",amt:null,rollover:true,via:"cardb"},
       {id:"d7",source:"mainbank",day:27,item:"家賃",amt:100000,rollover:true},{id:"d8",source:"subbank",day:31,item:"家族の口座へ生活費",amt:100000,rollover:true,via:"family"},
     ];
     return { version:1, nodes:N, edges:E, debits:D, settings:{ sample:true, updated:new Date().toISOString().slice(0,10) } };
@@ -284,6 +295,7 @@
     if(n.ap) chips.push(`<span class="chip ap">Apple Pay</span>`);
     if(r.back) chips.push(`<span class="chip ok">↩ 入金あり</span>`);
     if(n.off) chips.push(`<span class="chip off">解約予定</span>`);
+    if(n.note && !r.ghost) chips.push(`<span class="chip">メモ</span>`);
     if(r.kind==="link") chips.push(`<span class="chip lk">連携</span>`);
     if(r.ghost) chips.push(`<span class="chip up" data-goto="${n.id}">${seenIds.has(n.id)?"上にもあり ↑":"下にもあり ↓"}</span>`); else seenIds.add(n.id);
     const fold = UI.mode!=="full" && r.par && !r.ghost && r.depth>=1; const hid = fold ? curRows.filter(o=>o.anc && o.anc.includes(n.id)).length : 0;
@@ -293,7 +305,7 @@
     let conn = r.child ? `<i class="l"></i><i class="v"></i><b class="ah"></b>` : (r.inc ? `<i class="dn"></i>` : (r.hasin ? `<i class="up"></i><b class="dh"></b>` : ""));
     if(r.par) conn += `<i class="pd"></i>`;
     const sub = n.sub || TYPES[n.type];
-    return `<button class="${cls}" style="--d:${r.depth}" data-edit="${n.id}">${guides}${conn}${avatar(n)}<div class="t"><span class="n">${esc(n.name)}</span><span class="s">${esc(sub)}</span></div><div class="chips">${chips.join("")}</div></button>`;
+    return `<button class="${cls}" style="--d:${r.depth}" data-edit="${n.id}">${guides}${conn}${avatar(n)}<div class="t"><span class="n">${esc(n.name)}</span><span class="s">${esc(sub)}</span>${n.note && !r.ghost ? `<span class="nt">メモ: ${esc(n.note)}</span>` : ""}</div><div class="chips">${chips.join("")}</div></button>`;
   }
   function renderMap(){
     const L = layout(); let h = reviewHtml(); seenIds = new Set();
@@ -313,33 +325,40 @@
   function renderDebit(){
     const live = S.debits.filter(d=>!viaOff(d));
     const spend = live.filter(d=>!d.transfer);
-    const fixed = spend.filter(d=>d.amt!=null).reduce((a,d)=>a+Number(d.amt),0), varn = spend.filter(d=>d.amt==null).length;
+    const fixed = spend.filter(d=>d.amt!=null).reduce((a,d)=>a+Number(d.amt),0), varn = spend.filter(d=>d.amt==null).length, apxn = spend.filter(d=>d.amt!=null && d.approx).length;
+    const now = new Date(), today = now.getDate(), dim = new Date(now.getFullYear(), now.getMonth()+1, 0).getDate(); const realDay = d => d.day>=31 ? dim : Math.min(d.day, dim);
+    const rest = spend.filter(d=>realDay(d)>=today); const restFixed = rest.filter(d=>d.amt!=null).reduce((a,d)=>a+Number(d.amt),0), restVar = rest.filter(d=>d.amt==null).length, restApx = rest.some(d=>d.amt!=null && d.approx);
     const xfer = live.filter(d=>d.transfer && d.amt!=null).reduce((a,d)=>a+Number(d.amt),0), xfern = live.filter(d=>d.transfer).length;
     const byDay = {}; live.forEach(d=>{ (byDay[d.day]=byDay[d.day]||[]).push(d); });
     const dayFixed = d => (byDay[d]||[]).filter(x=>x.amt!=null).reduce((a,x)=>a+Number(x.amt),0);
     const max = Math.max(0, ...Object.keys(byDay).map(d=>dayFixed(+d)));
     const H = live.some(d=>d.amt==null) ? 52 : 64;
     const cols = Array.from({length:31},(_,i)=>i+1).map(day=>{ const segs=[...(byDay[day]||[])].sort((a,b)=>(a.amt==null)-(b.amt==null)).map(x=>{ const bk=byId(x.source); const col=bk?bk.col:"#94A3B8";
-      if(x.amt==null) return `<i class="seg var" style="border-color:${esc(col)};background:${esc(col)}26"></i>`;
-      const hpx = max ? Math.max(3, Math.round(Number(x.amt)/max*H)) : 3; return x.transfer ? `<i class="seg xf" style="height:${hpx}px;border-color:${esc(col)};background:${esc(col)}26"></i>` : `<i class="seg" style="height:${hpx}px;background:${esc(col)}"></i>`; }).join("");
-      return `<div class="col">${segs}</div>`; }).join("");
+      if(x.amt==null) return `<i class="seg var" style="border-color:${esc(col)}"></i>`;
+      const hpx = max ? Math.max(3, Math.round(Number(x.amt)/max*H)) : 3; return x.transfer ? `<i class="seg xf" style="height:${hpx}px;border-color:${esc(col)};background:${esc(col)}26"></i>` : (x.approx ? `<i class="seg apx" style="height:${hpx}px;border-color:${esc(col)};background:${esc(col)}8C"></i>` : `<i class="seg" style="height:${hpx}px;background:${esc(col)}"></i>`); }).join("");
+      return `<div class="col ${day<today?"past":""}">${segs}</div>`; }).join("");
     const refv = [1e4,2e4,5e4,1e5,2e5,5e5,1e6,2e6].filter(v=>v<=max).pop();
     const ref = refv ? `<div class="ref" style="bottom:${Math.round(refv/max*H)}px"><b>${refv/1e4}万</b></div>` : "";
     let labs=""; for(let d=1; d<=31; ){ const on=!!byDay[d]; if(on){ let e=d; while(e<31 && byDay[e+1]) e++; const n=e-d+1; const txt = n===1 ? (d===31?"末":d) : `${d}${n===2?"·":"–"}${e===31?"末":e}`; labs += `<i class="on" style="grid-column:span ${n}">${txt}</i>`; d=e+1; } else { labs += `<i>${d===1||d===10||d===20?d:(d===31?"末":"")}</i>`; d++; } }
-    const chart = `<div class="chart"><div class="bars">${ref}${cols}</div><div class="lab">${labs}</div></div>`;
+    const kinds = { f: live.some(d=>d.amt!=null && !d.approx && !d.transfer), a: live.some(d=>d.amt!=null && d.approx && !d.transfer), x: live.some(d=>d.transfer), u: live.some(d=>d.amt==null) };
+    const lgTxt = {f:"固定", a:"目安", x:"振替", u:"未設定"}; const lgKeys = Object.keys(kinds).filter(k=>kinds[k]);
+    const lg = lgKeys.length>=2 ? `<div class="lg">${lgKeys.map(k=>`<span><i class="${k}"></i>${lgTxt[k]}</span>`).join("")}</div>` : "";
+    const tdy = `<div class="tdy" style="left:calc(${(today-0.5)/31*100}%)"></div>`;
+    const chart = `<div class="chart"><div class="bars">${ref}${cols}${tdy}</div><div class="lab">${labs}</div>${lg}</div>`;
     const banks = S.nodes.filter(n=>n.type==="bank" && S.debits.some(d=>d.source===n.id));
-    const need = banks.map(b=>{ const l=live.filter(d=>d.source===b.id); if(!l.length) return ""; const f=l.filter(d=>d.amt!=null).reduce((a,d)=>a+Number(d.amt),0); const v=l.filter(d=>d.amt==null).length; const last=Math.max(...l.map(d=>d.day)); const inc = live.filter(d=>d.transfer && d.via===b.id && d.amt!=null).map(d=>`<span class="s in">${dayLabel(d.day)}に${esc(byId(d.source)?.name||"")}から ${yen(d.amt)} 入金</span>`).join(""); return `<div class="need">${avatar(b)}<div class="t"><span class="n">${esc(b.name)}</span><span class="s">${dayLabel(last)}までに必要</span>${inc}</div><div class="amt">${yen(f)}${v?`<small>＋ 変動 ${v}件</small>`:""}</div></div>`; }).join("");
-    const rows = [...S.debits].sort((a,b)=>a.day-b.day).map(d=>`<button class="drow" data-editd="${d.id}" data-day="${d.day}" style="${viaOff(d)?'opacity:.45':''}"><span class="d">${dayLabel(d.day)}</span><span class="n">${esc(d.item)}<small>${esc([byId(d.source)?.name, d.rollover?"休業日は翌営業日":""].filter(Boolean).join(" ・ "))}</small></span><span class="a">${d.amt!=null?yen(d.amt):'変動<small>金額未設定</small>'}${d.transfer?'<small>自分の口座へ振替</small>':''}</span></button>`).join("");
+    const need = banks.map(b=>{ const l=live.filter(d=>d.source===b.id); if(!l.length) return ""; const f=l.filter(d=>d.amt!=null).reduce((a,d)=>a+Number(d.amt),0); const v=l.filter(d=>d.amt==null).length; const ap=l.filter(d=>d.amt!=null && d.approx).length; const last=Math.max(...l.map(d=>d.day)); const inc = live.filter(d=>d.transfer && d.via===b.id && d.amt!=null).map(d=>`<span class="s in">${dayLabel(d.day)}に${esc(byId(d.source)?.name||"")}から ${yen(d.amt)} 入金</span>`).join(""); return `<div class="need">${avatar(b)}<div class="t"><span class="n">${esc(b.name)}</span><span class="s">${dayLabel(last)}までに必要</span>${inc}</div><div class="amt">${ap?"約":""}${yen(f)}${ap?`<small>目安 ${ap}件を含む</small>`:""}${v?`<small>＋ 未設定 ${v}件</small>`:""}</div></div>`; }).join("");
+    const rows = [...S.debits].sort((a,b)=>a.day-b.day).map(d=>`<button class="drow" data-editd="${d.id}" data-day="${d.day}" style="${viaOff(d)?'opacity:.45':''}"><span class="d">${dayLabel(d.day)}</span><span class="n">${esc(d.item)}<small>${esc([byId(d.source)?.name, d.rollover?"休業日は翌営業日":""].filter(Boolean).join(" ・ "))}</small></span><span class="a">${d.amt!=null?(d.approx?"約":"")+yen(d.amt):'未設定'}${d.approx&&d.amt!=null?'<small>目安</small>':''}${d.transfer?'<small>自分の口座へ振替</small>':''}</span></button>`).join("");
     document.getElementById("v-debit").innerHTML =
-      `<div class="month"><b>毎月の予定 ${S.debits.length}件</b><span>支出 ${yen(fixed)}${varn?` ＋ 変動 ${varn}件`:""}${xfern?` ・ 振替 ${yen(xfer)}`:""}</span></div>${chart}` + need +
+      `<div class="month"><b>毎月の予定 ${S.debits.length}件</b><span>支出 ${apxn?"約":""}${yen(fixed)}${varn?` ＋ 未設定 ${varn}件`:""}${xfern?` ・ 振替 ${yen(xfer)}`:""}</span></div>`
+      + `<div class="today">今日（${today}日）以降の支出 <b>${rest.length}件 ・ ${restApx?"約":""}${yen(restFixed)}</b>${restVar?` ＋ 未設定 ${restVar}件`:""}</div>${chart}` + need +
       (S.debits.length ? `<div class="dlist">${rows}</div>` : `<div class="empty">まだありません。右下の「＋」から追加してください。</div>`) + `<div class="hint">タップで編集。</div>`;
   }
 
   // ===== 共有 =====
   function renderShare(){
     document.getElementById("v-share").innerHTML =
-      `<div class="card"><h4><span class="sev bad"></span>このアプリに保存しないもの</h4><p>残高・暗証番号・口座番号は持ちません。データはこの端末の中だけに保存されます。</p></div>` +
-      `<button class="btn pri blk" id="print">印刷 / PDFに保存</button>` +
+      `<div class="card"><h4><span class="sev bad"></span>このアプリに保存しないもの</h4><p>残高・暗証番号・口座番号は持ちません。「もしもの時のメモ」にも暗証番号・パスワードは書かないでください。データはこの端末の中だけに保存されます。</p></div>` +
+      `<button class="btn pri blk" id="print">印刷 / PDFに保存</button><div class="hint">印刷には「${esc(S.settings.updated||"")} 時点」と入ります。マップの表示（ざっくり／詳しく）のまま印刷されます。</div>` +
       `<div class="card"><h4>書き出し・読み込み</h4><div class="actions"><button class="btn" id="exportBtn">書き出す</button><button class="btn" id="importBtn">読み込む</button></div><textarea id="io" rows="4" placeholder="書き出したテキストが出ます。読み込む時はここに貼り付けます。"></textarea><p>書き出したテキストを控えておけば、別の端末やアプリ版へ移せます。</p></div>` +
       `<div class="card"><h4>初期化</h4><div class="actions"><button class="btn" id="loadSample">サンプルを読み込む</button><button class="btn danger" id="clearAll">すべて消す</button></div></div>`;
     document.getElementById("print").addEventListener("click", ()=>{ show("map"); setTimeout(()=>window.print(), 100); });
@@ -373,12 +392,13 @@
       <div class="f"><label>名前</label><input type="text" id="nname" value="${esc(n.name)}" placeholder="例: メイン銀行" autocomplete="off"></div>
       <div class="f"><label>種類</label><select id="ntype">${opt(Object.entries(TYPES), n.type)}</select></div>
       <div class="f2"><div class="sw ${n.ap?'on':''}" id="nap">Apple Pay<i></i></div><div class="sw ${n.hub?'on':''}" id="nhub">起点の銀行<i></i></div></div>
+      <div class="f"><label>もしもの時のメモ（解約方法・連絡先など。暗証番号やパスワードは書かない）</label><textarea id="nnote" rows="2" placeholder="例: 解約はアプリから。カードは机の引き出し">${esc(n.note||"")}</textarea></div>
       ${isNew?"":`<div class="f"><label>つながり</label><div class="edges">${S.edges.filter(e=>e.from===n.id||e.to===n.id).map(e=>`<div class="e"><span>${e.from===n.id?`<b>この機関</b> → ${esc(byId(e.to)?.name)}`:`${esc(byId(e.from)?.name)} → <b>この機関</b>`}　<small>${KINDS[e.kind]}</small></span><button class="btn sm" data-deledge="${e.id}">削除</button></div>`).join("")||`<div class="hint">まだありません。マップで長押しして相手まで動かすとつながります。</div>`}</div></div>
       <div class="f"><label>やめるとどうなる</label>${(()=>{ const c=consequences(n); return c.length?`<ul class="list">${c.map(t=>`<li>・ ${esc(t)}</li>`).join("")}</ul>`:`<div class="empty">紐づくものはありません。そのままやめられます。</div>`; })()}</div>`}
       <div class="actions"><button class="btn pri" id="saveNode">保存</button>${isNew?"":`<button class="btn" id="offNode">${n.off?"解約予定を取消":"解約予定"}</button><button class="btn danger" id="delNode">削除</button>`}</div>`);
     document.getElementById("close").addEventListener("click", closeSheet);
     sheet.querySelectorAll(".sw").forEach(s=>s.addEventListener("click", ()=>s.classList.toggle("on")));
-    const read = ()=>{ const nm=document.getElementById("nname").value.trim()||"名称未設定"; const tp=document.getElementById("ntype").value; if(isNew||tp!==n.type){ n.col=TYPE_STYLE[tp][0]; n.sq=TYPE_STYLE[tp][1]; } if(isNew||nm!==n.name) n.av=autoAv(nm); n.name=nm; n.type=tp; n.ap=document.getElementById("nap").classList.contains("on"); n.hub=document.getElementById("nhub").classList.contains("on") && n.type==="bank"; };
+    const read = ()=>{ const nm=document.getElementById("nname").value.trim()||"名称未設定"; const tp=document.getElementById("ntype").value; if(isNew||tp!==n.type){ n.col=TYPE_STYLE[tp][0]; n.sq=TYPE_STYLE[tp][1]; } if(isNew||nm!==n.name) n.av=autoAv(nm); n.name=nm; n.type=tp; n.note=document.getElementById("nnote").value.trim(); n.ap=document.getElementById("nap").classList.contains("on"); n.hub=document.getElementById("nhub").classList.contains("on") && n.type==="bank"; };
     document.getElementById("saveNode").addEventListener("click", ()=>{ read(); if(isNew){ if(n.type==="bank" && !S.nodes.some(x=>x.hub)) n.hub=true; S.nodes.push(n); } S.settings.sample=false; save(); closeSheet(); renderAll(); toast("保存しました"); });
     if(!isNew){
       sheet.querySelectorAll("[data-deledge]").forEach(b=>b.addEventListener("click", ()=>{ S.edges=S.edges.filter(e=>e.id!==b.dataset.deledge); save(); nodeForm(n,false); renderAll(); }));
@@ -404,15 +424,17 @@
     openSheet(`<h2>${isNew?"引き落としを追加":"引き落としを編集"}<button id="close" aria-label="閉じる">×</button></h2>
       <div class="f"><label>項目</label><input type="text" id="ditem" value="${esc(d.item||"")}" placeholder="例: 家賃 ／ クレジットカードA" autocomplete="off"></div>
       <div class="f"><label>引き落とし元の銀行</label><select id="dsrc">${opt(banks, d.source||banks[0][0])}</select></div>
-      <div class="f2"><div class="f"><label>日（31＝月末）</label><input type="number" id="dday" min="1" max="31" value="${d.day||27}"></div><div class="f"><label>金額（空欄＝変動）</label><input type="number" id="damt" value="${d.amt==null?"":d.amt}" placeholder="例: 100000"></div></div>
+      <div class="f2"><div class="f"><label>日（31＝月末）</label><input type="number" id="dday" min="1" max="31" value="${d.day||27}"></div><div class="f"><label>金額（空欄＝未設定）</label><input type="number" id="damt" value="${d.amt==null?"":d.amt}" placeholder="例: 100000"></div></div>
+      <div class="sw ${d.approx?'on':''}" id="dapx">金額はおおよそ（毎月変わる）<i></i></div><div class="hint">多めに入れておくと安心です。</div>
       <div class="sw ${d.rollover?'on':''}" id="droll">銀行休業日は翌営業日<i></i></div>
       <div class="sw ${d.transfer?'on':''}" id="dxfer">自分の口座への振替（支出に数えない）<i></i></div>
       <div class="f" id="dxto" ${d.transfer?"":"hidden"}><label>振替先の口座</label><select id="dto">${opt(banks, d.via||banks[0][0])}</select></div>
       <div class="actions"><button class="btn pri" id="saveD">保存</button>${isNew?"":`<button class="btn danger" id="delD">削除</button>`}</div>`);
     document.getElementById("close").addEventListener("click", closeSheet);
     document.getElementById("droll").addEventListener("click", e=>e.currentTarget.classList.toggle("on"));
+    document.getElementById("dapx").addEventListener("click", e=>e.currentTarget.classList.toggle("on"));
     document.getElementById("dxfer").addEventListener("click", e=>{ e.currentTarget.classList.toggle("on"); document.getElementById("dxto").hidden = !e.currentTarget.classList.contains("on"); });
-    document.getElementById("saveD").addEventListener("click", ()=>{ d.item=document.getElementById("ditem").value.trim()||"名称未設定"; d.source=document.getElementById("dsrc").value; d.day=Math.min(31,Math.max(1,parseInt(document.getElementById("dday").value)||1)); const a=document.getElementById("damt").value.trim(); d.amt=a===""?null:Number(a); d.rollover=document.getElementById("droll").classList.contains("on"); d.transfer=document.getElementById("dxfer").classList.contains("on"); if(d.transfer) d.via=document.getElementById("dto").value; if(isNew) S.debits.push(d); S.settings.sample=false; save(); closeSheet(); renderAll(); toast("保存しました"); });
+    document.getElementById("saveD").addEventListener("click", ()=>{ d.item=document.getElementById("ditem").value.trim()||"名称未設定"; d.source=document.getElementById("dsrc").value; d.day=Math.min(31,Math.max(1,parseInt(document.getElementById("dday").value)||1)); const a=document.getElementById("damt").value.trim(); d.amt=a===""?null:Number(a); d.approx=document.getElementById("dapx").classList.contains("on"); d.rollover=document.getElementById("droll").classList.contains("on"); d.transfer=document.getElementById("dxfer").classList.contains("on"); if(d.transfer) d.via=document.getElementById("dto").value; if(isNew) S.debits.push(d); S.settings.sample=false; save(); closeSheet(); renderAll(); toast("保存しました"); });
     if(!isNew) document.getElementById("delD").addEventListener("click", ()=>{ if(!confirm("この引き落としを削除します。")) return; S.debits=S.debits.filter(x=>x.id!==d.id); save(); closeSheet(); renderAll(); });
   }
 
@@ -464,7 +486,7 @@
   let tt, ta; function toast(msg){ const el=document.getElementById("toast"); el.classList.remove("act"); el.textContent=msg; el.classList.add("show"); clearTimeout(tt); clearTimeout(ta); tt=setTimeout(()=>el.classList.remove("show"),1800); }
   function toastAction(msg, label, fn){ const el=document.getElementById("toast"); el.classList.add("act"); el.innerHTML=`<span>${esc(msg)}</span><button>${esc(label)}</button>`; el.querySelector("button").addEventListener("click", ()=>{ el.classList.remove("show","act"); fn(); }); el.classList.add("show"); clearTimeout(tt); clearTimeout(ta); ta=setTimeout(()=>{ el.classList.remove("show","act"); }, 5000); }
   function renderBanner(){ document.getElementById("banner").innerHTML = S.settings.sample ? `<div class="banner">架空のサンプルです。編集すると自分のデータになります。<button class="btn sm" id="startEmpty">空にする</button></div>` : ""; const b=document.getElementById("startEmpty"); if(b) b.addEventListener("click", ()=>{ if(!confirm("サンプルを消して空から始めます。")) return; S={version:1,nodes:[],edges:[],debits:[],settings:{sample:false}}; save(); renderAll(); }); }
-  function renderAll(){ renderBanner(); renderMap(); renderDebit(); renderShare(); document.getElementById("sub").textContent=META[view][1](); }
+  function renderAll(){ renderBanner(); renderMap(); renderDebit(); renderShare(); document.getElementById("prhead").innerHTML = `お金の流れマップ<small>${esc(S.settings.updated||"")} 時点</small>`; document.getElementById("sub").textContent=META[view][1](); }
   document.getElementById("tabs").addEventListener("click", e=>{ const b=e.target.closest("button"); if(b) show(b.dataset.v); });
   document.getElementById("fab").addEventListener("click", ()=>{ if(view==="debit") debitForm({id:uid("d"),day:27,amt:null,rollover:true}, true); else nodeForm({id:uid("n"),name:"",sub:"",type:"bank",av:"?",col:TYPE_STYLE.bank[0],sq:false,hub:false,ap:false,off:false}, true); });
   function flashTo(o){ if(!o) return; o.scrollIntoView({block:"center", behavior:"smooth"}); o.classList.remove("new"); void o.offsetWidth; o.classList.add("new"); }
