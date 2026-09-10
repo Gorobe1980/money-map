@@ -189,7 +189,7 @@
   const KEY = "moneymap.v1";
   const TYPES = { income:"収入", bank:"銀行口座", card:"カード", securities:"証券・取引所", wallet:"ウォレット", pay:"QR・電子マネー", app:"アプリ・サービス", use:"利用先" };
   const TYPE_STYLE = { income:["#1F9D6A",false], bank:["#1F4E79",false], card:["#374151",true], securities:["#0B5AA5",false], wallet:["#F6851B",true], pay:["#BF0000",true], app:["#8B5CF6",true], use:["#4B5563",true] };
-  const APP_VER = "2026-09-10 d";
+  const APP_VER = "2026-09-10 e";
   const KINDS = { in:"入金", out:"出金", link:"連携" };
   const CATS = { housing:["住居","#5B6B8C"], insurance:["保険","#7A9A7E"], invest:["投資・貯蓄","#1F9D6A"], card:["カード","#C08457"], utility:["通信・光熱","#D9A441"], subs:["サブスク","#9B6BFF"], living:["生活費","#E07A5F"], other:["その他","#A0A7B4"] };
   const catOf = d => CATS[d.cat] ? d.cat : "other";
@@ -418,6 +418,7 @@
     openSheet(`<h2>${isNew?"追加":"編集"}<button id="close" aria-label="閉じる">×</button></h2>
       <div class="f"><label>名前</label><input type="text" id="nname" value="${esc(n.name)}" placeholder="例: メイン銀行" autocomplete="off"></div>
       <div class="f"><label>種類</label><select id="ntype">${opt(Object.entries(TYPES), n.type)}</select></div>
+      <div class="f"><label>補足（名前の下に小さく表示。空欄なら種類名）</label><input type="text" id="nsub" value="${esc(n.sub||"")}" placeholder="例: 給与振込口座 ／ 26日引き落とし" autocomplete="off"></div>
       <div class="f2"><div class="sw ${n.ap?'on':''}" id="nap">Apple Pay<i></i></div><div class="sw ${n.hub?'on':''}" id="nhub">起点の銀行<i></i></div></div>
       <div class="f"><label>もしもの時のメモ（解約方法・連絡先など。暗証番号やパスワードは書かない）</label><textarea id="nnote" rows="2" placeholder="例: 解約はアプリから。カードは机の引き出し">${esc(n.note||"")}</textarea></div>
       ${isNew?"":`<div class="f"><label>つながり</label><div class="edges">${S.edges.filter(e=>e.from===n.id||e.to===n.id).map(e=>`<div class="e"><span>${e.from===n.id?`<b>この機関</b> → ${esc(byId(e.to)?.name)}`:`${esc(byId(e.from)?.name)} → <b>この機関</b>`}　<small>${KINDS[e.kind]}</small></span><button class="btn sm" data-deledge="${e.id}">削除</button></div>`).join("")||`<div class="hint">まだありません。マップで長押しして相手まで動かすとつながります。</div>`}</div></div>
@@ -425,7 +426,7 @@
       <div class="actions"><button class="btn pri" id="saveNode">保存</button>${isNew?"":`<button class="btn" id="offNode">${n.off?"解約予定を取消":"解約予定"}</button><button class="btn danger" id="delNode">削除</button>`}</div>`);
     document.getElementById("close").addEventListener("click", closeSheet);
     sheet.querySelectorAll(".sw").forEach(s=>s.addEventListener("click", ()=>s.classList.toggle("on")));
-    const read = ()=>{ const nm=document.getElementById("nname").value.trim()||"名称未設定"; const tp=document.getElementById("ntype").value; if(isNew||tp!==n.type){ n.col=TYPE_STYLE[tp][0]; n.sq=TYPE_STYLE[tp][1]; } if(isNew||nm!==n.name) n.av=autoAv(nm); n.name=nm; n.type=tp; n.note=document.getElementById("nnote").value.trim(); n.ap=document.getElementById("nap").classList.contains("on"); n.hub=document.getElementById("nhub").classList.contains("on") && n.type==="bank"; };
+    const read = ()=>{ const nm=document.getElementById("nname").value.trim()||"名称未設定"; const tp=document.getElementById("ntype").value; if(isNew||tp!==n.type){ n.col=TYPE_STYLE[tp][0]; n.sq=TYPE_STYLE[tp][1]; } if(isNew||nm!==n.name) n.av=autoAv(nm); n.name=nm; n.type=tp; n.sub=document.getElementById("nsub").value.trim(); n.note=document.getElementById("nnote").value.trim(); n.ap=document.getElementById("nap").classList.contains("on"); n.hub=document.getElementById("nhub").classList.contains("on") && n.type==="bank"; };
     document.getElementById("saveNode").addEventListener("click", ()=>{ read(); if(isNew){ if(n.type==="bank" && !S.nodes.some(x=>x.hub)) n.hub=true; S.nodes.push(n); } S.settings.sample=false; save(); closeSheet(); renderAll(); toast("保存しました"); });
     if(!isNew){
       sheet.querySelectorAll("[data-deledge]").forEach(b=>b.addEventListener("click", ()=>{ S.edges=S.edges.filter(e=>e.id!==b.dataset.deledge); save(); nodeForm(n,false); renderAll(); }));
