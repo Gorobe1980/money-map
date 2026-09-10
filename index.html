@@ -119,7 +119,8 @@
   .chart .ref{ position:absolute; left:0; right:0; border-top:1px dashed #C9CFD8; pointer-events:none; } .chart .ref b{ position:absolute; right:0; top:-12px; font-size:9px; color:var(--mute); font-weight:400; }
   .chart .lab{ display:grid; grid-template-columns:repeat(31,1fr); gap:2px; height:14px; margin-top:2px; }
   .chart .lab i{ font-style:normal; font-size:9px; color:var(--mute); text-align:center; white-space:nowrap; line-height:14px; } .chart .lab i.on{ color:var(--ink); font-weight:700; }
-  .drow.new{ animation:pulse 1.2s ease-out 1; }
+  .drow.new{ animation:pulseD 1.2s ease-out 1; }
+  @keyframes pulseD{ 0%{ box-shadow:inset 0 0 0 2px var(--outflow); background:#EEF3FF; } 100%{ box-shadow:inset 0 0 0 0 transparent; background:var(--tile); } }
   .dlist{ display:flex; flex-direction:column; gap:5px; }
   .dwrap{ position:relative; overflow:hidden; border-radius:9px; }
   .dwrap .ddel{ position:absolute; top:0; right:0; bottom:0; width:72px; border:0; background:var(--danger); color:#fff; font-weight:700; font-size:13px; font-family:inherit; cursor:pointer; }
@@ -188,7 +189,7 @@
   const KEY = "moneymap.v1";
   const TYPES = { income:"収入", bank:"銀行口座", card:"カード", securities:"証券・取引所", wallet:"ウォレット", pay:"QR・電子マネー", app:"アプリ・サービス", use:"利用先" };
   const TYPE_STYLE = { income:["#1F9D6A",false], bank:["#1F4E79",false], card:["#374151",true], securities:["#0B5AA5",false], wallet:["#F6851B",true], pay:["#BF0000",true], app:["#8B5CF6",true], use:["#4B5563",true] };
-  const APP_VER = "2026-09-10 c";
+  const APP_VER = "2026-09-10 d";
   const KINDS = { in:"入金", out:"出金", link:"連携" };
   const CATS = { housing:["住居","#5B6B8C"], insurance:["保険","#7A9A7E"], invest:["投資・貯蓄","#1F9D6A"], card:["カード","#C08457"], utility:["通信・光熱","#D9A441"], subs:["サブスク","#9B6BFF"], living:["生活費","#E07A5F"], other:["その他","#A0A7B4"] };
   const catOf = d => CATS[d.cat] ? d.cat : "other";
