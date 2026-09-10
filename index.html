@@ -202,7 +202,7 @@
   const KEY = "moneymap.v1";
   const TYPES = { income:"収入", bank:"銀行口座", card:"カード", securities:"証券・取引所", wallet:"ウォレット", pay:"QR・電子マネー", app:"アプリ・サービス", use:"利用先" };
   const TYPE_STYLE = { income:["#1F9D6A",false], bank:["#1F4E79",false], card:["#374151",true], securities:["#0B5AA5",false], wallet:["#F6851B",true], pay:["#BF0000",true], app:["#8B5CF6",true], use:["#4B5563",true] };
-  const APP_VER = "2026-09-10 i";
+  const APP_VER = "2026-09-10 j";
   const KINDS = { in:"入金", out:"出金", link:"連携" };
   const CATS = { housing:["住居","#5B6B8C"], insurance:["保険","#7A9A7E"], invest:["投資・貯蓄","#1F9D6A"], card:["カード","#C08457"], utility:["通信・光熱","#D9A441"], subs:["サブスク","#9B6BFF"], living:["生活費","#E07A5F"], other:["その他","#A0A7B4"] };
   const catOf = d => CATS[d.cat] ? d.cat : "other";
@@ -455,7 +455,7 @@
       <div class="f"><label>補足（名前の下に小さく表示。空欄なら種類名）</label><input type="text" id="nsub" value="${esc(n.sub||"")}" placeholder="例: 給与振込口座 ／ 26日引き落とし" autocomplete="off"></div>
       <div class="f2"><div class="sw ${n.ap?'on':''}" id="nap">Apple Pay<i></i></div><div class="sw ${n.hub?'on':''}" id="nhub">起点の銀行<i></i></div></div>
       <div class="f"><label>もしもの時のメモ（解約方法・連絡先など。暗証番号やパスワードは書かない）</label><textarea id="nnote" rows="2" placeholder="例: 解約はアプリから。カードは机の引き出し">${esc(n.note||"")}</textarea></div>
-      ${isNew?"":`<div class="f"><label>つながり</label><div class="edges">${S.edges.filter(e=>e.from===n.id||e.to===n.id).map(e=>`<div class="e"><span>${e.from===n.id?`<b>この機関</b> → ${esc(byId(e.to)?.name)}`:`${esc(byId(e.from)?.name)} → <b>この機関</b>`}　<small>${KINDS[e.kind]}</small></span><button class="btn sm" data-deledge="${e.id}">削除</button></div>`).join("")||`<div class="hint">まだありません。マップで長押しして相手まで動かすとつながります。</div>`}</div></div>
+      ${isNew?"":`<div class="f"><label>つながり</label><div class="edges">${S.edges.filter(e=>e.from===n.id||e.to===n.id).map(e=>`<div class="e"><span>${e.from===n.id?`<b>この機関</b> → ${esc(byId(e.to)?.name)}`:`${esc(byId(e.from)?.name)} → <b>この機関</b>`}　<small>${KINDS[e.kind]}</small></span><button class="btn sm" data-editedge="${e.id}">変更</button><button class="btn sm" data-deledge="${e.id}">削除</button></div>`).join("")||`<div class="hint">まだありません。マップで長押しして相手まで動かすとつながります。</div>`}</div></div>
       <div class="f"><label>やめるとどうなる</label>${(()=>{ const c=consequences(n); return c.length?`<ul class="list">${c.map(t=>`<li>・ ${esc(t)}</li>`).join("")}</ul>`:`<div class="empty">紐づくものはありません。そのままやめられます。</div>`; })()}</div>`}
       <div class="actions"><button class="btn pri" id="saveNode">保存</button>${isNew?"":`<button class="btn" id="offNode">${n.off?"解約予定を取消":"解約予定"}</button><button class="btn danger" id="delNode">削除</button>`}</div>`);
     document.getElementById("close").addEventListener("click", closeSheet);
@@ -463,12 +463,13 @@
     const read = ()=>{ const nm=document.getElementById("nname").value.trim()||"名称未設定"; const tp=document.getElementById("ntype").value; if(isNew||tp!==n.type){ n.col=TYPE_STYLE[tp][0]; n.sq=TYPE_STYLE[tp][1]; } if(isNew||nm!==n.name) n.av=autoAv(nm); n.name=nm; n.type=tp; n.sub=document.getElementById("nsub").value.trim(); n.note=document.getElementById("nnote").value.trim(); n.ap=document.getElementById("nap").classList.contains("on"); n.hub=document.getElementById("nhub").classList.contains("on") && n.type==="bank"; };
     document.getElementById("saveNode").addEventListener("click", ()=>{ read(); if(isNew){ if(n.type==="bank" && !S.nodes.some(x=>x.hub)) n.hub=true; S.nodes.push(n); } S.settings.sample=false; save(); closeSheet(); renderAll(); toast("保存しました"); });
     if(!isNew){
+      sheet.querySelectorAll("[data-editedge]").forEach(b=>b.addEventListener("click", ()=>edgeForm(b.dataset.editedge, ()=>nodeForm(n,false))));
       sheet.querySelectorAll("[data-deledge]").forEach(b=>b.addEventListener("click", ()=>{ const i=S.edges.findIndex(e=>e.id===b.dataset.deledge); if(i<0) return; const e=S.edges[i]; S.edges.splice(i,1); save(); nodeForm(n,false); renderAll(); toastAction("つながりを削除しました", "元に戻す", ()=>{ S.edges.splice(Math.min(i,S.edges.length),0,e); save(); if(sheet.classList.contains("on")) nodeForm(n,false); renderAll(); }); }));
       document.getElementById("offNode").addEventListener("click", ()=>{ read(); n.off=!n.off; save(); closeSheet(); renderAll(); toast(n.off?"解約予定にしました":"解約予定を取り消しました"); });
       document.getElementById("delNode").addEventListener("click", ()=>{ const snap={nodes:S.nodes.slice(), edges:S.edges.slice(), debits:S.debits.map(d=>Object.assign({},d))}; S.nodes=S.nodes.filter(x=>x.id!==n.id); S.edges=S.edges.filter(e=>e.from!==n.id&&e.to!==n.id); S.debits=S.debits.filter(d=>d.source!==n.id); S.debits.forEach(d=>{ if(d.via===n.id) d.via=""; }); save(); closeSheet(); renderAll(); toastAction(`${n.name} を削除しました`, "元に戻す", ()=>{ S.nodes=snap.nodes; S.edges=snap.edges; S.debits=snap.debits; save(); renderAll(); }); });
     }
   }
-  function edgeForm(eid){
+  function edgeForm(eid, back){
     const e = S.edges.find(x=>x.id===eid); if(!e) return;
     openSheet(`<h2>つながりを変更<button id="close" aria-label="閉じる">×</button></h2>
       <div class="edges"><div class="e"><span id="pair"><b>${esc(byId(e.from).name)}</b> → <b>${esc(byId(e.to).name)}</b></span><button class="btn sm" id="swap">向きを逆に</button></div></div>
@@ -477,11 +478,11 @@
     let f=e.from, t=e.to;
     document.getElementById("close").addEventListener("click", closeSheet);
     document.getElementById("swap").addEventListener("click", ()=>{ [f,t]=[t,f]; document.getElementById("pair").innerHTML=`<b>${esc(byId(f).name)}</b> → <b>${esc(byId(t).name)}</b>`; });
-    document.getElementById("cSave").addEventListener("click", ()=>{ e.from=f; e.to=t; e.kind=document.getElementById("ckind").value; save(); closeSheet(); renderAll(); toast("保存しました"); });
+    document.getElementById("cSave").addEventListener("click", ()=>{ e.from=f; e.to=t; e.kind=document.getElementById("ckind").value; save(); renderAll(); toast("保存しました"); if(back) back(); else closeSheet(); });
     document.getElementById("cDel").addEventListener("click", ()=>{ const i=S.edges.findIndex(x=>x.id===eid); if(i<0) return; const e=S.edges[i]; S.edges.splice(i,1); save(); closeSheet(); renderAll(); toastAction("つながりを削除しました", "元に戻す", ()=>{ S.edges.splice(Math.min(i,S.edges.length),0,e); save(); renderAll(); }); });
   }
   function debitForm(d, isNew){
-    const banks = S.nodes.filter(n=>n.type==="bank").map(n=>[n.id,n.name]);
+    const banks = S.nodes.filter(n=>n.type==="bank").map(n=>[n.id,n.name]); const cards = [["","なし"], ...S.nodes.filter(n=>n.type==="card").map(n=>[n.id,n.name])];
     if(!banks.length){ toast("先に銀行口座を追加してください"); return; }
     openSheet(`<h2>${isNew?"引き落としを追加":"引き落としを編集"}<button id="close" aria-label="閉じる">×</button></h2>
       <div class="f"><label>項目</label><input type="text" id="ditem" value="${esc(d.item||"")}" placeholder="例: 家賃 ／ クレジットカードA" autocomplete="off"></div>
@@ -492,12 +493,13 @@
       <div class="sw ${d.rollover?'on':''}" id="droll">銀行休業日は翌営業日<i></i></div>
       <div class="sw ${d.transfer?'on':''}" id="dxfer">自分の口座への振替（支出に数えない）<i></i></div>
       <div class="f" id="dxto" ${d.transfer?"":"hidden"}><label>振替先の口座</label><select id="dto">${opt(banks, d.via||banks[0][0])}</select></div>
+      <div class="f" id="dviaw" ${d.transfer?"hidden":""}><label>経由するカード（任意。カードを解約予定にすると、この引き落としも薄く表示）</label><select id="dvia">${opt(cards, (!d.transfer && byId(d.via) && byId(d.via).type==="card") ? d.via : "")}</select></div>
       <div class="actions"><button class="btn pri" id="saveD">保存</button>${isNew?"":`<button class="btn danger" id="delD">削除</button>`}</div>`);
     document.getElementById("close").addEventListener("click", closeSheet);
     document.getElementById("droll").addEventListener("click", e=>e.currentTarget.classList.toggle("on"));
     document.getElementById("dapx").addEventListener("click", e=>e.currentTarget.classList.toggle("on"));
-    document.getElementById("dxfer").addEventListener("click", e=>{ e.currentTarget.classList.toggle("on"); document.getElementById("dxto").hidden = !e.currentTarget.classList.contains("on"); });
-    document.getElementById("saveD").addEventListener("click", ()=>{ d.item=document.getElementById("ditem").value.trim()||"名称未設定"; d.cat=document.getElementById("dcat").value; d.source=document.getElementById("dsrc").value; d.day=Math.min(31,Math.max(1,parseInt(document.getElementById("dday").value)||1)); const a=document.getElementById("damt").value.trim(); d.amt=a===""?null:Number(a); d.approx=document.getElementById("dapx").classList.contains("on"); d.rollover=document.getElementById("droll").classList.contains("on"); d.transfer=document.getElementById("dxfer").classList.contains("on"); if(d.transfer) d.via=document.getElementById("dto").value; if(isNew) S.debits.push(d); S.settings.sample=false; save(); closeSheet(); renderAll(); toast("保存しました"); });
+    document.getElementById("dxfer").addEventListener("click", e=>{ e.currentTarget.classList.toggle("on"); document.getElementById("dxto").hidden = !e.currentTarget.classList.contains("on"); document.getElementById("dviaw").hidden = e.currentTarget.classList.contains("on"); });
+    document.getElementById("saveD").addEventListener("click", ()=>{ d.item=document.getElementById("ditem").value.trim()||"名称未設定"; d.cat=document.getElementById("dcat").value; d.source=document.getElementById("dsrc").value; d.day=Math.min(31,Math.max(1,parseInt(document.getElementById("dday").value)||1)); const a=document.getElementById("damt").value.trim(); d.amt=a===""?null:Number(a); d.approx=document.getElementById("dapx").classList.contains("on"); d.rollover=document.getElementById("droll").classList.contains("on"); d.transfer=document.getElementById("dxfer").classList.contains("on"); if(d.transfer) d.via=document.getElementById("dto").value; else d.via=document.getElementById("dvia").value; if(isNew) S.debits.push(d); S.settings.sample=false; save(); closeSheet(); renderAll(); toast("保存しました"); });
     if(!isNew) document.getElementById("delD").addEventListener("click", ()=>{ closeSheet(); deleteDebit(d.id); });
   }
 
