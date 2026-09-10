@@ -189,7 +189,7 @@
   const KEY = "moneymap.v1";
   const TYPES = { income:"収入", bank:"銀行口座", card:"カード", securities:"証券・取引所", wallet:"ウォレット", pay:"QR・電子マネー", app:"アプリ・サービス", use:"利用先" };
   const TYPE_STYLE = { income:["#1F9D6A",false], bank:["#1F4E79",false], card:["#374151",true], securities:["#0B5AA5",false], wallet:["#F6851B",true], pay:["#BF0000",true], app:["#8B5CF6",true], use:["#4B5563",true] };
-  const APP_VER = "2026-09-10 e";
+  const APP_VER = "2026-09-10 f";
   const KINDS = { in:"入金", out:"出金", link:"連携" };
   const CATS = { housing:["住居","#5B6B8C"], insurance:["保険","#7A9A7E"], invest:["投資・貯蓄","#1F9D6A"], card:["カード","#C08457"], utility:["通信・光熱","#D9A441"], subs:["サブスク","#9B6BFF"], living:["生活費","#E07A5F"], other:["その他","#A0A7B4"] };
   const catOf = d => CATS[d.cat] ? d.cat : "other";
@@ -386,9 +386,10 @@
       `<div class="card"><h4><span class="sev bad"></span>このアプリに保存しないもの</h4><p>残高・暗証番号・口座番号は持ちません。「もしもの時のメモ」にも暗証番号・パスワードは書かないでください。データはこの端末の中だけに保存されます。</p></div>` +
       `<button class="btn pri blk" id="print">印刷 / PDFに保存</button><div class="hint">印刷には「${esc(S.settings.updated||"")} 時点」と入ります。マップの表示（ざっくり／詳しく）のまま印刷されます。</div>` +
       `<div class="card"><h4>書き出し・読み込み</h4><div class="actions"><button class="btn" id="exportBtn">書き出す</button><button class="btn" id="importBtn">読み込む</button></div><textarea id="io" rows="4" placeholder="書き出したテキストが出ます。読み込む時はここに貼り付けます。"></textarea><p>書き出したテキストを控えておけば、別の端末やアプリ版へ移せます。</p></div>` +
-      `<div class="hint">バージョン ${APP_VER}</div>` +
+      `<div class="hint">バージョン ${APP_VER} <button class="btn sm" id="chkUpd">更新を確認</button></div>` +
       `<div class="card"><h4>初期化</h4><div class="actions"><button class="btn" id="loadSample">サンプルを読み込む</button><button class="btn danger" id="clearAll">すべて消す</button></div></div>`;
     document.getElementById("print").addEventListener("click", ()=>{ show("map"); setTimeout(()=>window.print(), 100); });
+    document.getElementById("chkUpd").addEventListener("click", ()=>checkUpdate(true));
     document.getElementById("exportBtn").addEventListener("click", ()=>{ const ta=document.getElementById("io"); ta.value=JSON.stringify(S); ta.select(); try{ document.execCommand("copy"); toast("書き出してコピーしました"); }catch(e){ toast("書き出しました"); } });
     document.getElementById("importBtn").addEventListener("click", ()=>{ const ta=document.getElementById("io"); try{ const o=JSON.parse(ta.value); if(!o.nodes||!o.edges) throw 0; if(!confirm("いまのデータを置き換えます。よろしいですか？")) return; S=o; save(); renderAll(); toast("読み込みました"); }catch(e){ toast("読み込めません。書き出したテキストを貼り付けてください"); } });
     document.getElementById("loadSample").addEventListener("click", ()=>{ if(!confirm("いまのデータを消してサンプルにします。よろしいですか？")) return; S=sample(); save(); renderAll(); });
@@ -610,7 +611,7 @@
   document.addEventListener("pointerup", tswEnd); document.addEventListener("pointercancel", tswEnd);
   let tt, ta; function toast(msg){ const el=document.getElementById("toast"); el.classList.remove("act"); el.textContent=msg; el.classList.add("show"); clearTimeout(tt); clearTimeout(ta); tt=setTimeout(()=>el.classList.remove("show"),1800); }
   function toastAction(msg, label, fn){ const el=document.getElementById("toast"); el.classList.add("act"); el.innerHTML=`<span>${esc(msg)}</span><button>${esc(label)}</button>`; el.querySelector("button").addEventListener("click", ()=>{ el.classList.remove("show","act"); fn(); }); el.classList.add("show"); clearTimeout(tt); clearTimeout(ta); ta=setTimeout(()=>{ el.classList.remove("show","act"); }, 5000); }
-  function renderBanner(){ document.getElementById("banner").innerHTML = S.settings.sample ? `<div class="banner">架空のサンプルです。編集すると自分のデータになります。<button class="btn sm" id="startEmpty">空にする</button></div>` : ""; const b=document.getElementById("startEmpty"); if(b) b.addEventListener("click", ()=>{ if(!confirm("サンプルを消して空から始めます。")) return; S={version:1,nodes:[],edges:[],debits:[],settings:{sample:false}}; save(); renderAll(); }); }
+  function renderBanner(){ document.getElementById("banner").innerHTML = (typeof updBanner==="string" ? updBanner : "") + (S.settings.sample ? `<div class="banner">架空のサンプルです。編集すると自分のデータになります。<button class="btn sm" id="startEmpty">空にする</button></div>` : ""); const u=document.getElementById("doUpd"); if(u) u.addEventListener("click", ()=>location.replace(location.pathname + "?v=" + Date.now())); const b=document.getElementById("startEmpty"); if(b) b.addEventListener("click", ()=>{ if(!confirm("サンプルを消して空から始めます。")) return; S={version:1,nodes:[],edges:[],debits:[],settings:{sample:false}}; save(); renderAll(); }); }
   function renderAll(){ renderBanner(); renderMap(); renderDebit(); renderShare(); document.getElementById("prhead").innerHTML = `お金の流れマップ<small>${esc(S.settings.updated||"")} 時点</small>`; document.getElementById("sub").textContent=META[view][1](); }
   document.getElementById("tabs").addEventListener("click", e=>{ const b=e.target.closest("button"); if(b) show(b.dataset.v); });
   document.getElementById("fab").addEventListener("click", ()=>{ if(view==="debit") debitForm({id:uid("d"),day:27,amt:null,rollover:true}, true); else nodeForm({id:uid("n"),name:"",sub:"",type:"bank",av:"?",col:TYPE_STYLE.bank[0],sq:false,hub:false,ap:false,off:false}, true); });
@@ -618,7 +619,20 @@
   function jumpTo(id){ const q=()=>document.querySelector(`.row[data-edit="${id}"]:not(.ghost), .mini[data-edit="${id}"]`); let o=q(); if(!o && UI.mode!=="full"){ setMode("full"); o=q(); } flashTo(o); }
   document.getElementById("seg2").addEventListener("click", e=>{ const x=e.target.closest("button"); if(x) setMode(x.dataset.m); });
   document.body.addEventListener("click", e=>{ const g=e.target.closest("[data-goto]"); if(g){ e.stopPropagation(); jumpTo(g.dataset.goto); return; } const m=e.target.closest("[data-more]"); if(m){ e.stopPropagation(); const id=m.dataset.more; setMode("full"); flashTo(document.querySelector(`.row[data-edit="${id}"]:not(.ghost)`)); return; } const c=e.target.closest(".chart .bars"); if(c){ const r=c.getBoundingClientRect(); const day=Math.min(31, Math.max(1, Math.floor((e.clientX-r.left)/r.width*31)+1)); const cand=[...document.querySelectorAll(".drow[data-day]")].map(x=>[Math.abs(+x.dataset.day-day), x]).sort((a,b)=>a[0]-b[0])[0]; if(cand && cand[0]<=2) flashTo(cand[1]); return; } const t=e.target.closest("[data-edit]"); if(t){ const n=byId(t.dataset.edit); if(n) nodeForm(n,false); return; } const d=e.target.closest("[data-editd]"); if(d){ const x=S.debits.find(y=>y.id===d.dataset.editd); if(x) debitForm(x,false); } });
-  load(); setMode(UI.mode, false); renderAll(); show("map");
+  // ===== 更新の確認（ホーム画面アプリは古い版を持ち続けることがある） =====
+  let updBanner = "";
+  async function checkUpdate(manual){
+    try{
+      const res = await fetch(location.pathname + "?u=" + Date.now(), {cache:"no-store"}); const txt = await res.text();
+      const m = txt.match(/APP_VER = "([^"]+)"/); const latest = m ? m[1] : null;
+      if(latest && latest !== APP_VER){
+        if(manual){ if(confirm(`新しい版（${latest}）があります。読み込み直しますか？`)) location.replace(location.pathname + "?v=" + Date.now()); }
+        else { updBanner = `<div class="banner">新しい版（${esc(latest)}）があります。<button class="btn sm" id="doUpd">更新</button></div>`; renderBanner(); }
+      } else if(manual) toast("最新版です");
+    }catch(e){ if(manual) toast("確認できませんでした（オフライン？）"); }
+  }
+  if("serviceWorker" in navigator){ navigator.serviceWorker.register("sw.js").catch(()=>{}); }
+  load(); setMode(UI.mode, false); renderAll(); show("map"); checkUpdate(false);
 })();
 </script>
 </body>
