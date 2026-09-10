@@ -140,7 +140,10 @@
   .dwrap .drow{ position:relative; z-index:1; transition:transform .2s; touch-action:pan-y; -webkit-touch-callout:none; user-select:none; -webkit-user-select:none; }
   .dwrap .drow.sw{ transition:none; }
   .drow{ background:var(--tile); border:1px solid var(--edge); border-radius:9px; padding:7px 9px; display:grid; grid-template-columns:40px 1fr auto; align-items:center; gap:8px; cursor:pointer; width:100%; text-align:left; font-family:inherit; color:var(--text); }
-  .drow .d{ background:var(--ink); color:var(--onink); font-size:10px; font-weight:700; border-radius:6px; text-align:center; padding:3px 0; }
+  .drow .d{ background:var(--ink); color:var(--onink); font-size:10px; font-weight:700; border-radius:6px; text-align:center; padding:3px 0; } .drow .d.y{ background:var(--both); color:#fff; }
+  .mchips{ display:grid; grid-template-columns:repeat(6,1fr); gap:4px; } .mchips button{ font-family:inherit; font-size:12px; padding:7px 0; border-radius:8px; border:1px solid var(--edge); background:var(--tile); color:var(--ink); cursor:pointer; } .mchips button.on{ background:var(--ink); color:var(--onink); border-color:var(--ink); }
+  .ychart .bars{ grid-template-columns:repeat(12,1fr); height:56px; cursor:default; } .ychart .lab{ grid-template-columns:repeat(12,1fr); } .ychart .seg.base{ background:var(--chip); } .ychart .seg.y{ background:var(--both); } .ychart .col.cur .seg.base{ background:var(--dash); } .ychart .col.cur .seg.y{ box-shadow:0 0 0 1px var(--ink) inset; }
+  .ychart h4{ margin:0 0 8px; font-size:12px; color:var(--ink); display:flex; justify-content:space-between; align-items:baseline; } .ychart h4 small{ font-weight:400; color:var(--mute); font-size:10px; }
   .drow .n{ font-weight:700; font-size:12px; color:var(--ink); line-height:1.25; } .drow .n small{ display:block; font-weight:400; color:var(--mute); font-size:9.5px; }
   .drow .a{ font-variant-numeric:tabular-nums; font-size:12px; color:var(--ink); text-align:right; } .drow .a small{ display:block; color:var(--mute); font-size:9px; }
   .pf{ background:var(--tile); border:1px solid var(--edge); border-radius:10px; padding:10px 12px 8px; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
@@ -204,10 +207,14 @@
   const KEY = "moneymap.v1";
   const TYPES = { income:"収入", bank:"銀行口座", card:"カード", securities:"証券・取引所", wallet:"ウォレット", pay:"QR・電子マネー", app:"アプリ・サービス", use:"利用先" };
   const TYPE_STYLE = { income:["#1F9D6A",false], bank:["#1F4E79",false], card:["#374151",true], securities:["#0B5AA5",false], wallet:["#F6851B",true], pay:["#BF0000",true], app:["#8B5CF6",true], use:["#4B5563",true] };
-  const APP_VER = "2026-09-10 p";
+  const APP_VER = "2026-09-11 a";
   const KINDS = { in:"入金", out:"出金", link:"入出金" };
   const CATS = { housing:["住居","#5B6B8C"], insurance:["保険","#7A9A7E"], invest:["投資・貯蓄","#1F9D6A"], card:["カード","#C08457"], utility:["通信・光熱","#D9A441"], subs:["サブスク","#9B6BFF"], living:["生活費","#E07A5F"], other:["その他","#A0A7B4"] };
   const catOf = d => CATS[d.cat] ? d.cat : "other";
+  const curMonth = () => new Date().getMonth()+1;
+  const isYearly = d => d.freq==="yearly";
+  const inThisMonth = d => !isYearly(d) || (d.months||[]).includes(curMonth());
+  const monthsLabel = d => (d.months||[]).map(m=>m+"").join("·") + "月";
   const AUTO_KIND = (a,b) => { if(a.type==="income") return "in"; if(a.type==="securities" && b.type==="bank") return "in"; if(a.type==="bank" && b.type==="securities") return "link"; if(a.type==="wallet" && b.type==="app") return "link"; if(a.type===b.type && (a.type==="securities"||a.type==="app")) return "link"; return "out"; };
 
   function sample(){
@@ -234,7 +241,8 @@
       {id:"d1",source:"mainbank",day:1,item:"カード分割払い",amt:25000,rollover:false,cat:"card"},{id:"d2",source:"mainbank",day:5,item:"サブ銀行へ自動入金",amt:150000,rollover:false,via:"subbank",transfer:true},
       {id:"d3",source:"mainbank",day:15,item:"生命保険",amt:2500,rollover:true,cat:"insurance"},{id:"d4",source:"mainbank",day:26,item:"iDeCo",amt:23000,rollover:true,cat:"invest"},
       {id:"d5",source:"mainbank",day:26,item:"クレジットカードA",amt:80000,approx:true,rollover:true,via:"carda",cat:"card"},{id:"d6",source:"mainbank",day:27,item:"クレジットカードB",amt:null,rollover:true,via:"cardb",cat:"card"},
-      {id:"d7",source:"mainbank",day:27,item:"家賃",amt:100000,rollover:true,cat:"housing"},{id:"d8",source:"subbank",day:31,item:"家族の口座へ生活費",amt:100000,rollover:true,via:"family",cat:"living"},
+      {id:"d7",source:"mainbank",day:27,item:"家賃",amt:100000,rollover:true,cat:"housing"},
+      {id:"d9",source:"mainbank",day:30,item:"自動車保険（年払い）",amt:45000,rollover:true,cat:"insurance",freq:"yearly",months:[6]},{id:"d10",source:"mainbank",day:30,item:"住民税",amt:30000,approx:true,rollover:true,cat:"other",freq:"yearly",months:[6,8,10,1]},{id:"d8",source:"subbank",day:31,item:"家族の口座へ生活費",amt:100000,rollover:true,via:"family",cat:"living"},
     ];
     return { version:1, nodes:N, edges:E, debits:D, settings:{ sample:true, updated:new Date().toISOString().slice(0,10) } };
   }
@@ -307,7 +315,7 @@
     const nofeed = noFeed();
     const groups = {}; S.nodes.filter(n=>!n.off && (n.type==="pay"||n.type==="card")).forEach(n=>{ const p = inTo(n.id).find(e=>e.kind==="out"); if(p){ const k=n.type+"@"+p.from; (groups[k]=groups[k]||[]).push(n); } });
     const dups = Object.values(groups).filter(g=>g.length>1);
-    const byDay = {}; S.debits.filter(d=>!viaOff(d)).forEach(d=>{ byDay[d.day]=(byDay[d.day]||0)+1; });
+    const byDay = {}; S.debits.filter(d=>!viaOff(d) && inThisMonth(d)).forEach(d=>{ byDay[d.day]=(byDay[d.day]||0)+1; });
     const busy = Object.entries(byDay).filter(([d,c])=>c>=2).map(([d])=>dayLabel(+d));
     return {unlinked, nofeed, dups, busy, count: unlinked.length + nofeed.length + dups.length + (busy.length?1:0)};
   }
@@ -367,17 +375,19 @@
   }
 
   // ===== 引き落とし =====
-  function todayRest(){ const live = S.debits.filter(d=>!viaOff(d) && !d.transfer); const now=new Date(), today=now.getDate(), dim=new Date(now.getFullYear(), now.getMonth()+1, 0).getDate(); const realDay = d => d.day>=31 ? dim : Math.min(d.day, dim);
+  function todayRest(){ const live = S.debits.filter(d=>!viaOff(d) && !d.transfer && inThisMonth(d)); const now=new Date(), today=now.getDate(), dim=new Date(now.getFullYear(), now.getMonth()+1, 0).getDate(); const realDay = d => d.day>=31 ? dim : Math.min(d.day, dim);
     const rest = live.filter(d=>realDay(d)>=today); return {today, n:rest.length, fixed:rest.filter(d=>d.amt!=null).reduce((a,d)=>a+Number(d.amt),0), varn:rest.filter(d=>d.amt==null).length, apx:rest.some(d=>d.amt!=null && d.approx)}; }
   function todayLine(){ const t=todayRest(); if(!t.n) return ""; return `<button class="today2" id="goDebit">今日（${t.today}日）以降 <b>${t.n}件 ・ ${t.apx?"約":""}${yen(t.fixed)}</b>${t.varn?` ＋ 未設定 ${t.varn}件`:""}<span class="arr">›</span></button>`; }
   let debitFilter = null;
   function renderDebit(){
-    const live = S.debits.filter(d=>!viaOff(d));
-    const spend = live.filter(d=>!d.transfer);
-    const fixed = spend.filter(d=>d.amt!=null).reduce((a,d)=>a+Number(d.amt),0), varn = spend.filter(d=>d.amt==null).length, apxn = spend.filter(d=>d.amt!=null && d.approx).length;
+    const curM = curMonth(); const all = S.debits.filter(d=>!viaOff(d));
+    const live = all.filter(inThisMonth); const monthlyAll = all.filter(d=>!isYearly(d)); const yearly = all.filter(isYearly); const yThis = yearly.filter(inThisMonth);
+    const spendM = monthlyAll.filter(d=>!d.transfer); const spend = live.filter(d=>!d.transfer);
+    const fixed = spendM.filter(d=>d.amt!=null).reduce((a,d)=>a+Number(d.amt),0), varn = spendM.filter(d=>d.amt==null).length, apxn = spendM.filter(d=>d.amt!=null && d.approx).length;
+    const ySum = yThis.filter(d=>d.amt!=null).reduce((a,d)=>a+Number(d.amt),0), yVar = yThis.filter(d=>d.amt==null).length, yApx = yThis.some(d=>d.amt!=null && d.approx);
     const now = new Date(), today = now.getDate(), dim = new Date(now.getFullYear(), now.getMonth()+1, 0).getDate(); const realDay = d => d.day>=31 ? dim : Math.min(d.day, dim);
     const rest = spend.filter(d=>realDay(d)>=today); const restFixed = rest.filter(d=>d.amt!=null).reduce((a,d)=>a+Number(d.amt),0), restVar = rest.filter(d=>d.amt==null).length, restApx = rest.some(d=>d.amt!=null && d.approx);
-    const xfer = live.filter(d=>d.transfer && d.amt!=null).reduce((a,d)=>a+Number(d.amt),0), xfern = live.filter(d=>d.transfer).length;
+    const xfer = monthlyAll.filter(d=>d.transfer && d.amt!=null).reduce((a,d)=>a+Number(d.amt),0), xfern = monthlyAll.filter(d=>d.transfer).length;
     const byDay = {}; live.forEach(d=>{ (byDay[d.day]=byDay[d.day]||[]).push(d); });
     const dayFixed = d => (byDay[d]||[]).filter(x=>x.amt!=null).reduce((a,x)=>a+Number(x.amt),0);
     const max = Math.max(0, ...Object.keys(byDay).map(d=>dayFixed(+d)));
@@ -396,17 +406,23 @@
     const chart = `<div class="chart"><div class="bars">${ref}${cols}${tdy}</div><div class="lab">${labs}</div>${lg}</div>`;
     const banks = S.nodes.filter(n=>n.type==="bank" && S.debits.some(d=>d.source===n.id));
     const need = banks.map(b=>{ const l=live.filter(d=>d.source===b.id); if(!l.length) return ""; const f=l.filter(d=>d.amt!=null).reduce((a,d)=>a+Number(d.amt),0); const v=l.filter(d=>d.amt==null).length; const ap=l.filter(d=>d.amt!=null && d.approx).length; const last=Math.max(...l.map(d=>d.day)); const inc = live.filter(d=>d.transfer && d.via===b.id && d.amt!=null).map(d=>`<span class="s in">${dayLabel(d.day)}に${esc(byId(d.source)?.name||"")}から ${yen(d.amt)} 入金</span>`).join(""); return `<div class="need">${avatar(b)}<div class="t"><span class="n">${esc(b.name)}</span><span class="s">${dayLabel(last)}までに必要</span>${inc}</div><div class="amt">${ap?"約":""}${yen(f)}${ap?`<small>目安 ${ap}件を含む</small>`:""}${v?`<small>＋ 未設定 ${v}件</small>`:""}</div></div>`; }).join("");
-    const sums = {}; spend.filter(d=>d.amt!=null).forEach(d=>{ const c=catOf(d); sums[c]=(sums[c]||0)+Number(d.amt); }); const total = Object.values(sums).reduce((a,v)=>a+v,0);
+    const sums = {}; spendM.filter(d=>d.amt!=null).forEach(d=>{ const c=catOf(d); sums[c]=(sums[c]||0)+Number(d.amt); }); const total = Object.values(sums).reduce((a,v)=>a+v,0);
     const catList = Object.keys(CATS).filter(c=>sums[c]).sort((a,c)=>sums[c]-sums[a]);
     const pf = total ? `<div class="pf"><h4>内訳<small>${apxn?"目安を含む":""}${varn?`${apxn?" ・ ":""}未設定 ${varn}件は含まず`:""}</small></h4>`
       + `<div class="bar">${catList.map(c=>`<i class="${debitFilter&&debitFilter!==c?'dim':''}" data-cat="${c}" style="flex:${sums[c]};background:${CATS[c][1]}" title="${CATS[c][0]}"></i>`).join("")}</div>`
       + `<div class="lg2">${catList.map(c=>`<button class="${debitFilter&&debitFilter!==c?'dim':''}" data-cat="${c}"><i style="background:${CATS[c][1]}"></i>${CATS[c][0]}<b>${yen(sums[c])}</b><small>${Math.round(sums[c]/total*100)}%</small></button>`).join("")}</div>`
       + (debitFilter ? `<div class="flt">一覧を <b>${CATS[debitFilter][0]}</b> だけに絞っています。もう一度タップで解除。</div>` : "") + `</div>` : "";
-    const rows = [...S.debits].filter(d=>!debitFilter || catOf(d)===debitFilter).sort((a,b)=>a.day-b.day).map(d=>`<div class="dwrap"><button class="ddel" data-del="${d.id}" tabindex="-1">削除</button><button class="drow" data-editd="${d.id}" data-day="${d.day}" style="${viaOff(d)?'opacity:.45':''}"><span class="d">${dayLabel(d.day)}</span><span class="n">${esc(d.item)}<small>${esc([byId(d.source)?.name, d.rollover?"休業日は翌営業日":""].filter(Boolean).join(" ・ "))}${d.transfer?"":` ・ <i style="display:inline-block;width:7px;height:7px;border-radius:2px;background:${CATS[catOf(d)][1]};vertical-align:0"></i> ${CATS[catOf(d)][0]}`}</small></span><span class="a">${d.amt!=null?(d.approx?"約":"")+yen(d.amt):'未設定'}${d.approx&&d.amt!=null?'<small>目安</small>':''}${d.transfer?'<small>自分の口座へ振替</small>':''}</span></button></div>`).join("");
+    const rows = [...S.debits].filter(d=>!isYearly(d)).filter(d=>!debitFilter || catOf(d)===debitFilter).sort((a,b)=>a.day-b.day).map(d=>`<div class="dwrap"><button class="ddel" data-del="${d.id}" tabindex="-1">削除</button><button class="drow" data-editd="${d.id}" data-day="${d.day}" style="${viaOff(d)?'opacity:.45':''}"><span class="d">${dayLabel(d.day)}</span><span class="n">${esc(d.item)}<small>${esc([byId(d.source)?.name, d.rollover?"休業日は翌営業日":""].filter(Boolean).join(" ・ "))}${d.transfer?"":` ・ <i style="display:inline-block;width:7px;height:7px;border-radius:2px;background:${CATS[catOf(d)][1]};vertical-align:0"></i> ${CATS[catOf(d)][0]}`}</small></span><span class="a">${d.amt!=null?(d.approx?"約":"")+yen(d.amt):'未設定'}${d.approx&&d.amt!=null?'<small>目安</small>':''}${d.transfer?'<small>自分の口座へ振替</small>':''}</span></button></div>`).join("");
+    const yBase = fixed; const mSum = m => yearly.filter(d=>(d.months||[]).includes(m) && d.amt!=null).reduce((a,d)=>a+Number(d.amt),0); const mVar = m => yearly.filter(d=>(d.months||[]).includes(m) && d.amt==null).length;
+    const M12 = Array.from({length:12},(_,i)=>i+1); const yMax = Math.max(1, ...M12.map(m=>yBase+mSum(m))); const YH = 56;
+    const ycols = M12.map(m=>`<div class="col ${m===curM?'cur':''}"><i class="seg base" style="height:${Math.max(2, Math.round(yBase/yMax*YH))}px"></i>${mSum(m)?`<i class="seg y" style="height:${Math.max(3, Math.round(mSum(m)/yMax*YH))}px"></i>`:""}${mVar(m)?`<i class="seg var" style="border-color:var(--ink)"></i>`:""}</div>`).join("");
+    const ylabs = M12.map(m=>`<i class="${m===curM?'on':''}">${m}</i>`).join("");
+    const yrows = [...yearly].sort((a,b)=>(a.months||[99])[0]-(b.months||[99])[0]).map(d=>`<div class="dwrap"><button class="ddel" data-del="${d.id}" tabindex="-1">削除</button><button class="drow" data-editd="${d.id}" data-day="${inThisMonth(d)?d.day:''}" style="${viaOff(d)?'opacity:.45':''}"><span class="d y">${(d.months||[]).length===1?`${d.months[0]}月`:`年${(d.months||[]).length}回`}</span><span class="n">${esc(d.item)}<small>${esc([monthsLabel(d)+" "+dayLabel(d.day), byId(d.source)?.name].filter(Boolean).join(" ・ "))} ・ <i style="display:inline-block;width:7px;height:7px;border-radius:2px;background:${CATS[catOf(d)][1]};vertical-align:0"></i> ${CATS[catOf(d)][0]}${inThisMonth(d)?' ・ <b>今月</b>':''}</small></span><span class="a">${d.amt!=null?(d.approx?"約":"")+yen(d.amt):'未設定'}${d.approx&&d.amt!=null?'<small>目安</small>':''}</span></button></div>`).join("");
+    const ysec = yearly.length ? `<div class="chart ychart"><h4>年間の見え方<small>薄い部分＝毎月の支出 ・ 濃い部分＝その月の年払い</small></h4><div class="bars">${ycols}</div><div class="lab">${ylabs}</div></div><div class="lbl">年に一度・数回の支払い</div><div class="dlist">${yrows}</div>` : "";
     document.getElementById("v-debit").innerHTML =
-      `<div class="month"><b>毎月の予定 ${S.debits.length}件</b><span>支出 ${apxn?"約":""}${yen(fixed)}${varn?` ＋ 未設定 ${varn}件`:""}${xfern?` ・ 振替 ${yen(xfer)}`:""}</span></div>`
-      + `<div class="today">今日（${today}日）以降の支出 <b>${rest.length}件 ・ ${restApx?"約":""}${yen(restFixed)}</b>${restVar?` ＋ 未設定 ${restVar}件`:""}</div>${chart}` + need +
-      pf + (S.debits.length ? `<div class="dlist">${rows}</div>` : `<div class="empty">まだありません。右下の「＋」から追加してください。</div>`) + `<div class="hint">タップで編集。左にスワイプで削除。</div>`;
+      `<div class="month"><b>毎月の予定 ${monthlyAll.length}件</b><span>支出 ${apxn?"約":""}${yen(fixed)}${varn?` ＋ 未設定 ${varn}件`:""}${xfern?` ・ 振替 ${yen(xfer)}`:""}</span></div>`
+      + `<div class="today">今日（${today}日）以降の支出 <b>${rest.length}件 ・ ${restApx?"約":""}${yen(restFixed)}</b>${restVar?` ＋ 未設定 ${restVar}件`:""}</div>` + (yThis.length ? `<div class="today">今月の年払い <b>${yThis.length}件 ・ ${yApx?"約":""}${yen(ySum)}</b>${yVar?` ＋ 未設定 ${yVar}件`:""}</div>` : "") + `${chart}` + need +
+      pf + (monthlyAll.length ? `<div class="dlist">${rows}</div>` : `<div class="empty">まだありません。右下の「＋」から追加してください。</div>`) + ysec + `<div class="hint">タップで編集。左にスワイプで削除。</div>`;
     document.querySelectorAll("#v-debit [data-cat]").forEach(el=>el.addEventListener("click", ()=>{ debitFilter = debitFilter===el.dataset.cat ? null : el.dataset.cat; renderDebit(); }));
   }
 
@@ -497,6 +513,8 @@
       <div class="f2"><div class="f"><label>日（31＝月末）</label><input type="number" id="dday" min="1" max="31" value="${d.day||27}"></div><div class="f"><label>金額（空欄＝未設定）</label><input type="number" id="damt" value="${d.amt==null?"":d.amt}" placeholder="例: 100000"></div></div>
       <div class="sw ${d.approx?'on':''}" id="dapx">金額はおおよそ（毎月変わる）<i></i></div><div class="hint">多めに入れておくと安心です。</div>
       <div class="sw ${d.rollover?'on':''}" id="droll">銀行休業日は翌営業日<i></i></div>
+      <div class="f"><label>頻度</label><div class="seg2 seg3" id="dfreq"><button type="button" data-f="monthly" class="${isYearly(d)?'':'on'}">毎月</button><button type="button" data-f="yearly" class="${isYearly(d)?'on':''}">年払い（月を選ぶ）</button></div></div>
+      <div class="f" id="dmw" ${isYearly(d)?"":"hidden"}><label>支払う月（複数可）</label><div class="mchips" id="dmonths">${Array.from({length:12},(_,i)=>i+1).map(m=>`<button type="button" data-m="${m}" class="${(d.months||[]).includes(m)?'on':''}">${m}月</button>`).join("")}</div></div>
       <div class="sw ${d.transfer?'on':''}" id="dxfer">自分の口座への振替（支出に数えない）<i></i></div>
       <div class="f" id="dxto" ${d.transfer?"":"hidden"}><label>振替先の口座</label><select id="dto">${opt(banks, d.via||banks[0][0])}</select></div>
       <div class="f" id="dviaw" ${d.transfer?"hidden":""}><label>経由するカード（任意。カードを解約予定にすると、この引き落としも薄く表示）</label><select id="dvia">${opt(cards, (!d.transfer && byId(d.via) && byId(d.via).type==="card") ? d.via : "")}</select></div>
@@ -504,8 +522,10 @@
     document.getElementById("close").addEventListener("click", closeSheet);
     document.getElementById("droll").addEventListener("click", e=>e.currentTarget.classList.toggle("on"));
     document.getElementById("dapx").addEventListener("click", e=>e.currentTarget.classList.toggle("on"));
+    document.getElementById("dfreq").addEventListener("click", e=>{ const x=e.target.closest("button"); if(!x) return; document.querySelectorAll("#dfreq button").forEach(y=>y.classList.toggle("on", y===x)); document.getElementById("dmw").hidden = x.dataset.f!=="yearly"; });
+    document.getElementById("dmonths").addEventListener("click", e=>{ const x=e.target.closest("button"); if(x) x.classList.toggle("on"); });
     document.getElementById("dxfer").addEventListener("click", e=>{ e.currentTarget.classList.toggle("on"); document.getElementById("dxto").hidden = !e.currentTarget.classList.contains("on"); document.getElementById("dviaw").hidden = e.currentTarget.classList.contains("on"); });
-    document.getElementById("saveD").addEventListener("click", ()=>{ d.item=document.getElementById("ditem").value.trim()||"名称未設定"; d.cat=document.getElementById("dcat").value; d.source=document.getElementById("dsrc").value; d.day=Math.min(31,Math.max(1,parseInt(document.getElementById("dday").value)||1)); const a=document.getElementById("damt").value.trim(); d.amt=a===""?null:Number(a); d.approx=document.getElementById("dapx").classList.contains("on"); d.rollover=document.getElementById("droll").classList.contains("on"); d.transfer=document.getElementById("dxfer").classList.contains("on"); if(d.transfer) d.via=document.getElementById("dto").value; else d.via=document.getElementById("dvia").value; if(isNew) S.debits.push(d); S.settings.sample=false; save(); closeSheet(); renderAll(); toast("保存しました"); });
+    document.getElementById("saveD").addEventListener("click", ()=>{ const yOn = (document.querySelector("#dfreq button.on")||{}).dataset?.f==="yearly"; const ms=[...document.querySelectorAll("#dmonths button.on")].map(x=>+x.dataset.m).sort((a,b)=>a-b); if(yOn && !ms.length){ toast("支払う月を1つ以上選んでください"); return; } d.freq = yOn ? "yearly" : "monthly"; d.months = yOn ? ms : []; d.item=document.getElementById("ditem").value.trim()||"名称未設定"; d.cat=document.getElementById("dcat").value; d.source=document.getElementById("dsrc").value; d.day=Math.min(31,Math.max(1,parseInt(document.getElementById("dday").value)||1)); const a=document.getElementById("damt").value.trim(); d.amt=a===""?null:Number(a); d.approx=document.getElementById("dapx").classList.contains("on"); d.rollover=document.getElementById("droll").classList.contains("on"); d.transfer=document.getElementById("dxfer").classList.contains("on"); if(d.transfer) d.via=document.getElementById("dto").value; else d.via=document.getElementById("dvia").value; if(isNew) S.debits.push(d); S.settings.sample=false; save(); closeSheet(); renderAll(); toast("保存しました"); });
     if(!isNew) document.getElementById("delD").addEventListener("click", ()=>{ closeSheet(); deleteDebit(d.id); });
   }
 
@@ -658,7 +678,7 @@
   function flashTo(o){ if(!o) return; o.scrollIntoView({block:"center", behavior:"smooth"}); o.classList.remove("new"); void o.offsetWidth; o.classList.add("new"); }
   function jumpTo(id){ const q=()=>document.querySelector(`.row[data-edit="${id}"]:not(.ghost), .mini[data-edit="${id}"]`); let o=q(); if(!o && openTo(id)){ renderMap(); o=q(); } flashTo(o); }
   document.getElementById("seg2").addEventListener("click", e=>{ const x=e.target.closest("button"); if(x) setMode(x.dataset.m); });
-  document.body.addEventListener("click", e=>{ const g=e.target.closest("[data-goto]"); if(g){ e.stopPropagation(); jumpTo(g.dataset.goto); return; } const m=e.target.closest("[data-more]"); if(m){ e.stopPropagation(); const id=m.dataset.more; const c=UI.closed||[]; UI.closed = c.includes(id) ? c.filter(x=>x!==id) : [...c, id]; UI.mode="custom"; saveUI(); syncPill(); renderMap(); return; } const c=e.target.closest(".chart .bars"); if(c){ const r=c.getBoundingClientRect(); const day=Math.min(31, Math.max(1, Math.floor((e.clientX-r.left)/r.width*31)+1)); const cand=[...document.querySelectorAll(".drow[data-day]")].map(x=>[Math.abs(+x.dataset.day-day), x]).sort((a,b)=>a[0]-b[0])[0]; if(cand && cand[0]<=2) flashTo(cand[1]); return; } const t=e.target.closest("[data-edit]"); if(t){ const n=byId(t.dataset.edit); if(n) nodeForm(n,false); return; } const d=e.target.closest("[data-editd]"); if(d){ const x=S.debits.find(y=>y.id===d.dataset.editd); if(x) debitForm(x,false); } });
+  document.body.addEventListener("click", e=>{ const g=e.target.closest("[data-goto]"); if(g){ e.stopPropagation(); jumpTo(g.dataset.goto); return; } const m=e.target.closest("[data-more]"); if(m){ e.stopPropagation(); const id=m.dataset.more; const c=UI.closed||[]; UI.closed = c.includes(id) ? c.filter(x=>x!==id) : [...c, id]; UI.mode="custom"; saveUI(); syncPill(); renderMap(); return; } const c=e.target.closest(".chart:not(.ychart) .bars"); if(c){ const r=c.getBoundingClientRect(); const day=Math.min(31, Math.max(1, Math.floor((e.clientX-r.left)/r.width*31)+1)); const cand=[...document.querySelectorAll(".drow[data-day]")].map(x=>[Math.abs(+x.dataset.day-day), x]).sort((a,b)=>a[0]-b[0])[0]; if(cand && cand[0]<=2) flashTo(cand[1]); return; } const t=e.target.closest("[data-edit]"); if(t){ const n=byId(t.dataset.edit); if(n) nodeForm(n,false); return; } const d=e.target.closest("[data-editd]"); if(d){ const x=S.debits.find(y=>y.id===d.dataset.editd); if(x) debitForm(x,false); } });
   // ===== 更新の確認（ホーム画面アプリは古い版を持ち続けることがある） =====
   let updBanner = "";
   async function checkUpdate(manual){
