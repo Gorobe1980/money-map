@@ -28,7 +28,9 @@
   .seg2 button{ font-family:inherit; font-size:11px; padding:0 11px; border:0; background:transparent; color:var(--mute); cursor:pointer; }
   .seg2 button.on{ background:var(--ink); color:#fff; font-weight:700; }
   .seg2[hidden]{ display:none; }
-  .body{ flex:1; padding:0 12px 96px; display:flex; flex-direction:column; gap:10px; }
+  .body{ flex:1; padding:0 12px 96px; display:flex; flex-direction:column; gap:10px; position:relative; }
+  .body.sliding{ overflow-x:clip; min-height:100dvh; } .body.sliding .view{ will-change:transform; }
+  .view.slide{ position:absolute; left:12px; right:12px; } .view.anim{ transition:transform .25s ease-out; }
   .view[hidden]{ display:none; } .view{ display:flex; flex-direction:column; gap:10px; }
   .tabs{ position:fixed; left:0; right:0; bottom:0; margin:0 auto; max-width:520px; display:grid; grid-template-columns:repeat(3,1fr); border-top:1px solid var(--edge); background:var(--tile); padding:8px 6px calc(10px + env(safe-area-inset-bottom)); z-index:20; }
   .tabs button{ background:none; border:0; color:var(--mute); font-size:10.5px; display:flex; flex-direction:column; align-items:center; gap:3px; cursor:pointer; font-family:inherit; padding:2px 0; }
@@ -573,13 +575,35 @@
   let view="map";
   const META = { map:["マップ", ()=>`${S.nodes.length}機関`], debit:["引き落とし", ()=>"毎月の予定"], share:["共有", ()=>"もしもの時のために"] };
   function show(v){ view=v; ["map","debit","share"].forEach(k=>{ document.getElementById("v-"+k).hidden=(k!==v); }); document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on", b.dataset.v===v)); document.getElementById("ttl").textContent=META[v][0]; document.getElementById("sub").textContent=META[v][1](); document.getElementById("sub").hidden=(v==="map"); document.getElementById("seg2").hidden=(v!=="map"); document.getElementById("fab").hidden = (v==="share"); window.scrollTo(0,0); }
-  // ===== 横スワイプで画面切替（マップ ⇄ 引き落とし ⇄ 共有） =====
-  const VIEWS = ["map","debit","share"]; let tsw=null;
-  document.addEventListener("pointerdown", e=>{ if(e.button>0 || sheet.classList.contains("on") || e.target.closest(".dwrap, input, textarea, select, .sheet, .tabs")){ tsw=null; return; } tsw={x:e.clientX, y:e.clientY, done:false}; }, {passive:true});
+  // ===== 横スワイプで画面切替（指に追従して横スライド） =====
+  const VIEWS = ["map","debit","share"]; let tsw=null; const bodyEl = document.querySelector(".body");
+  const slideFinish = (t, complete) => {
+    const w = bodyEl.clientWidth; const cur=t.cur, nxt=t.nxt;
+    cur.classList.add("anim"); if(nxt) nxt.classList.add("anim");
+    if(nxt && complete){ cur.style.transform=`translateX(${t.dir*w}px)`; nxt.style.transform="translateX(0)"; }
+    else { cur.style.transform="translateX(0)"; if(nxt) nxt.style.transform=`translateX(${-t.dir*w}px)`; }
+    setTimeout(()=>{ [cur,nxt].forEach(v=>{ if(!v) return; v.classList.remove("anim","slide"); v.style.transform=""; v.style.top=""; }); bodyEl.classList.remove("sliding");
+      if(nxt && complete){ show(nxt.id.slice(2)); } else if(nxt){ nxt.hidden=true; } }, 270);
+  };
+  document.addEventListener("pointerdown", e=>{ if(e.button>0 || sheet.classList.contains("on") || e.target.closest(".dwrap, input, textarea, select, .sheet, .tabs")){ tsw=null; return; } tsw={x:e.clientX, y:e.clientY, t0:performance.now(), done:false, active:false}; }, {passive:true});
   document.addEventListener("pointermove", e=>{ if(!tsw || tsw.done || dragging) return; const dx=e.clientX-tsw.x, dy=e.clientY-tsw.y;
-    if(Math.abs(dy)>30 && Math.abs(dy)>Math.abs(dx)){ tsw.done=true; return; }
-    if(Math.abs(dx)>60 && Math.abs(dx)>Math.abs(dy)*1.5){ tsw.done=true; const i=VIEWS.indexOf(view); const j = dx<0 ? i+1 : i-1; if(j>=0 && j<VIEWS.length){ swClose(); show(VIEWS[j]); suppressClick=true; setTimeout(()=>{ suppressClick=false; }, 80); } } }, {passive:true});
-  document.addEventListener("pointerup", ()=>{ tsw=null; }); document.addEventListener("pointercancel", ()=>{ tsw=null; });
+    if(!tsw.active){
+      if(Math.abs(dy)>30 && Math.abs(dy)>Math.abs(dx)){ tsw.done=true; return; }
+      if(!(Math.abs(dx)>14 && Math.abs(dx)>Math.abs(dy)*1.5)) return;
+      const dir = dx<0 ? -1 : 1; const i=VIEWS.indexOf(view); const j=i-dir; const w=bodyEl.clientWidth;
+      tsw.active=true; tsw.dir=dir; tsw.cur=document.getElementById("v-"+view); tsw.nxt=(j>=0 && j<VIEWS.length) ? document.getElementById("v-"+VIEWS[j]) : null;
+      swClose(); bodyEl.classList.add("sliding"); suppressClick=true;
+      if(tsw.nxt){ const br=bodyEl.getBoundingClientRect(); tsw.nxt.style.top=Math.max(0,-br.top)+"px"; tsw.nxt.classList.add("slide"); tsw.nxt.style.transform=`translateX(${-dir*w}px)`; tsw.nxt.hidden=false; }
+    }
+    const w=bodyEl.clientWidth; const x = tsw.nxt ? dx : dx*0.25;
+    tsw.cur.style.transform=`translateX(${x}px)`; if(tsw.nxt) tsw.nxt.style.transform=`translateX(${x - tsw.dir*w}px)`; tsw.dx=dx;
+  }, {passive:true});
+  document.addEventListener("touchmove", e=>{ if(tsw && tsw.active) e.preventDefault(); }, {passive:false});
+  const tswEnd = () => { if(!tsw) return; const t=tsw; tsw=null; if(!t.active) return;
+    const w=bodyEl.clientWidth; const dx=t.dx||0; const fast = performance.now()-t.t0 < 300 && Math.abs(dx)>30;
+    const complete = !!t.nxt && Math.sign(dx)===t.dir && (Math.abs(dx) > w*0.3 || fast);
+    slideFinish(t, complete); setTimeout(()=>{ suppressClick=false; }, 300); };
+  document.addEventListener("pointerup", tswEnd); document.addEventListener("pointercancel", tswEnd);
   let tt, ta; function toast(msg){ const el=document.getElementById("toast"); el.classList.remove("act"); el.textContent=msg; el.classList.add("show"); clearTimeout(tt); clearTimeout(ta); tt=setTimeout(()=>el.classList.remove("show"),1800); }
   function toastAction(msg, label, fn){ const el=document.getElementById("toast"); el.classList.add("act"); el.innerHTML=`<span>${esc(msg)}</span><button>${esc(label)}</button>`; el.querySelector("button").addEventListener("click", ()=>{ el.classList.remove("show","act"); fn(); }); el.classList.add("show"); clearTimeout(tt); clearTimeout(ta); ta=setTimeout(()=>{ el.classList.remove("show","act"); }, 5000); }
   function renderBanner(){ document.getElementById("banner").innerHTML = S.settings.sample ? `<div class="banner">架空のサンプルです。編集すると自分のデータになります。<button class="btn sm" id="startEmpty">空にする</button></div>` : ""; const b=document.getElementById("startEmpty"); if(b) b.addEventListener("click", ()=>{ if(!confirm("サンプルを消して空から始めます。")) return; S={version:1,nodes:[],edges:[],debits:[],settings:{sample:false}}; save(); renderAll(); }); }
