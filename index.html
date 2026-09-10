@@ -204,7 +204,7 @@
   const KEY = "moneymap.v1";
   const TYPES = { income:"収入", bank:"銀行口座", card:"カード", securities:"証券・取引所", wallet:"ウォレット", pay:"QR・電子マネー", app:"アプリ・サービス", use:"利用先" };
   const TYPE_STYLE = { income:["#1F9D6A",false], bank:["#1F4E79",false], card:["#374151",true], securities:["#0B5AA5",false], wallet:["#F6851B",true], pay:["#BF0000",true], app:["#8B5CF6",true], use:["#4B5563",true] };
-  const APP_VER = "2026-09-10 o";
+  const APP_VER = "2026-09-10 p";
   const KINDS = { in:"入金", out:"出金", link:"入出金" };
   const CATS = { housing:["住居","#5B6B8C"], insurance:["保険","#7A9A7E"], invest:["投資・貯蓄","#1F9D6A"], card:["カード","#C08457"], utility:["通信・光熱","#D9A441"], subs:["サブスク","#9B6BFF"], living:["生活費","#E07A5F"], other:["その他","#A0A7B4"] };
   const catOf = d => CATS[d.cat] ? d.cat : "other";
@@ -240,11 +240,13 @@
   }
 
   let S;
-  let UI = {mode:"full", open:[]}; try{ UI = Object.assign(UI, JSON.parse(localStorage.getItem("moneymap.ui")||"{}")); }catch(e){}
+  let UI = {mode:"full", closed:[]}; try{ UI = Object.assign(UI, JSON.parse(localStorage.getItem("moneymap.ui")||"{}")); }catch(e){}
   function saveUI(){ try{ localStorage.setItem("moneymap.ui", JSON.stringify(UI)); }catch(e){} }
   function applyTheme(){ const t = UI.theme || "auto"; if(t==="auto") delete document.documentElement.dataset.theme; else document.documentElement.dataset.theme = t; }
   function setTheme(t){ UI.theme = t; saveUI(); applyTheme(); renderShare(); }
-  function setMode(m, rerender){ UI.mode = m; if(m!=="full") UI.open = []; saveUI(); document.querySelectorAll("#seg2 button").forEach(x=>x.classList.toggle("on", x.dataset.m===m)); if(rerender!==false) renderMap(); }
+  function syncPill(){ document.querySelectorAll("#seg2 button").forEach(x=>x.classList.toggle("on", x.dataset.m===UI.mode)); }
+  const isClosed = id => (UI.closed||[]).includes(id);
+  function setMode(m, rerender){ UI.mode = m; if(m==="full") UI.closed = []; else if(m==="brief"){ const L = layout(); const rows = L.sections.flatMap(s=>s.rows); UI.closed = rows.filter(r=>r.par && !r.ghost && r.depth>=1 && rows.some(o=>o.anc && o.anc.includes(r.id))).map(r=>r.id); } saveUI(); syncPill(); if(rerender!==false) renderMap(); }
   function load(){ try{ const raw=localStorage.getItem(KEY); S = raw ? JSON.parse(raw) : sample(); }catch(e){ S = sample(); } if(!S.settings) S.settings={sample:false}; }
   function save(){ S.settings.updated = new Date().toISOString().slice(0,10); try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){ toast("保存できませんでした"); } }
   const byId = id => S.nodes.find(n=>n.id===id);
@@ -336,7 +338,7 @@
     if(noFeedSet.has(n.id) && !r.ghost) chips.push(`<span class="chip warn">入金経路なし</span>`);
     if(r.kind==="link") chips.push(`<span class="chip lk">⇄ 入出金</span>`);
     if(r.ghost) chips.push(`<span class="chip up" data-goto="${n.id}">${seenIds.has(n.id)?"上にもあり ↑":"下にもあり ↓"}</span>`); else seenIds.add(n.id);
-    const fold = UI.mode!=="full" && r.par && !r.ghost && r.depth>=1; const hid = fold ? curRows.filter(o=>o.anc && o.anc.includes(n.id)).length : 0; const isOpen = fold && (UI.open||[]).includes(n.id);
+    const fold = r.par && !r.ghost && r.depth>=1; const hid = fold ? curRows.filter(o=>o.anc && o.anc.includes(n.id)).length : 0; const isOpen = !isClosed(n.id);
     if(fold && hid) chips.push(`<span class="chip more" data-more="${n.id}">${isOpen ? "−" : "＋"+hid}</span>`);
     const cls = ["row", `d${r.depth}`, r.kind, r.child?"child":"", r.child&&!r.last?"cont":"", r.hub?"hub":"", r.inc?"inc":"", r.hasin?"hasin":"", n.off?"off":"", r.offb?"offb":"", r.ghost?"ghost":"", r.eid && r.eid===newEid?"new":"", r.par?"par pk-"+r.pk:"", fold&&hid&&!isOpen?"fold":""].join(" ");
     const guides = (r.guides||[]).map((g,k)=> g.on ? `<i class="g ${g.kind==='link'?'gl':''}" style="left:${k*28+13}px"></i>` : "").join("");
@@ -346,9 +348,9 @@
     const rk = r.child ? (r.ghost ? "ghost" : (r.jump>=0 ? "jump" : r.kind)) : (r.hub ? "hub" : "inc"); const par = r.child && r.anc ? r.anc[r.anc.length-1] : "";
     return `<button class="${cls}" style="--d:${r.depth}" data-edit="${n.id}" data-eid="${r.eid||""}" data-par="${par}" data-depth="${r.depth}" data-rk="${rk}" data-anc="${(r.anc||[]).join(",")}">${guides}${conn}${avatar(n)}<div class="t"><span class="n">${esc(n.name)}</span><span class="s">${esc(sub)}</span>${n.note && !r.ghost ? `<span class="nt">メモ: ${esc(n.note)}</span>` : ""}</div><div class="chips">${chips.join("")}</div></button>`;
   }
-  const rowVisible = r => UI.mode==="full" || r.depth<=1 || (r.anc||[]).slice(1).every(id=>(UI.open||[]).includes(id));
+  const rowVisible = r => (r.anc||[]).slice(1).every(id=>!isClosed(id));
   let lastRows = [];
-  function openTo(id){ const row = lastRows.find(o=>o.id===id && !o.ghost) || lastRows.find(o=>o.id===id); if(!row) return false; const need=(row.anc||[]).slice(1).filter(x=>!(UI.open||[]).includes(x)); if(!need.length) return false; UI.open=[...(UI.open||[]), ...need]; saveUI(); return true; }
+  function openTo(id){ const row = lastRows.find(o=>o.id===id && !o.ghost) || lastRows.find(o=>o.id===id); if(!row) return false; const need=(row.anc||[]).slice(1).filter(x=>isClosed(x)); if(!need.length) return false; UI.closed=(UI.closed||[]).filter(x=>!need.includes(x)); UI.mode="custom"; saveUI(); syncPill(); return true; }
   function renderMap(){
     const L = layout(); lastRows = L.sections.flatMap(s=>s.rows); noFeedSet = new Set(noFeed().map(n=>n.id)); let h = todayLine() + reviewHtml(); seenIds = new Set();
     if(!S.nodes.length) h += `<div class="empty">まだ何もありません。右下の「＋」から銀行を追加してください。最初の銀行が起点になります。</div>`;
@@ -361,7 +363,7 @@
     document.getElementById("v-map").innerHTML = h;
     const rb=document.getElementById("reviewBtn"); if(rb) rb.addEventListener("click", ()=>{ reviewOpen=!reviewOpen; renderMap(); });
     const gd=document.getElementById("goDebit"); if(gd) gd.addEventListener("click", ()=>show("debit"));
-    if(newEid){ const el=document.querySelector(`.row.new`); if(!el && UI.mode!=="full"){ const row=lastRows.find(o=>o.eid===newEid); if(row && openTo(row.id)){ renderMap(); return; } } if(el) el.scrollIntoView({block:"center", behavior:"smooth"}); newEid=null; }
+    if(newEid){ const el=document.querySelector(`.row.new`); if(!el){ const row=lastRows.find(o=>o.eid===newEid); if(row && openTo(row.id)){ renderMap(); return; } } if(el) el.scrollIntoView({block:"center", behavior:"smooth"}); newEid=null; }
   }
 
   // ===== 引き落とし =====
@@ -654,9 +656,9 @@
   document.getElementById("tabs").addEventListener("click", e=>{ const b=e.target.closest("button"); if(b) show(b.dataset.v); });
   document.getElementById("fab").addEventListener("click", ()=>{ if(view==="debit") debitForm({id:uid("d"),day:27,amt:null,rollover:true}, true); else nodeForm({id:uid("n"),name:"",sub:"",type:"bank",av:"?",col:TYPE_STYLE.bank[0],sq:false,hub:false,ap:false,off:false}, true); });
   function flashTo(o){ if(!o) return; o.scrollIntoView({block:"center", behavior:"smooth"}); o.classList.remove("new"); void o.offsetWidth; o.classList.add("new"); }
-  function jumpTo(id){ const q=()=>document.querySelector(`.row[data-edit="${id}"]:not(.ghost), .mini[data-edit="${id}"]`); let o=q(); if(!o && UI.mode!=="full" && openTo(id)){ renderMap(); o=q(); } flashTo(o); }
+  function jumpTo(id){ const q=()=>document.querySelector(`.row[data-edit="${id}"]:not(.ghost), .mini[data-edit="${id}"]`); let o=q(); if(!o && openTo(id)){ renderMap(); o=q(); } flashTo(o); }
   document.getElementById("seg2").addEventListener("click", e=>{ const x=e.target.closest("button"); if(x) setMode(x.dataset.m); });
-  document.body.addEventListener("click", e=>{ const g=e.target.closest("[data-goto]"); if(g){ e.stopPropagation(); jumpTo(g.dataset.goto); return; } const m=e.target.closest("[data-more]"); if(m){ e.stopPropagation(); const id=m.dataset.more; const o=UI.open||[]; UI.open = o.includes(id) ? o.filter(x=>x!==id) : [...o, id]; saveUI(); renderMap(); return; } const c=e.target.closest(".chart .bars"); if(c){ const r=c.getBoundingClientRect(); const day=Math.min(31, Math.max(1, Math.floor((e.clientX-r.left)/r.width*31)+1)); const cand=[...document.querySelectorAll(".drow[data-day]")].map(x=>[Math.abs(+x.dataset.day-day), x]).sort((a,b)=>a[0]-b[0])[0]; if(cand && cand[0]<=2) flashTo(cand[1]); return; } const t=e.target.closest("[data-edit]"); if(t){ const n=byId(t.dataset.edit); if(n) nodeForm(n,false); return; } const d=e.target.closest("[data-editd]"); if(d){ const x=S.debits.find(y=>y.id===d.dataset.editd); if(x) debitForm(x,false); } });
+  document.body.addEventListener("click", e=>{ const g=e.target.closest("[data-goto]"); if(g){ e.stopPropagation(); jumpTo(g.dataset.goto); return; } const m=e.target.closest("[data-more]"); if(m){ e.stopPropagation(); const id=m.dataset.more; const c=UI.closed||[]; UI.closed = c.includes(id) ? c.filter(x=>x!==id) : [...c, id]; UI.mode="custom"; saveUI(); syncPill(); renderMap(); return; } const c=e.target.closest(".chart .bars"); if(c){ const r=c.getBoundingClientRect(); const day=Math.min(31, Math.max(1, Math.floor((e.clientX-r.left)/r.width*31)+1)); const cand=[...document.querySelectorAll(".drow[data-day]")].map(x=>[Math.abs(+x.dataset.day-day), x]).sort((a,b)=>a[0]-b[0])[0]; if(cand && cand[0]<=2) flashTo(cand[1]); return; } const t=e.target.closest("[data-edit]"); if(t){ const n=byId(t.dataset.edit); if(n) nodeForm(n,false); return; } const d=e.target.closest("[data-editd]"); if(d){ const x=S.debits.find(y=>y.id===d.dataset.editd); if(x) debitForm(x,false); } });
   // ===== 更新の確認（ホーム画面アプリは古い版を持ち続けることがある） =====
   let updBanner = "";
   async function checkUpdate(manual){
@@ -674,7 +676,7 @@
   const vv = window.visualViewport;
   function kbSync(){ if(!vv) return; const open = vv.height < window.innerHeight*0.8; const was = document.body.classList.contains("kb"); document.body.classList.toggle("kb", open); if(was && !open) setTimeout(()=>window.scrollTo(window.scrollX, window.scrollY), 50); }
   if(vv){ vv.addEventListener("resize", kbSync); vv.addEventListener("scroll", kbSync); }
-  load(); applyTheme(); setMode(UI.mode, false); renderAll(); show("map"); checkUpdate(false);
+  load(); applyTheme(); if(!Array.isArray(UI.closed)) UI.closed=[]; syncPill(); renderAll(); show("map"); checkUpdate(false);
 })();
 </script>
 </body>
