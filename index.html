@@ -207,7 +207,7 @@
   const KEY = "moneymap.v1";
   const TYPES = { income:"収入", bank:"銀行口座", card:"カード", securities:"証券・取引所", wallet:"ウォレット", pay:"QR・電子マネー", app:"アプリ・サービス", use:"利用先" };
   const TYPE_STYLE = { income:["#1F9D6A",false], bank:["#1F4E79",false], card:["#374151",true], securities:["#0B5AA5",false], wallet:["#F6851B",true], pay:["#BF0000",true], app:["#8B5CF6",true], use:["#4B5563",true] };
-  const APP_VER = "2026-09-11 b";
+  const APP_VER = "2026-09-11 c";
   const KINDS = { in:"入金", out:"出金", link:"入出金" };
   const CATS = { housing:["住居","#5B6B8C"], insurance:["保険","#7A9A7E"], invest:["投資・貯蓄","#1F9D6A"], card:["カード","#C08457"], utility:["通信・光熱","#D9A441"], subs:["サブスク","#9B6BFF"], living:["生活費","#E07A5F"], tax:["税金","#8C6D3F"], social:["社会保険料","#4A8FB8"], other:["その他","#A0A7B4"] };
   const catOf = d => CATS[d.cat] ? d.cat : "other";
@@ -511,7 +511,7 @@
       <div class="f"><label>ジャンル</label><select id="dcat">${opt(Object.entries(CATS).map(([k,v])=>[k,v[0]]), catOf(d))}</select></div>
       <div class="f"><label>引き落とし元の銀行</label><select id="dsrc">${opt(banks, d.source||banks[0][0])}</select></div>
       <div class="f2"><div class="f"><label>日（31＝月末）</label><input type="number" id="dday" min="1" max="31" value="${d.day||27}"></div><div class="f"><label>金額（空欄＝未設定）</label><input type="number" id="damt" value="${d.amt==null?"":d.amt}" placeholder="例: 100000"></div></div>
-      <div class="sw ${d.approx?'on':''}" id="dapx">金額はおおよそ（毎月変わる）<i></i></div><div class="hint">多めに入れておくと安心です。</div>
+      <div class="sw ${d.approx?'on':''}" id="dapx">金額はおおよそ<i></i></div><div class="hint">多めに入れておくと安心です。</div>
       <div class="sw ${d.rollover?'on':''}" id="droll">銀行休業日は翌営業日<i></i></div>
       <div class="f"><label>頻度</label><div class="seg2 seg3" id="dfreq"><button type="button" data-f="monthly" class="${isYearly(d)?'':'on'}">毎月</button><button type="button" data-f="yearly" class="${isYearly(d)?'on':''}">年払い（月を選ぶ）</button></div></div>
       <div class="f" id="dmw" ${isYearly(d)?"":"hidden"}><label>支払う月（複数可）</label><div class="mchips" id="dmonths">${Array.from({length:12},(_,i)=>i+1).map(m=>`<button type="button" data-m="${m}" class="${(d.months||[]).includes(m)?'on':''}">${m}月</button>`).join("")}</div></div>
