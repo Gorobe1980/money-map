@@ -16,7 +16,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&display=swap">
 <style>
   :root{ --bg:#F6F7F9; --tile:#FFFFFF; --edge:#E3E6EA; --ink:#111827; --text:#1F2933; --mute:#6B7280; --chip:#EEF0F3; --chiptx:#4B5563;
-         --inflow:#1F9D6A; --outflow:#3B6FD8; --both:#0E9F9F; --link:#94A3B8; --warn:#B45309; --warnbg:#FFF4E5; --ok:#1F9D6A; --okbg:#E8F6EF; --danger:#B91C1C; --dangerbg:#FDECEC; --dangerbd:#F3C1C1;
+         --inflow:#157A52; --outflow:#3B6FD8; --both:#0B7A7A; --link:#94A3B8; --warn:#B45309; --warnbg:#FFF4E5; --ok:#1F9D6A; --okbg:#E8F6EF; --danger:#B91C1C; --dangerbg:#FDECEC; --dangerbd:#F3C1C1;
          --onink:#FFFFFF; --sep:#EEF1F5; --dash:#C9CFD8; --hl:#EEF3FF; --apbg:#111111; --aptx:#FFFFFF; color-scheme:light; }
   :root[data-theme="dark"]{ --bg:#0F1216; --tile:#181C22; --edge:#2A3038; --ink:#F3F4F6; --text:#E5E7EB; --mute:#9AA3AE; --chip:#252B33; --chiptx:#C4CAD3;
          --outflow:#5B8AF0; --both:#2DD4BF; --link:#6B7683; --warn:#F5B860; --warnbg:#3A2A12; --ok:#4CC58F; --okbg:#12301F; --danger:#F08787; --dangerbg:#3B1717; --dangerbd:#5A2626;
@@ -24,15 +24,17 @@
   @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]):not([data-theme="dark"]){ --bg:#0F1216; --tile:#181C22; --edge:#2A3038; --ink:#F3F4F6; --text:#E5E7EB; --mute:#9AA3AE; --chip:#252B33; --chiptx:#C4CAD3;
          --outflow:#5B8AF0; --both:#2DD4BF; --link:#6B7683; --warn:#F5B860; --warnbg:#3A2A12; --ok:#4CC58F; --okbg:#12301F; --danger:#F08787; --dangerbg:#3B1717; --dangerbd:#5A2626;
          --onink:#0F1216; --sep:#232930; --dash:#3A424C; --hl:#1E2A44; --apbg:#E5E7EB; --aptx:#111111; color-scheme:dark; } }
+  html{ font-size:17px; } @supports (font: -apple-system-body){ html{ font: -apple-system-body; } }
+  :root{ --ind:28px; } @media (max-width:359px){ :root{ --ind:22px; } .chips{ max-width:36%; } }
   *{ box-sizing:border-box; }
   html,body{ margin:0; height:100%; }
-  body{ background:var(--bg); color:var(--text); font-family:"BIZ UDPGothic","Hiragino Sans","Yu Gothic UI",system-ui,sans-serif; font-size:13px; line-height:1.45; -webkit-text-size-adjust:100%; }
+  body{ background:var(--bg); color:var(--text); font-family:"BIZ UDPGothic","Hiragino Sans","Yu Gothic UI",system-ui,sans-serif; font-size:0.882rem; line-height:1.45; -webkit-text-size-adjust:100%; }
   #app{ max-width:520px; margin:0 auto; min-height:100dvh; display:flex; flex-direction:column; padding-top:env(safe-area-inset-top); }
   .appbar{ padding:14px 16px 8px; display:flex; align-items:center; justify-content:space-between; gap:8px; }
-  .appbar h1{ margin:0; font-size:19px; font-weight:700; color:var(--ink); }
-  .appbar .sub{ font-size:11px; color:var(--mute); }
-  .seg2{ display:inline-flex; border:1px solid var(--edge); border-radius:999px; overflow:hidden; height:26px; background:var(--tile); }
-  .seg2 button{ font-family:inherit; font-size:11px; padding:0 11px; border:0; background:transparent; color:var(--mute); cursor:pointer; }
+  .appbar h1{ margin:0; font-size:1.176rem; font-weight:700; color:var(--ink); }
+  .appbar .sub{ font-size:0.765rem; color:var(--mute); }
+  .seg2{ display:inline-flex; border:1px solid var(--edge); border-radius:999px; overflow:hidden; height:36px; background:var(--tile); }
+  .seg2 button{ font-family:inherit; font-size:0.765rem; padding:0 11px; border:0; background:transparent; color:var(--mute); cursor:pointer; }
   .seg2 button.on{ background:var(--ink); color:var(--onink); font-weight:700; }
   .seg2[hidden]{ display:none; }
   body.kb .tabs, body.kb .fab{ display:none; }
@@ -42,39 +44,41 @@
   .view.slide{ position:absolute; left:12px; right:12px; } .view.anim{ transition:transform .25s ease-out; }
   .view[hidden]{ display:none; } .view{ display:flex; flex-direction:column; gap:10px; }
   .tabs{ position:fixed; left:0; right:0; bottom:0; margin:0 auto; max-width:520px; display:grid; grid-template-columns:repeat(3,1fr); border-top:1px solid var(--edge); background:var(--tile); padding:8px 6px calc(10px + env(safe-area-inset-bottom)); z-index:20; }
-  .tabs button{ background:none; border:0; color:var(--mute); font-size:10.5px; display:flex; flex-direction:column; align-items:center; gap:3px; cursor:pointer; font-family:inherit; padding:2px 0; }
+  .tabs button{ background:none; border:0; color:var(--mute); font-size:0.735rem; display:flex; flex-direction:column; align-items:center; gap:3px; cursor:pointer; font-family:inherit; padding:2px 0; }
   .tabs button svg{ width:22px; height:22px; stroke:currentColor; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
   .tabs button.on{ color:var(--outflow); font-weight:700; }
-  .fab{ position:fixed; right:calc(50% - 260px + 16px); bottom:calc(74px + env(safe-area-inset-bottom)); width:52px; height:52px; border-radius:50%; background:var(--ink); color:var(--onink); border:0; font-size:26px; line-height:1; box-shadow:0 8px 20px rgba(0,0,0,.25); cursor:pointer; z-index:21; font-family:inherit; }
+  .fab{ position:fixed; right:calc(50% - 260px + 16px); bottom:calc(74px + env(safe-area-inset-bottom)); width:52px; height:52px; border-radius:50%; background:var(--ink); color:var(--onink); border:0; font-size:1.529rem; line-height:1; box-shadow:0 8px 20px rgba(0,0,0,.25); cursor:pointer; z-index:21; font-family:inherit; }
   @media (max-width:520px){ .fab{ right:16px; } }
-  .banner{ background:var(--warnbg); color:var(--warn); border-radius:10px; padding:8px 10px; font-size:11.5px; display:flex; align-items:center; gap:8px; }
+  .banner{ background:var(--warnbg); color:var(--warn); border-radius:10px; padding:8px 10px; font-size:0.765rem; display:flex; align-items:center; gap:8px; }
   .banner button{ margin-left:auto; }
-  .today2{ display:flex; align-items:center; gap:5px; width:100%; background:var(--tile); border:1px solid var(--edge); border-radius:10px; padding:8px 10px; font-family:inherit; font-size:12px; color:var(--mute); cursor:pointer; text-align:left; } .today2 b{ color:var(--ink); } .today2 .arr{ margin-left:auto; color:var(--link); font-size:16px; line-height:1; }
-  .review{ background:var(--tile); border:1px solid var(--edge); border-radius:10px; padding:8px 10px; display:flex; align-items:center; gap:8px; cursor:pointer; font-family:inherit; width:100%; text-align:left; color:var(--ink); font-size:12.5px; font-weight:700; }
-  .review .cnt{ background:var(--warnbg); color:var(--warn); border-radius:999px; padding:1px 8px; font-size:11px; }
+  .today2{ display:flex; align-items:center; gap:5px; width:100%; background:var(--tile); border:1px solid var(--edge); border-radius:10px; padding:8px 10px; font-family:inherit; font-size:0.794rem; color:var(--mute); cursor:pointer; text-align:left; } .today2 b{ color:var(--ink); } .today2 .arr{ margin-left:auto; color:var(--link); font-size:0.941rem; line-height:1; }
+  .review{ background:var(--tile); border:1px solid var(--edge); border-radius:10px; padding:8px 10px; display:flex; align-items:center; gap:8px; cursor:pointer; font-family:inherit; width:100%; text-align:left; color:var(--ink); font-size:0.824rem; font-weight:700; }
+  .review .cnt{ background:var(--warnbg); color:var(--warn); border-radius:999px; padding:1px 8px; font-size:0.765rem; }
   .review .cnt.ok{ background:var(--okbg); color:var(--ok); }
   .review .arr{ margin-left:auto; color:var(--mute); font-weight:400; }
   .sec{ display:flex; align-items:center; gap:8px; margin-top:6px; }
-  .sec .num{ background:var(--ink); color:var(--onink); font-size:10px; font-weight:700; border-radius:999px; padding:1px 7px; letter-spacing:.06em; }
-  .sec h3{ margin:0; font-size:13px; font-weight:700; color:var(--ink); } .sec::after{ content:""; flex:1; height:1px; background:var(--edge); }
+  .sec .num{ background:var(--ink); color:var(--onink); font-size:0.706rem; font-weight:700; border-radius:999px; padding:1px 7px; letter-spacing:.06em; }
+  .sec h3{ margin:0; font-size:0.882rem; font-weight:700; color:var(--ink); } .sec::after{ content:""; flex:1; height:1px; background:var(--edge); }
   /* ---- ツリー表示（系統ごとに白カード、行はタイル枠なし） ---- */
   .tree{ background:var(--tile); border:1px solid var(--edge); border-radius:12px; padding:4px 12px; }
-  .row{ position:relative; display:flex; align-items:center; gap:9px; height:52px; padding-left:calc(var(--d,0) * 28px); cursor:pointer; text-align:left; width:100%; font-family:inherit; color:var(--text); background:none; border:0; border-radius:8px; -webkit-touch-callout:none; user-select:none; -webkit-user-select:none; }
-  .row + .row::after{ content:""; position:absolute; left:calc(var(--d,0) * 28px + 36px); right:0; top:0; height:1px; background:var(--sep); }
+  .row{ position:relative; display:flex; align-items:center; gap:9px; height:52px; padding-left:calc(var(--d,0) * var(--ind)); cursor:pointer; text-align:left; width:100%; font-family:inherit; color:var(--text); background:none; border:0; border-radius:8px; -webkit-touch-callout:none; user-select:none; -webkit-user-select:none; }
+  .row + .row::after{ content:""; position:absolute; left:calc(var(--d,0) * var(--ind) + 36px); right:0; top:0; height:1px; background:var(--sep); }
   .row .av{ position:relative; z-index:1; }
-  .row .t .n{ font-size:14px; } .row .t .s{ font-size:11px; }
-  .row.hub .t .n{ font-size:15px; } .row.hub .av{ box-shadow:0 0 0 2px var(--tile), 0 0 0 4px var(--ink); }
+  .row .t .n{ font-size:0.882rem; } .row .t .s{ font-size:0.765rem; }
+  .row.hub .t .n{ font-size:0.941rem; } .row.hub .av{ box-shadow:0 0 0 2px var(--tile), 0 0 0 4px var(--ink); }
   /* 親から降りるL字（左下角丸）と、末尾でない場合の縦線の継ぎ足し */
-  .row.child .l{ position:absolute; left:calc(var(--d,0) * 28px - 15px); top:0; width:9px; height:26px; border-left:2px solid var(--lc); border-bottom:2px solid var(--lc); border-radius:0 0 0 8px; pointer-events:none; }
-  .row.child.cont .v{ position:absolute; left:calc(var(--d,0) * 28px - 15px); top:26px; bottom:-1px; width:2px; background:var(--lc); pointer-events:none; }
-  .row.child .ah{ position:absolute; left:calc(var(--d,0) * 28px - 6px); top:22px; width:0; height:0; border-left:6px solid var(--lc); border-top:4px solid transparent; border-bottom:4px solid transparent; pointer-events:none; }
-  .row.par .pd{ position:absolute; left:calc(var(--d,0) * 28px + 13px); top:40px; bottom:-1px; width:2px; background:var(--outflow); pointer-events:none; }
+  .row.child .l{ position:absolute; left:calc(var(--d,0) * var(--ind) - 15px); top:0; width:9px; height:26px; border-left:2px solid var(--lc); border-bottom:2px solid var(--lc); border-radius:0 0 0 8px; pointer-events:none; }
+  .row.child.cont .v{ position:absolute; left:calc(var(--d,0) * var(--ind) - 15px); top:26px; bottom:-1px; width:2px; background:var(--lc); pointer-events:none; }
+  .row.child .ah{ position:absolute; left:calc(var(--d,0) * var(--ind) - 6px); top:22px; width:0; height:0; border-left:6px solid var(--lc); border-top:4px solid transparent; border-bottom:4px solid transparent; pointer-events:none; }
+  .row.par .pd{ position:absolute; left:calc(var(--d,0) * var(--ind) + 13px); top:40px; bottom:-1px; width:2px; background:var(--outflow); pointer-events:none; }
   .row.par.pk-link .pd{ background:var(--both); }
   .row.fold .pd{ display:none; }
   .chip.more{ background:var(--chip); color:var(--ink); font-weight:700; }
   .row.out{ --lc:var(--outflow); } .row.in{ --lc:var(--inflow); }
   .row.link{ --lc:var(--both); } .row.link .ah{ display:none; }
-  .row.link .bh{ position:absolute; left:calc(var(--d,0) * 28px - 22px); top:15px; font-size:11px; line-height:1; color:var(--both); font-style:normal; font-weight:700; pointer-events:none; }
+  .row.in .l{ border-left-style:dashed; border-bottom-style:dashed; } .row.in .v{ background:repeating-linear-gradient(to bottom, var(--lc) 0 4px, transparent 4px 7px); }
+  .row.child .kl{ position:absolute; left:calc(var(--d,0) * var(--ind) - 30px); top:29px; width:14px; text-align:center; font-size:.6rem; line-height:1; font-weight:700; font-style:normal; color:var(--lc); pointer-events:none; }
+  .row.link .bh{ position:absolute; left:calc(var(--d,0) * var(--ind) - 22px); top:15px; font-size:0.765rem; line-height:1; color:var(--both); font-style:normal; font-weight:700; pointer-events:none; }
   .row .g{ position:absolute; top:0; bottom:-1px; width:2px; background:var(--outflow); pointer-events:none; opacity:.9; }
   .row.gl .g{ background:var(--both); }
   /* 収入 → 起点銀行（緑の短い縦線と下向き矢じり） */
@@ -85,7 +89,7 @@
   .row.off .l, .row.off .ah, .row.off .v, .row.offb .l, .row.offb .ah, .row.offb .v, .row.offb .g{ opacity:.35; }
   .row.ghost .av, .row.ghost .t{ opacity:.45; }
   .chip.up{ background:transparent; color:var(--mute); border:1px dashed var(--dash); padding:1px 6px; }
-  .chip.up, .chip.more{ position:relative; } .chip.up::before, .chip.more::before{ content:""; position:absolute; inset:-10px -8px; }
+  .chip.up, .chip.more{ position:relative; } .chip.up::before, .chip.more::before{ content:""; position:absolute; inset:-13px -10px; }
   .chip.warn{ background:var(--warnbg); color:var(--warn); }
   .mini.new{ animation:pulse 1.2s ease-out 1; }
   .row.lift{ transform:scale(1.03); box-shadow:0 12px 26px rgba(0,0,0,.35); background:var(--tile); z-index:5; }
@@ -93,27 +97,27 @@
   .row.new{ animation:pulse 1.2s ease-out 1; }
   @keyframes pulse{ 0%{ box-shadow:inset 0 0 0 2px var(--lc,var(--outflow)); background:var(--hl); } 100%{ box-shadow:inset 0 0 0 0 transparent; background:transparent; } }
   @media (prefers-reduced-motion: reduce){ .row.new{ animation:none; } }
-  .av{ width:28px; height:28px; border-radius:50%; display:grid; place-items:center; color:#fff; font-weight:700; font-size:12px; flex:none; } .av.sq{ border-radius:7px; }
-  .t{ display:flex; flex-direction:column; min-width:0; flex:1; } .t .n{ font-weight:700; color:var(--ink); font-size:13px; line-height:1.3; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; } .t .s{ color:var(--mute); font-size:10.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .av{ width:28px; height:28px; border-radius:50%; display:grid; place-items:center; color:#fff; font-weight:700; font-size:0.794rem; flex:none; } .av.sq{ border-radius:7px; }
+  .t{ display:flex; flex-direction:column; min-width:0; flex:1; } .t .n{ font-weight:700; color:var(--ink); font-size:0.882rem; line-height:1.3; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; } .t .s{ color:var(--mute); font-size:0.735rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .chips{ display:flex; gap:4px; flex-wrap:wrap; justify-content:flex-end; max-width:42%; }
-  .chip{ background:var(--chip); color:var(--chiptx); font-size:10px; border-radius:999px; padding:2px 7px; white-space:nowrap; }
+  .chip{ background:var(--chip); color:var(--chiptx); font-size:0.706rem; border-radius:999px; padding:2px 7px; white-space:nowrap; }
   .chip.ap{ background:var(--apbg); color:var(--aptx); font-weight:700; } .chip.ok{ background:var(--okbg); color:var(--ok); } .chip.off{ background:var(--dangerbg); color:var(--danger); } .chip.lk{ background:transparent; color:var(--both); font-weight:700; padding-right:0; }
   .row2{ display:grid; grid-template-columns:1fr 1fr; gap:6px; }
-  .mini{ background:var(--tile); border:1px dashed var(--dash); border-radius:8px; padding:7px 8px; display:flex; align-items:center; gap:6px; font-size:11.5px; font-weight:700; color:var(--mute); cursor:pointer; text-align:left; font-family:inherit; -webkit-touch-callout:none; user-select:none; -webkit-user-select:none; }
+  .mini{ background:var(--tile); border:1px dashed var(--dash); border-radius:8px; padding:7px 8px; display:flex; align-items:center; gap:6px; font-size:0.765rem; font-weight:700; color:var(--mute); cursor:pointer; text-align:left; font-family:inherit; -webkit-touch-callout:none; user-select:none; -webkit-user-select:none; }
   .mini.off{ opacity:.45; text-decoration:line-through; } .mini.lift{ transform:scale(1.04); box-shadow:0 12px 26px rgba(17,24,39,.25); } .mini.target{ outline:3px solid var(--outflow); }
-  .mini .av{ width:20px; height:20px; font-size:9px; opacity:.7; } .mini small{ font-weight:400; color:var(--mute); font-size:9.5px; margin-left:auto; }
-  .lbl{ font-size:10.5px; color:var(--mute); margin-top:2px; }
+  .mini .av{ width:20px; height:20px; font-size:0.706rem; opacity:.7; } .mini small{ font-weight:400; color:var(--mute); font-size:0.706rem; margin-left:auto; }
+  .lbl{ font-size:0.735rem; color:var(--mute); margin-top:2px; }
   .card{ background:var(--tile); border:1px solid var(--edge); border-radius:12px; padding:10px 11px; display:flex; flex-direction:column; gap:7px; }
-  .card h4{ margin:0; font-size:12.5px; font-weight:700; color:var(--ink); display:flex; align-items:center; gap:6px; }
+  .card h4{ margin:0; font-size:0.824rem; font-weight:700; color:var(--ink); display:flex; align-items:center; gap:6px; }
   .card h4 .sev{ width:8px; height:8px; border-radius:50%; background:var(--warn); flex:none; } .card h4 .sev.ok{ background:var(--ok); } .card h4 .sev.bad{ background:var(--danger); }
-  .card p{ margin:0; color:var(--mute); font-size:11px; }
+  .card p{ margin:0; color:var(--mute); font-size:0.765rem; }
   .list{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:5px; }
-  .list li{ display:flex; align-items:center; gap:7px; font-size:11.5px; } .list li .av{ width:20px; height:20px; font-size:10px; } .list li .r{ margin-left:auto; color:var(--mute); font-size:10.5px; white-space:nowrap; }
-  .btn{ display:inline-flex; align-items:center; justify-content:center; gap:6px; border-radius:9px; padding:9px 12px; font-size:12px; font-weight:700; border:1px solid var(--edge); color:var(--ink); background:var(--tile); cursor:pointer; font-family:inherit; }
-  .btn.pri{ background:var(--ink); color:var(--onink); border-color:var(--ink); } .btn.danger{ background:var(--dangerbg); color:var(--danger); border-color:var(--dangerbd); } .btn.blk{ width:100%; } .btn.sm{ padding:5px 9px; font-size:11px; }
-  select, input[type=text], input[type=number], textarea{ font-family:inherit; font-size:16px; padding:8px 10px; border-radius:9px; border:1px solid var(--edge); background:var(--tile); color:var(--ink); width:100%; }
-  .empty{ color:var(--mute); font-size:11px; background:var(--okbg); border-radius:8px; padding:8px 10px; }
-  .month{ display:flex; flex-wrap:wrap; align-items:baseline; justify-content:space-between; gap:0 8px; } .month b{ white-space:nowrap; } .month span{ margin-left:auto; text-align:right; } .month b{ font-size:15px; color:var(--ink); } .month span{ font-size:11px; color:var(--mute); }
+  .list li{ display:flex; align-items:center; gap:7px; font-size:0.765rem; } .list li .av{ width:20px; height:20px; font-size:0.706rem; } .list li .r{ margin-left:auto; color:var(--mute); font-size:0.735rem; white-space:nowrap; }
+  .btn{ display:inline-flex; align-items:center; justify-content:center; gap:6px; border-radius:9px; padding:9px 12px; font-size:0.794rem; font-weight:700; border:1px solid var(--edge); color:var(--ink); background:var(--tile); cursor:pointer; font-family:inherit; }
+  .btn.pri{ background:var(--ink); color:var(--onink); border-color:var(--ink); } .btn.danger{ background:var(--dangerbg); color:var(--danger); border-color:var(--dangerbd); } .btn.blk{ width:100%; } .btn.sm{ padding:8px 10px; min-height:36px; font-size:0.765rem; }
+  max(16px, .941rem); padding:8px 10px; border-radius:9px; border:1px solid var(--edge); background:var(--tile); color:var(--ink); width:100%; }
+  .empty{ color:var(--mute); font-size:0.765rem; background:var(--okbg); border-radius:8px; padding:8px 10px; }
+  .month{ display:flex; flex-wrap:wrap; align-items:baseline; justify-content:space-between; gap:0 8px; } .month b{ white-space:nowrap; } .month span{ margin-left:auto; text-align:right; } .month b{ font-size:0.941rem; color:var(--ink); } .month span{ font-size:0.765rem; color:var(--mute); }
   .chart{ background:var(--tile); border:1px solid var(--edge); border-radius:10px; padding:12px 8px 4px; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
   .chart .bars{ position:relative; display:grid; grid-template-columns:repeat(31,1fr); gap:2px; height:64px; align-items:end; border-bottom:1px solid var(--edge); cursor:pointer; }
   .chart .col{ display:flex; flex-direction:column-reverse; justify-content:flex-start; gap:1px; height:100%; }
@@ -121,66 +125,68 @@
   .chart .seg.var{ height:11px; border:1.5px dashed; box-sizing:border-box; }
   .chart .seg.xf{ border:1.5px solid; box-sizing:border-box; }
   .chart .seg.apx{ border:1.5px dashed; box-sizing:border-box; }
-  .chart .tdy{ position:absolute; top:-4px; bottom:0; width:1px; background:var(--ok); pointer-events:none; } .chart .tdy::after{ content:"今日"; position:absolute; top:-9px; left:2px; font-size:8px; color:var(--ok); white-space:nowrap; }
+  .chart .tdy{ position:absolute; top:-4px; bottom:0; width:1px; background:var(--ok); pointer-events:none; } .chart .tdy::after{ content:"今日"; position:absolute; top:-9px; left:2px; font-size:0.706rem; color:var(--ok); white-space:nowrap; }
   .chart .col.past{ opacity:.35; }
-  .chart .lg{ display:flex; gap:10px; justify-content:flex-end; font-size:9px; color:var(--mute); margin-top:3px; } .chart .lg i{ display:inline-block; width:9px; height:9px; border-radius:2px; vertical-align:-1px; margin-right:3px; background:var(--ink); box-sizing:border-box; }
+  .chart .lg{ display:flex; gap:10px; justify-content:flex-end; font-size:0.706rem; color:var(--mute); margin-top:3px; } .chart .lg i{ display:inline-block; width:9px; height:9px; border-radius:2px; vertical-align:-1px; margin-right:3px; background:var(--ink); box-sizing:border-box; }
   .chart .lg i.a{ background:color-mix(in srgb, var(--ink) 60%, transparent); border:1px dashed var(--ink); } .chart .lg i.x{ background:color-mix(in srgb, var(--ink) 12%, transparent); border:1px solid var(--ink); } .chart .lg i.u{ background:transparent; border:1px dashed var(--ink); }
-  .today{ font-size:11px; color:var(--mute); margin-top:-2px; } .today b{ color:var(--ink); }
+  .today{ font-size:0.765rem; color:var(--mute); margin-top:-2px; } .today b{ color:var(--ink); }
   .row .nt{ display:none; }
   #prhead{ display:none; }
   .need .t .s.in{ color:var(--ok); }
-  .chart .ref{ position:absolute; left:0; right:0; border-top:1px dashed var(--dash); pointer-events:none; } .chart .ref b{ position:absolute; right:0; top:-12px; font-size:9px; color:var(--mute); font-weight:400; }
+  .chart .ref{ position:absolute; left:0; right:0; border-top:1px dashed var(--dash); pointer-events:none; } .chart .ref b{ position:absolute; right:0; top:-12px; font-size:0.706rem; color:var(--mute); font-weight:400; }
   .chart .lab{ display:grid; grid-template-columns:repeat(31,1fr); gap:2px; height:14px; margin-top:2px; }
-  .chart .lab i{ font-style:normal; font-size:9px; color:var(--mute); text-align:center; white-space:nowrap; line-height:14px; } .chart .lab i.on{ color:var(--ink); font-weight:700; }
+  .chart .lab i{ font-style:normal; font-size:0.706rem; color:var(--mute); text-align:center; white-space:nowrap; line-height:14px; } .chart .lab i.on{ color:var(--ink); font-weight:700; }
   .drow.new{ animation:pulseD 1.2s ease-out 1; }
   @keyframes pulseD{ 0%{ box-shadow:inset 0 0 0 2px var(--outflow); background:var(--hl); } 100%{ box-shadow:inset 0 0 0 0 transparent; background:var(--tile); } }
   .dlist{ display:flex; flex-direction:column; gap:5px; }
   .dwrap{ position:relative; overflow:hidden; border-radius:9px; }
-  .dwrap .ddel{ position:absolute; top:0; right:0; bottom:0; width:72px; border:0; background:var(--danger); color:#fff; font-weight:700; font-size:13px; font-family:inherit; cursor:pointer; }
+  .dwrap .ddel{ position:absolute; top:0; right:0; bottom:0; width:72px; border:0; background:var(--danger); color:#fff; font-weight:700; font-size:0.882rem; font-family:inherit; cursor:pointer; }
   .dwrap .drow{ position:relative; z-index:1; transition:transform .2s; touch-action:pan-y; -webkit-touch-callout:none; user-select:none; -webkit-user-select:none; }
   .dwrap .drow.sw{ transition:none; }
   .drow{ background:var(--tile); border:1px solid var(--edge); border-radius:9px; padding:7px 9px; display:grid; grid-template-columns:40px 1fr auto; align-items:center; gap:8px; cursor:pointer; width:100%; text-align:left; font-family:inherit; color:var(--text); }
-  .drow .d{ background:var(--ink); color:var(--onink); font-size:10px; font-weight:700; border-radius:6px; text-align:center; padding:3px 0; } .drow .d.y{ background:var(--both); color:#fff; }
-  .mchips{ display:grid; grid-template-columns:repeat(6,1fr); gap:4px; } .mchips button{ font-family:inherit; font-size:12px; padding:7px 0; border-radius:8px; border:1px solid var(--edge); background:var(--tile); color:var(--ink); cursor:pointer; } .mchips button.on{ background:var(--ink); color:var(--onink); border-color:var(--ink); }
+  .drow .d{ background:var(--ink); color:var(--onink); font-size:0.706rem; font-weight:700; border-radius:6px; text-align:center; padding:3px 0; } .drow .d.y{ background:var(--both); color:#fff; }
+  .mchips{ display:grid; grid-template-columns:repeat(6,1fr); gap:4px; } .mchips button{ min-height:40px; font-family:inherit; font-size:0.794rem; padding:7px 0; border-radius:8px; border:1px solid var(--edge); background:var(--tile); color:var(--ink); cursor:pointer; } .mchips button.on{ background:var(--ink); color:var(--onink); border-color:var(--ink); }
   .ychart .bars{ grid-template-columns:repeat(12,1fr); height:56px; cursor:default; } .ychart .lab{ grid-template-columns:repeat(12,1fr); } .ychart .seg.base{ background:var(--chip); } .ychart .seg.y{ background:var(--both); } .ychart .col.cur .seg.base{ background:var(--dash); } .ychart .col.cur .seg.y{ box-shadow:0 0 0 1px var(--ink) inset; }
-  .ychart h4{ margin:0 0 8px; font-size:12px; color:var(--ink); display:flex; justify-content:space-between; align-items:baseline; } .ychart h4 small{ font-weight:400; color:var(--mute); font-size:10px; }
-  .drow .n{ font-weight:700; font-size:12px; color:var(--ink); line-height:1.25; } .drow .n small{ display:block; font-weight:400; color:var(--mute); font-size:9.5px; }
-  .drow .a{ font-variant-numeric:tabular-nums; font-size:12px; color:var(--ink); text-align:right; } .drow .a small{ display:block; color:var(--mute); font-size:9px; }
+  .ychart h4{ margin:0 0 8px; font-size:0.794rem; color:var(--ink); display:flex; justify-content:space-between; align-items:baseline; } .ychart h4 small{ font-weight:400; color:var(--mute); font-size:0.706rem; }
+  .drow .n{ font-weight:700; font-size:0.794rem; color:var(--ink); line-height:1.25; } .drow .n small{ display:block; font-weight:400; color:var(--mute); font-size:0.706rem; }
+  .drow .a{ font-variant-numeric:tabular-nums; font-size:0.794rem; color:var(--ink); text-align:right; } .drow .a small{ display:block; color:var(--mute); font-size:0.706rem; }
   .pf{ background:var(--tile); border:1px solid var(--edge); border-radius:10px; padding:10px 12px 8px; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
-  .pf h4{ margin:0 0 8px; font-size:12px; color:var(--ink); display:flex; justify-content:space-between; align-items:baseline; } .pf h4 small{ font-weight:400; color:var(--mute); font-size:10px; }
+  .pf h4{ margin:0 0 8px; font-size:0.794rem; color:var(--ink); display:flex; justify-content:space-between; align-items:baseline; } .pf h4 small{ font-weight:400; color:var(--mute); font-size:0.706rem; }
   .pf .bar{ display:flex; height:18px; border-radius:6px; overflow:hidden; gap:1px; } .pf .bar i{ display:block; min-width:3px; cursor:pointer; } .pf .bar i.dim{ opacity:.3; }
-  .pf .lg2{ display:grid; grid-template-columns:1fr; gap:2px; margin-top:8px; } .pf .lg2 button{ display:flex; align-items:center; gap:6px; font-family:inherit; font-size:11px; color:var(--ink); background:none; border:0; padding:6px 0; cursor:pointer; text-align:left; white-space:nowrap; }
-  .pf .lg2 button i{ width:10px; height:10px; border-radius:3px; flex:none; } .pf .lg2 button b{ margin-left:auto; font-variant-numeric:tabular-nums; font-weight:700; } .pf .lg2 button small{ color:var(--mute); font-size:10px; width:30px; text-align:right; } .pf .lg2 button.dim{ opacity:.35; }
-  .pf .flt{ margin-top:6px; font-size:11px; color:var(--mute); } .pf .flt b{ color:var(--ink); }
+  .pf .lg2{ display:grid; grid-template-columns:1fr; gap:2px; margin-top:8px; } .pf .lg2 button{ display:flex; align-items:center; gap:6px; font-family:inherit; font-size:0.765rem; color:var(--ink); background:none; border:0; padding:8px 0; min-height:36px; cursor:pointer; text-align:left; white-space:nowrap; }
+  .pf .lg2 button i{ width:10px; height:10px; border-radius:3px; flex:none; } .pf .lg2 button b{ margin-left:auto; font-variant-numeric:tabular-nums; font-weight:700; } .pf .lg2 button small{ color:var(--mute); font-size:0.706rem; width:30px; text-align:right; } .pf .lg2 button.dim{ opacity:.35; }
+  .pf .flt{ margin-top:6px; font-size:0.765rem; color:var(--mute); } .pf .flt b{ color:var(--ink); }
   .need{ background:var(--tile); border:1px solid var(--edge); border-left:4px solid var(--outflow); border-radius:10px; padding:8px 10px; display:flex; align-items:center; gap:9px; }
-  .need .amt{ margin-left:auto; text-align:right; font-variant-numeric:tabular-nums; font-weight:700; color:var(--ink); font-size:13px; line-height:1.15; } .need .amt small{ display:block; font-weight:400; color:var(--mute); font-size:9.5px; }
-  .toast{ position:fixed; left:50%; bottom:calc(140px + env(safe-area-inset-bottom)); transform:translateX(-50%); background:var(--ink); color:var(--onink); font-size:12px; padding:8px 14px; border-radius:999px; opacity:0; transition:opacity .2s; pointer-events:none; white-space:nowrap; z-index:40; }
+  .need .amt{ margin-left:auto; text-align:right; font-variant-numeric:tabular-nums; font-weight:700; color:var(--ink); font-size:0.882rem; line-height:1.15; } .need .amt small{ display:block; font-weight:400; color:var(--mute); font-size:0.706rem; }
+  .toast{ position:fixed; left:50%; bottom:calc(140px + env(safe-area-inset-bottom)); transform:translateX(-50%); background:var(--ink); color:var(--onink); font-size:0.794rem; padding:8px 14px; border-radius:999px; opacity:0; transition:opacity .2s; pointer-events:none; white-space:normal; max-width:calc(100% - 32px); text-align:center; z-index:40; }
   .toast.show{ opacity:1; } .toast.act{ pointer-events:auto; display:flex; align-items:center; gap:10px; }
-  .toast.act button{ background:var(--onink); color:var(--ink); border:0; border-radius:999px; padding:4px 10px; font-size:11.5px; font-weight:700; font-family:inherit; cursor:pointer; }
+  .toast.act button{ background:var(--onink); color:var(--ink); border:0; border-radius:999px; padding:8px 12px; font-size:0.765rem; font-weight:700; font-family:inherit; cursor:pointer; }
   .cfm{ position:fixed; inset:0; z-index:60; display:flex; align-items:center; justify-content:center; padding:24px; background:rgba(17,24,39,.45); opacity:0; pointer-events:none; transition:opacity .15s; } .cfm.on{ opacity:1; pointer-events:auto; }
   .cfm .box{ background:var(--tile); color:var(--ink); border-radius:14px; padding:16px 16px 12px; width:100%; max-width:320px; box-shadow:0 12px 30px rgba(0,0,0,.3); transform:scale(.96); transition:transform .15s; } .cfm.on .box{ transform:scale(1); }
-  .cfm p{ margin:0 0 12px; font-size:13.5px; line-height:1.5; } .cfm .actions{ display:flex; gap:8px; } .cfm .actions .btn{ flex:1; }
+  .cfm.first .box{ max-width:360px; } .cfm.first h3{ margin:0 0 8px; font-size:1.06rem; } .cfm .fbtns{ display:flex; flex-direction:column; gap:8px; } .cfm .fbtns .btn{ min-height:44px; }
+  .steps{ background:var(--tile); border:1px solid var(--edge); border-radius:10px; padding:10px 12px; } .steps h4{ margin:0 0 6px; font-size:.82rem; color:var(--ink); } .steps button{ display:flex; align-items:center; gap:8px; width:100%; min-height:40px; background:none; border:0; font-family:inherit; font-size:.82rem; color:var(--ink); cursor:pointer; text-align:left; padding:4px 0; } .steps button i{ width:22px; height:22px; border-radius:50%; border:2px solid var(--dash); display:grid; place-items:center; font-style:normal; font-size:.7rem; flex:none; } .steps button.done{ color:var(--mute); } .steps button.done i{ background:var(--ok); border-color:var(--ok); color:#fff; }
+  .cfm p{ margin:0 0 12px; font-size:0.882rem; line-height:1.5; } .cfm .actions{ display:flex; gap:8px; } .cfm .actions .btn{ flex:1; }
   .scrim{ position:fixed; inset:0; background:rgba(17,24,39,.45); z-index:30; opacity:0; pointer-events:none; transition:opacity .22s; } .scrim.on{ opacity:1; pointer-events:auto; }
   .sheet{ position:fixed; left:50%; transform:translateX(-50%); bottom:0; width:100%; max-width:520px; max-height:88dvh; overflow-y:auto; background:var(--tile); border-radius:18px 18px 0 0; padding:12px 16px calc(20px + env(safe-area-inset-bottom)); z-index:31; display:flex; flex-direction:column; gap:10px; box-shadow:0 -10px 30px rgba(0,0,0,.2); visibility:hidden; transform:translate(-50%,105%); transition:transform .22s cubic-bezier(.2,.8,.2,1), visibility 0s .22s; }
   .sheet::before{ content:""; width:36px; height:4px; border-radius:2px; background:var(--dash); margin:-2px auto 0; flex:none; }
   .sheet.drag{ transition:none; }
   .sheet.on{ visibility:visible; transform:translate(-50%,0); transition:transform .22s cubic-bezier(.2,.8,.2,1); }
-  .sheet h2{ margin:0; font-size:15px; color:var(--ink); display:flex; align-items:center; justify-content:space-between; } .sheet h2 button{ background:none; border:0; font-size:22px; color:var(--mute); cursor:pointer; padding:4px 12px; margin:-6px -12px -6px 0; line-height:1; }
-  .f{ display:flex; flex-direction:column; gap:4px; } .f label{ font-size:11px; color:var(--mute); } .f2{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
-  .sw{ display:flex; align-items:center; justify-content:space-between; background:var(--bg); border-radius:10px; padding:9px 10px; font-size:12.5px; color:var(--ink); cursor:pointer; }
+  .sheet h2{ margin:0; font-size:0.941rem; color:var(--ink); display:flex; align-items:center; justify-content:space-between; } .sheet h2 button{ background:none; border:0; font-size:1.294rem; color:var(--mute); cursor:pointer; padding:8px 14px; margin:-8px -14px -8px 0; line-height:1; }
+  .f{ display:flex; flex-direction:column; gap:4px; } .f label{ font-size:0.765rem; color:var(--mute); } .f2{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .sw{ display:flex; align-items:center; justify-content:space-between; background:var(--bg); border-radius:10px; padding:9px 10px; font-size:0.824rem; color:var(--ink); cursor:pointer; }
   .sw i{ width:38px; height:22px; border-radius:999px; background:var(--dash); position:relative; flex:none; } .sw i::after{ content:""; position:absolute; top:2px; left:2px; width:18px; height:18px; border-radius:50%; background:#fff; }
   .sw.on i{ background:var(--outflow); } .sw.on i::after{ left:18px; }
   .edges{ display:flex; flex-direction:column; gap:5px; }
-  .edges .e{ display:grid; grid-template-columns:1fr auto; gap:6px; align-items:center; background:var(--bg); border-radius:8px; padding:6px 8px; font-size:11.5px; } .edges .e b{ color:var(--ink); }
+  .edges .e{ display:grid; grid-template-columns:1fr auto; gap:6px; align-items:center; background:var(--bg); border-radius:8px; padding:6px 8px; font-size:0.765rem; } .edges .e b{ color:var(--ink); }
   .actions{ display:flex; gap:8px; } .actions .btn{ flex:1; }
-  .hint{ font-size:10.5px; color:var(--mute); }
+  .hint{ font-size:0.735rem; color:var(--mute); }
   body.dragging{ overflow:hidden; }
   #dragline{ position:fixed; inset:0; width:100vw; height:100vh; pointer-events:none; z-index:25; display:none; } #dragline.on{ display:block; }
   #dropline{ position:fixed; height:3px; border-radius:2px; background:var(--outflow); z-index:26; pointer-events:none; display:none; } #dropline::before{ content:""; position:absolute; left:-5px; top:-3px; width:9px; height:9px; border-radius:50%; background:var(--outflow); } #dropline.on{ display:block; }
-  .draghint{ position:fixed; left:50%; top:calc(12px + env(safe-area-inset-top)); transform:translateX(-50%); background:var(--ink); color:var(--onink); font-size:12px; padding:7px 14px; border-radius:999px; z-index:26; display:none; white-space:nowrap; } .draghint.on{ display:block; }
+  .draghint{ position:fixed; left:50%; top:calc(12px + env(safe-area-inset-top)); transform:translateX(-50%); background:var(--ink); color:var(--onink); font-size:0.794rem; padding:7px 14px; border-radius:999px; z-index:26; display:none; white-space:normal; max-width:calc(100% - 32px); text-align:center; } .draghint.on{ display:block; }
   @media print{ :root, :root[data-theme="dark"]{ --bg:#fff; --tile:#fff; --edge:#E3E6EA; --ink:#111827; --text:#1F2933; --mute:#6B7280; --chip:#EEF0F3; --chiptx:#4B5563; --onink:#fff; --sep:#EEF1F5; --dash:#C9CFD8; --hl:#EEF3FF; --apbg:#111; --aptx:#fff; --warnbg:#FFF4E5; --warn:#B45309; --okbg:#E8F6EF; --ok:#1F9D6A; --dangerbg:#FDECEC; --danger:#B91C1C; --outflow:#3B6FD8; --both:#0E9F9F; --link:#94A3B8; } body{ background:#fff; } .tabs, .fab, .banner, .toast, .scrim, .sheet, .review, .appbar, .hint, .chip.up, .chip.more, .seg2{ display:none !important; } #app{ max-width:none; } .body{ padding:0; } .view[hidden]{ display:flex !important; } #v-share{ display:none !important; } .tile, .drow, .row{ break-inside:avoid; }
-    #prhead{ display:block; font-size:16px; font-weight:700; color:var(--ink); margin:0 0 8px; } #prhead small{ font-weight:400; color:var(--mute); font-size:11px; margin-left:8px; }
-    #v-debit{ break-before:page; } .row{ height:auto; min-height:52px; padding-top:4px; padding-bottom:4px; } .row .nt{ display:block; font-size:9.5px; color:#444; white-space:normal; margin-top:2px; } .row.fold .pd{ display:block; } }
+    #prhead{ display:block; font-size:0.941rem; font-weight:700; color:var(--ink); margin:0 0 8px; } #prhead small{ font-weight:400; color:var(--mute); font-size:0.765rem; margin-left:8px; }
+    #v-debit{ break-before:page; } .row{ height:auto; min-height:52px; padding-top:4px; padding-bottom:4px; } .row .nt{ display:block; font-size:0.706rem; color:#444; white-space:normal; margin-top:2px; } .row.fold .pd{ display:block; } }
 </style>
 </head>
 <body>
@@ -197,7 +203,7 @@
   <nav class="tabs" id="tabs">
     <button class="on" data-v="map"><svg viewBox="0 0 24 24"><path d="M4 6h6v5H4zM14 13h6v5h-6zM10 8.5h4M12 8.5v7"/></svg>マップ</button>
     <button data-v="debit"><svg viewBox="0 0 24 24"><path d="M4 5h16v15H4zM4 10h16M8 3v4M16 3v4"/></svg>引き落とし</button>
-    <button data-v="share"><svg viewBox="0 0 24 24"><path d="M12 14v-9M8 8l4-4 4 4M5 14v5h14v-5"/></svg>共有</button>
+    <button data-v="share"><svg viewBox="0 0 24 24"><path d="M12 14v-9M8 8l4-4 4 4M5 14v5h14v-5"/></svg>保存・印刷</button>
   </nav>
   <div class="toast" id="toast"></div>
   <div class="scrim" id="scrim"></div>
@@ -210,7 +216,7 @@
   const KEY = "moneymap.v1";
   const TYPES = { income:"収入", bank:"銀行口座", card:"カード", securities:"証券・取引所", wallet:"ウォレット", pay:"QR・電子マネー", app:"アプリ・サービス", use:"利用先" };
   const TYPE_STYLE = { income:["#1F9D6A",false], bank:["#1F4E79",false], card:["#374151",true], securities:["#0B5AA5",false], wallet:["#F6851B",true], pay:["#BF0000",true], app:["#8B5CF6",true], use:["#4B5563",true] };
-  const APP_VER = "2026-09-11 g";
+  const APP_VER = "2026-09-11 h";
   const KINDS = { in:"入金", out:"出金", link:"入出金" };
   const CATS = { housing:["住居","#5B6B8C"], insurance:["保険","#7A9A7E"], invest:["投資・貯蓄","#1F9D6A"], card:["カード","#C08457"], utility:["通信・光熱","#D9A441"], subs:["サブスク","#9B6BFF"], living:["生活費","#E07A5F"], tax:["税金","#8C6D3F"], social:["社会保険料","#4A8FB8"], other:["その他","#A0A7B4"] };
   const catOf = d => CATS[d.cat] ? d.cat : "other";
@@ -258,7 +264,18 @@
   function syncPill(){ document.querySelectorAll("#seg2 button").forEach(x=>x.classList.toggle("on", x.dataset.m===UI.mode)); }
   const isClosed = id => (UI.closed||[]).includes(id);
   function setMode(m, rerender){ UI.mode = m; if(m==="full") UI.closed = []; else if(m==="brief"){ const L = layout(); const rows = L.sections.flatMap(s=>s.rows); UI.closed = rows.filter(r=>r.par && !r.ghost && r.depth>=1 && rows.some(o=>o.anc && o.anc.includes(r.id))).map(r=>r.id); } saveUI(); syncPill(); if(rerender!==false) renderMap(); }
-  function load(){ try{ const raw=localStorage.getItem(KEY); S = raw ? JSON.parse(raw) : sample(); }catch(e){ S = sample(); } if(!S.settings) S.settings={sample:false}; }
+  let firstRun = false;
+  function emptyData(){ return {version:1, nodes:[], edges:[], debits:[], settings:{sample:false}}; }
+  function tplNode(id,name,type,x){ return Object.assign({id, name, sub:"", type, av:autoAv(name), col:TYPE_STYLE[type][0], sq:TYPE_STYLE[type][1], hub:false, ap:false, off:false}, x||{}); }
+  function template(kind){
+    const D = emptyData(); const N=D.nodes, E=D.edges, B=D.debits;
+    N.push(tplNode("salary","給与","income",{sub:"給与振込"}), tplNode("main","メイン銀行","bank",{hub:true, sub:"給料が入る口座"}), tplNode("card","クレジットカード","card"));
+    E.push({id:"e1",from:"salary",to:"main",kind:"in",label:""}, {id:"e2",from:"main",to:"card",kind:"out",label:""});
+    B.push({id:"b1",source:"main",day:27,item:"家賃",amt:null,rollover:true,cat:"housing"}, {id:"b2",source:"main",day:26,item:"スマホ代",amt:null,rollover:true,cat:"utility"}, {id:"b3",source:"main",day:27,item:"クレジットカード",amt:null,approx:true,rollover:true,via:"card",cat:"card"});
+    if(kind==="couple"){ N.push(tplNode("family","生活費の口座","bank",{sub:"家族で使う口座"})); E.push({id:"e3",from:"main",to:"family",kind:"out",label:""}); B.push({id:"b4",source:"main",day:31,item:"生活費の口座へ",amt:null,rollover:true,via:"family",transfer:true,cat:"other"}, {id:"b5",source:"main",day:27,item:"電気・ガス・水道",amt:null,approx:true,rollover:true,cat:"utility"}); }
+    return D;
+  }
+  function load(){ try{ const raw=localStorage.getItem(KEY); if(raw){ S = JSON.parse(raw); } else { S = emptyData(); firstRun = true; } }catch(e){ S = sample(); } if(!S.settings) S.settings={sample:false}; }
   function save(){ S.settings.updated = new Date().toISOString().slice(0,10); try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){ toast("保存できませんでした"); } }
   const byId = id => S.nodes.find(n=>n.id===id);
   const uid = p => p + Math.random().toString(36).slice(2,8);
@@ -325,13 +342,13 @@
   let reviewOpen = false;
   function reviewHtml(){
     const r = review();
-    let h = `<button class="review" id="reviewBtn"><span>見直し候補</span><span class="cnt ${r.count?'':'ok'}">${r.count}件</span><span class="arr">${reviewOpen?"閉じる":"見る"}</span></button>`;
+    let h = `<button class="review" id="reviewBtn"><span>気づき</span><span class="cnt ${r.count?'':'ok'}">${r.count}件</span><span class="arr">${reviewOpen?"閉じる":"見る"}</span></button>`;
     if(reviewOpen){
       h += r.nofeed.length ? `<div class="card"><h4><span class="sev"></span>入金の経路がない口座</h4><ul class="list">${r.nofeed.map(n=>`<li>${avatar(n)}${esc(n.name)}<span class="r">引き落としがあるのに入金元がありません</span></li>`).join("")}</ul><p>手動で入金しているなら、その元の口座から線をつなぐか、振替として登録すると消えます。</p></div>` : "";
       h += r.unlinked.length ? `<div class="card"><h4><span class="sev"></span>つながりのない口座</h4><ul class="list">${r.unlinked.map(n=>`<li>${avatar(n)}${esc(n.name)}<span class="r">使っていなければ解約候補</span></li>`).join("")}</ul></div>` : "";
       h += r.dups.map(g=>`<div class="card"><h4><span class="sev"></span>同じ役割の${TYPES[g[0].type]}が${g.length}つ</h4><ul class="list">${g.map(n=>`<li>${avatar(n)}${esc(n.name)}<span class="r">利用先 ${outOf(n.id).length}</span></li>`).join("")}</ul><p>利用先が少ないものは1つに寄せられます。</p></div>`).join("");
       h += r.busy.length ? `<div class="card"><h4><span class="sev"></span>引き落としが重なる日: ${esc(r.busy.join("・"))}</h4><p>その日までに口座に必要な額は「引き落とし」で確認できます。</p></div>` : "";
-      if(!r.count) h += `<div class="empty">いまのところ見直し候補はありません。</div>`;
+      if(!r.count) h += `<div class="empty">いまのところ気づきはありません。</div>`;
     }
     return h;
   }
@@ -352,28 +369,30 @@
     const fold = r.par && !r.ghost && r.depth>=1; const hid = fold ? curRows.filter(o=>o.anc && o.anc.includes(n.id)).length : 0; const isOpen = !isClosed(n.id);
     if(fold && hid) chips.push(`<span class="chip more" data-more="${n.id}">${isOpen ? "−" : "＋"+hid}</span>`);
     const cls = ["row", `d${r.depth}`, r.kind, r.child?"child":"", r.child&&!r.last?"cont":"", r.hub?"hub":"", r.inc?"inc":"", r.hasin?"hasin":"", n.off?"off":"", r.offb?"offb":"", r.ghost?"ghost":"", r.eid && r.eid===newEid?"new":"", r.par?"par pk-"+r.pk:"", fold&&hid&&!isOpen?"fold":""].join(" ");
-    const guides = (r.guides||[]).map((g,k)=> g.on ? `<i class="g ${g.kind==='link'?'gl':''}" style="left:${k*28+13}px"></i>` : "").join("");
-    let conn = r.child ? `<i class="l"></i><i class="v"></i><b class="ah"></b>${r.kind==="link"?`<i class="bh">⇅</i>`:""}` : (r.inc ? `<i class="dn"></i>` : (r.hasin ? `<i class="up"></i><b class="dh"></b>` : ""));
+    const guides = (r.guides||[]).map((g,k)=> g.on ? `<i class="g ${g.kind==='link'?'gl':''}" style="left:${k*IND()+13}px"></i>` : "").join("");
+    let conn = r.child ? `<i class="l"></i><i class="v"></i><b class="ah"></b><i class="kl">${r.kind==="link"?"⇄":(r.kind==="in"?"入":"出")}</i>` : (r.inc ? `<i class="dn"></i>` : (r.hasin ? `<i class="up"></i><b class="dh"></b>` : ""));
     if(r.par) conn += `<i class="pd"></i>`;
     const sub = n.sub || TYPES[n.type];
     const rk = r.child ? (r.ghost ? "ghost" : (r.jump>=0 ? "jump" : r.kind)) : (r.hub ? "hub" : "inc"); const par = r.child && r.anc ? r.anc[r.anc.length-1] : "";
     return `<button class="${cls}" style="--d:${r.depth}" data-edit="${n.id}" data-eid="${r.eid||""}" data-par="${par}" data-depth="${r.depth}" data-rk="${rk}" data-anc="${(r.anc||[]).join(",")}">${guides}${conn}${avatar(n)}<div class="t"><span class="n">${esc(n.name)}</span><span class="s">${esc(sub)}</span>${n.note && !r.ghost ? `<span class="nt">メモ: ${esc(n.note)}</span>` : ""}</div><div class="chips">${chips.join("")}</div></button>`;
   }
+  const IND = () => (window.matchMedia && window.matchMedia("(max-width:359px)").matches) ? 22 : 28;
   const rowVisible = r => (r.anc||[]).slice(1).every(id=>!isClosed(id));
   let lastRows = [];
   function openTo(id){ const row = lastRows.find(o=>o.id===id && !o.ghost) || lastRows.find(o=>o.id===id); if(!row) return false; const need=(row.anc||[]).slice(1).filter(x=>isClosed(x)); if(!need.length) return false; UI.closed=(UI.closed||[]).filter(x=>!need.includes(x)); UI.mode="custom"; saveUI(); syncPill(); return true; }
   function renderMap(){
-    const L = layout(); lastRows = L.sections.flatMap(s=>s.rows); noFeedSet = new Set(noFeed().map(n=>n.id)); let h = todayLine() + reviewHtml(); seenIds = new Set();
+    const L = layout(); lastRows = L.sections.flatMap(s=>s.rows); noFeedSet = new Set(noFeed().map(n=>n.id)); let h = stepsHtml() + todayLine() + reviewHtml(); seenIds = new Set();
     if(!S.nodes.length) h += `<div class="empty">まだ何もありません。右下の「＋」から銀行を追加してください。最初の銀行が起点になります。</div>`;
     L.sections.forEach((sec,i)=>{
       curRows = sec.rows;
-      h += `<div class="sec"><span class="num">${String(i+1).padStart(2,"0")}</span><h3>${esc(sec.hub.name)}系統</h3></div><div class="tree">` + sec.rows.map(r=>{ const x=rowHtml(r); return rowVisible(r) ? x : ""; }).join("") + `</div>`;
+      h += `<div class="sec"><span class="num">${String(i+1).padStart(2,"0")}</span><h3>${esc(sec.hub.name)} のグループ</h3></div><div class="tree">` + sec.rows.map(r=>{ const x=rowHtml(r); return rowVisible(r) ? x : ""; }).join("") + `</div>`;
     });
     if(L.unplaced.length) h += `<div class="lbl">つながり未登録</div><div class="row2">${L.unplaced.map(n=>`<button class="mini ${n.off?'off':''}" data-edit="${n.id}">${avatar(n)}${esc(n.name)}<small>${esc(TYPES[n.type]||"")}</small></button>`).join("")}</div>`;
     h += `<div class="hint">タップで編集。長押しして相手まで動かすとつながります。</div>`;
     document.getElementById("v-map").innerHTML = h;
     const rb=document.getElementById("reviewBtn"); if(rb) rb.addEventListener("click", ()=>{ reviewOpen=!reviewOpen; renderMap(); });
     const gd=document.getElementById("goDebit"); if(gd) gd.addEventListener("click", ()=>show("debit"));
+    document.querySelectorAll("#v-map [data-step]").forEach(x=>x.addEventListener("click", ()=>{ const k=x.dataset.step; if(k==="debit"){ debitForm({id:uid("d"),day:27,amt:null,rollover:true}, true); } else { nodeForm({id:uid("n"),name:"",sub:"",type:k==="card"?"card":"bank",av:"",col:TYPE_STYLE[k==="card"?"card":"bank"][0],sq:TYPE_STYLE[k==="card"?"card":"bank"][1],hub:false,ap:false,off:false}, true); } }));
     if(newEid){ const el=document.querySelector(`.row.new`); if(!el){ const row=lastRows.find(o=>o.eid===newEid); if(row && openTo(row.id)){ renderMap(); return; } } if(el) el.scrollIntoView({block:"center", behavior:"smooth"}); newEid=null; }
   }
 
@@ -381,6 +400,7 @@
   function todayRest(){ const live = S.debits.filter(d=>!viaOff(d) && !d.transfer && inThisMonth(d)); const now=new Date(), today=now.getDate(), dim=new Date(now.getFullYear(), now.getMonth()+1, 0).getDate(); const realDay = d => d.day>=31 ? dim : Math.min(d.day, dim);
     const rest = live.filter(d=>realDay(d)>=today); return {today, n:rest.length, fixed:rest.filter(d=>d.amt!=null).reduce((a,d)=>a+Number(d.amt),0), varn:rest.filter(d=>d.amt==null).length, apx:rest.some(d=>d.amt!=null && d.approx)}; }
   function todayLine(){ const t=todayRest(); if(!t.n) return ""; return `<button class="today2" id="goDebit">今日（${t.today}日）以降 <b>${t.n}件 ・ ${t.apx?"約":""}${yen(t.fixed)}</b>${t.varn?` ＋ 未設定 ${t.varn}件`:""}<span class="arr">›</span></button>`; }
+  function stepsHtml(){ if(S.settings.sample) return ""; const a=S.nodes.some(n=>n.type==="bank"), c=S.nodes.some(n=>n.type==="card"||n.type==="pay"), d=S.debits.length>0; if(a&&c&&d) return ""; const st=[["bank","銀行口座を入れる",a],["card","カードやQR決済を入れる",c],["debit","毎月の引き落としを入れる",d]]; return `<div class="steps"><h4>はじめの3ステップ</h4>${st.map(([k,t,ok],i)=>`<button data-step="${k}" class="${ok?'done':''}"><i>${ok?'✓':i+1}</i>${t}</button>`).join("")}</div>`; }
   let debitFilter = null;
   function renderDebit(){
     const curM = curMonth(); const all = S.debits.filter(d=>!viaOff(d));
@@ -451,6 +471,8 @@
   const sheet=document.getElementById("sheet"), scrim=document.getElementById("scrim");
   const cfmEl = document.createElement("div"); cfmEl.className="cfm"; cfmEl.innerHTML='<div class="box"><p id="cfmMsg"></p><div class="actions"><button class="btn" id="cfmNo">やめる</button><button class="btn danger" id="cfmOk">削除</button></div></div>'; document.body.appendChild(cfmEl);
   function askConfirm(msg, okLabel){ return new Promise(res=>{ document.getElementById("cfmMsg").textContent=msg; document.getElementById("cfmOk").textContent=okLabel||"削除"; cfmEl.classList.add("on"); const done=v=>{ cfmEl.classList.remove("on"); ok.removeEventListener("click",onOk); no.removeEventListener("click",onNo); cfmEl.removeEventListener("click",onBg); res(v); }; const ok=document.getElementById("cfmOk"), no=document.getElementById("cfmNo"); const onOk=()=>done(true), onNo=()=>done(false), onBg=e=>{ if(e.target===cfmEl) done(false); }; ok.addEventListener("click",onOk); no.addEventListener("click",onNo); cfmEl.addEventListener("click",onBg); }); }
+  const firstEl = document.createElement("div"); firstEl.className="cfm first"; firstEl.innerHTML='<div class="box"><h3>お金の流れマップ</h3><p>銀行・カード・支払いのつながりを1枚にして、毎月の引き落としを見える化するアプリです。データはこの端末の中だけに保存されます。</p><p><b>どこから始めますか？</b></p><div class="fbtns"><button class="btn pri" data-t="single">一人暮らしの例から</button><button class="btn pri" data-t="couple">夫婦・家族の例から</button><button class="btn" data-t="sample">見本（架空の例）を見る</button><button class="btn" data-t="empty">空から始める</button></div></div>'; document.body.appendChild(firstEl);
+  firstEl.addEventListener("click", e=>{ const x=e.target.closest("button"); if(!x) return; const t=x.dataset.t; S = t==="sample" ? sample() : (t==="empty" ? emptyData() : template(t)); firstRun=false; save(); firstEl.classList.remove("on"); renderAll(); show("map"); if(t!=="sample" && t!=="empty") toast("例を入れました。名前や金額を自分のものに直してください"); });
   let sheetTimer=null;
   function openSheet(html){ clearTimeout(sheetTimer); sheet.innerHTML=html; sheet.scrollTop=0; sheet.style.transform=""; sheet.classList.remove("drag"); sheet.classList.add("on"); scrim.classList.add("on"); }
   function closeSheet(){ if(document.activeElement && document.activeElement.blur) document.activeElement.blur(); setTimeout(()=>window.scrollTo(window.scrollX, window.scrollY), 80); sheet.classList.remove("on","drag"); sheet.style.transform=""; scrim.classList.remove("on"); clearTimeout(sheetTimer); sheetTimer=setTimeout(()=>{ if(!sheet.classList.contains("on")) sheet.innerHTML=""; }, 240); }
@@ -479,17 +501,22 @@
     openSheet(`<h2>${isNew?"追加":"編集"}<button id="close" aria-label="閉じる">×</button></h2>
       <div class="f"><label>名前</label><input type="text" id="nname" value="${esc(n.name)}" placeholder="例: メイン銀行" autocomplete="off"></div>
       <div class="f"><label>種類</label><select id="ntype">${opt(Object.entries(TYPES), n.type)}</select></div>
+      ${isNew && S.nodes.length ? `<div class="f"><label>どこから出ていく？（あとで長押しでも変えられます）</label><select id="nfrom">${opt([["","あとで決める"], ...S.nodes.filter(x=>x.type!=="use").map(x=>[x.id,x.name])], (S.nodes.find(x=>x.hub)||{}).id||"")}</select></div>` : ""}
       <div class="f"><label>補足（名前の下に小さく表示。空欄なら種類名）</label><input type="text" id="nsub" value="${esc(n.sub||"")}" placeholder="例: 給与振込口座 ／ 26日引き落とし" autocomplete="off"></div>
-      <div class="f2"><div class="sw ${n.ap?'on':''}" id="nap">Apple Pay<i></i></div><div class="sw ${n.hub?'on':''}" id="nhub">起点の銀行<i></i></div></div>
+      <div class="f2"><div class="sw ${n.ap?'on':''}" id="nap">Apple Pay<i></i></div><div class="sw ${n.hub?'on':''}" id="nhub">給料が入る口座（一番上に表示）<i></i></div></div>
       <div class="f"><label>もしもの時のメモ（解約方法・連絡先など。暗証番号やパスワードは書かない）</label><textarea id="nnote" rows="2" placeholder="例: 解約はアプリから。カードは机の引き出し">${esc(n.note||"")}</textarea></div>
       ${isNew?"":`<div class="f"><label>つながり</label><div class="edges">${S.edges.filter(e=>e.from===n.id||e.to===n.id).map(e=>`<div class="e"><span>${e.from===n.id?`<b>この機関</b> → ${esc(byId(e.to)?.name)}`:`${esc(byId(e.from)?.name)} → <b>この機関</b>`}　<small>${KINDS[e.kind]}</small></span><button class="btn sm" data-editedge="${e.id}">変更</button><button class="btn sm" data-deledge="${e.id}">削除</button></div>`).join("")||`<div class="hint">まだありません。マップで長押しして相手まで動かすとつながります。</div>`}</div></div>
+      <div class="f"><label>つながりを追加</label><div class="f2"><select id="nlTo">${opt([["","相手を選ぶ"], ...S.nodes.filter(x=>x.id!==n.id).map(x=>[x.id,x.name])], "")}</select><select id="nlDir"><option value="out">この機関 → 相手</option><option value="in">相手 → この機関</option></select></div><div class="f2"><select id="nlKind">${opt(Object.entries(KINDS), "out")}</select><button class="btn" id="nlAdd" type="button">追加</button></div></div>
       <div class="f"><label>やめるとどうなる</label>${(()=>{ const c=consequences(n); return c.length?`<ul class="list">${c.map(t=>`<li>・ ${esc(t)}</li>`).join("")}</ul>`:`<div class="empty">紐づくものはありません。そのままやめられます。</div>`; })()}</div>`}
       <div class="actions"><button class="btn pri" id="saveNode">保存</button>${isNew?"":`<button class="btn" id="offNode">${n.off?"解約予定を取消":"解約予定"}</button><button class="btn danger" id="delNode">削除</button>`}</div>`);
     document.getElementById("close").addEventListener("click", closeSheet);
     sheet.querySelectorAll(".sw").forEach(s=>s.addEventListener("click", ()=>s.classList.toggle("on")));
     const read = ()=>{ const nm=document.getElementById("nname").value.trim()||"名称未設定"; const tp=document.getElementById("ntype").value; if(isNew||tp!==n.type){ n.col=TYPE_STYLE[tp][0]; n.sq=TYPE_STYLE[tp][1]; } if(isNew||nm!==n.name) n.av=autoAv(nm); n.name=nm; n.type=tp; n.sub=document.getElementById("nsub").value.trim(); n.note=document.getElementById("nnote").value.trim(); n.ap=document.getElementById("nap").classList.contains("on"); n.hub=document.getElementById("nhub").classList.contains("on") && n.type==="bank"; };
-    document.getElementById("saveNode").addEventListener("click", ()=>{ read(); if(isNew){ if(n.type==="bank" && !S.nodes.some(x=>x.hub)) n.hub=true; S.nodes.push(n); } S.settings.sample=false; save(); closeSheet(); renderAll(); toast("保存しました"); });
+    document.getElementById("saveNode").addEventListener("click", ()=>{ read(); if(isNew){ if(n.type==="bank" && !S.nodes.some(x=>x.hub)) n.hub=true; S.nodes.push(n); const nf=document.getElementById("nfrom"); const p = nf && byId(nf.value); if(p){ const e={id:uid("e"), from:p.id, to:n.id, kind:AUTO_KIND(p,n), label:""}; S.edges.push(e); newEid=e.id; } } S.settings.sample=false; save(); closeSheet(); renderAll(); toast("保存しました"); });
     if(!isNew){
+      const nlTo=document.getElementById("nlTo"), nlKind=document.getElementById("nlKind"), nlDir=document.getElementById("nlDir");
+      nlTo.addEventListener("change", ()=>{ const o=byId(nlTo.value); if(o) nlKind.value = nlDir.value==="out" ? AUTO_KIND(n,o) : AUTO_KIND(o,n); });
+      document.getElementById("nlAdd").addEventListener("click", ()=>{ const o=byId(nlTo.value); if(!o){ toast("相手を選んでください"); return; } const fwd = nlDir.value==="out"; const e={id:uid("e"), from: fwd?n.id:o.id, to: fwd?o.id:n.id, kind:nlKind.value, label:""}; S.edges.push(e); S.settings.sample=false; save(); newEid=e.id; nodeForm(n,false); renderAll(); toast(`${byId(e.from).name} → ${byId(e.to).name}（${KINDS[e.kind]}）`); });
       sheet.querySelectorAll("[data-editedge]").forEach(b=>b.addEventListener("click", ()=>edgeForm(b.dataset.editedge, ()=>nodeForm(n,false))));
       sheet.querySelectorAll("[data-deledge]").forEach(b=>b.addEventListener("click", async ()=>{ const i=S.edges.findIndex(e=>e.id===b.dataset.deledge); if(i<0) return; const ed=S.edges[i]; if(!(await askConfirm(`${byId(ed.from)?.name||""} → ${byId(ed.to)?.name||""} のつながりを削除しますか？`))) return; const e=S.edges[i]; S.edges.splice(i,1); save(); nodeForm(n,false); renderAll(); toastAction("つながりを削除しました", "元に戻す", ()=>{ S.edges.splice(Math.min(i,S.edges.length),0,e); save(); if(sheet.classList.contains("on")) nodeForm(n,false); renderAll(); }); }));
       document.getElementById("offNode").addEventListener("click", ()=>{ read(); n.off=!n.off; save(); closeSheet(); renderAll(); toast(n.off?"解約予定にしました":"解約予定を取り消しました"); });
@@ -500,13 +527,15 @@
   function edgeForm(eid, back){
     const e = S.edges.find(x=>x.id===eid); if(!e) return;
     openSheet(`<h2>つながりを変更<button id="close" aria-label="閉じる">×</button></h2>
-      <div class="edges"><div class="e"><span id="pair"><b>${esc(byId(e.from).name)}</b> → <b>${esc(byId(e.to).name)}</b></span><button class="btn sm" id="swap">向きを逆に</button></div></div>
+      <div class="f"><label>から</label><select id="cfrom">${opt(S.nodes.map(x=>[x.id,x.name]), e.from)}</select></div>
+      <div class="f"><label>へ</label><select id="cto">${opt(S.nodes.map(x=>[x.id,x.name]), e.to)}</select></div>
+      <div class="actions"><button class="btn sm" id="swap" type="button">向きを逆に</button></div>
       <div class="f"><label>種類</label><select id="ckind">${opt(Object.entries(KINDS), e.kind)}</select></div>
       <div class="actions"><button class="btn pri" id="cSave">保存</button><button class="btn danger" id="cDel">削除</button></div>`);
     let f=e.from, t=e.to;
     document.getElementById("close").addEventListener("click", closeSheet);
-    document.getElementById("swap").addEventListener("click", ()=>{ [f,t]=[t,f]; document.getElementById("pair").innerHTML=`<b>${esc(byId(f).name)}</b> → <b>${esc(byId(t).name)}</b>`; });
-    document.getElementById("cSave").addEventListener("click", ()=>{ e.from=f; e.to=t; e.kind=document.getElementById("ckind").value; save(); renderAll(); toast("保存しました"); if(back) back(); else closeSheet(); });
+    document.getElementById("swap").addEventListener("click", ()=>{ const a=document.getElementById("cfrom"), c=document.getElementById("cto"); const v=a.value; a.value=c.value; c.value=v; });
+    document.getElementById("cSave").addEventListener("click", ()=>{ f=document.getElementById("cfrom").value; t=document.getElementById("cto").value; if(f===t){ toast("同じ機関どうしはつなげません"); return; } e.from=f; e.to=t; e.kind=document.getElementById("ckind").value; save(); renderAll(); toast("保存しました"); if(back) back(); else closeSheet(); });
     document.getElementById("cDel").addEventListener("click", async ()=>{ const i=S.edges.findIndex(x=>x.id===eid); if(i<0) return; if(!(await askConfirm("このつながりを削除しますか？"))) return; const e=S.edges[i]; S.edges.splice(i,1); save(); closeSheet(); renderAll(); toastAction("つながりを削除しました", "元に戻す", ()=>{ S.edges.splice(Math.min(i,S.edges.length),0,e); save(); renderAll(); }); });
   }
   function debitForm(d, isNew){
@@ -560,7 +589,7 @@
   };
   const showDrop = (y, plan, tree) => {
     const pr = document.querySelector(`.row[data-edit="${plan.parent}"]:not(.ghost)`); const pd = pr ? +pr.dataset.depth : 0;
-    const tr = tree.getBoundingClientRect(); const left = tr.left + 12 + (Math.min(pd,3)+1)*28 - 15;
+    const tr = tree.getBoundingClientRect(); const left = tr.left + 12 + (Math.min(pd,3)+1)*IND() - 15;
     dropline.style.left = left+"px"; dropline.style.width = Math.max(40, tr.right-12-left)+"px"; dropline.style.top = (y-2)+"px"; dropline.classList.add("on");
   };
   const updateDrop = (x,y) => {
@@ -644,7 +673,7 @@
 
   // ===== 共通 =====
   let view="map";
-  const META = { map:["マップ", ()=>`${S.nodes.length}機関`], debit:["引き落とし", ()=>"毎月の予定"], share:["共有", ()=>"もしもの時のために"] };
+  const META = { map:["マップ", ()=>`${S.nodes.length}件`], debit:["引き落とし", ()=>"毎月の予定"], share:["保存・印刷", ()=>"もしもの時のために"] };
   function show(v){ view=v; ["map","debit","share"].forEach(k=>{ document.getElementById("v-"+k).hidden=(k!==v); }); document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on", b.dataset.v===v)); document.getElementById("ttl").textContent=META[v][0]; document.getElementById("sub").textContent=META[v][1](); document.getElementById("sub").hidden=(v==="map"); document.getElementById("seg2").hidden=(v!=="map"); document.getElementById("fab").hidden = (v==="share"); window.scrollTo(0,0); }
   // ===== 横スワイプで画面切替（指に追従して横スライド） =====
   const VIEWS = ["map","debit","share"]; let tsw=null; const bodyEl = document.querySelector(".body");
@@ -702,7 +731,7 @@
   const vv = window.visualViewport;
   function kbSync(){ if(!vv) return; const open = vv.height < window.innerHeight*0.8; const was = document.body.classList.contains("kb"); document.body.classList.toggle("kb", open); if(was && !open) setTimeout(()=>window.scrollTo(window.scrollX, window.scrollY), 50); }
   if(vv){ vv.addEventListener("resize", kbSync); vv.addEventListener("scroll", kbSync); }
-  load(); applyTheme(); if(!Array.isArray(UI.closed)) UI.closed=[]; syncPill(); renderAll(); show("map"); checkUpdate(false);
+  load(); applyTheme(); if(!Array.isArray(UI.closed)) UI.closed=[]; syncPill(); renderAll(); show("map"); checkUpdate(false); if(firstRun) firstEl.classList.add("on");
 })();
 </script>
 </body>
