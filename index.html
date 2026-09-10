@@ -16,13 +16,13 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&display=swap">
 <style>
   :root{ --bg:#F6F7F9; --tile:#FFFFFF; --edge:#E3E6EA; --ink:#111827; --text:#1F2933; --mute:#6B7280; --chip:#EEF0F3; --chiptx:#4B5563;
-         --inflow:#1F9D6A; --outflow:#3B6FD8; --link:#94A3B8; --warn:#B45309; --warnbg:#FFF4E5; --ok:#1F9D6A; --okbg:#E8F6EF; --danger:#B91C1C; --dangerbg:#FDECEC; --dangerbd:#F3C1C1;
+         --inflow:#1F9D6A; --outflow:#3B6FD8; --both:#0E9F9F; --link:#94A3B8; --warn:#B45309; --warnbg:#FFF4E5; --ok:#1F9D6A; --okbg:#E8F6EF; --danger:#B91C1C; --dangerbg:#FDECEC; --dangerbd:#F3C1C1;
          --onink:#FFFFFF; --sep:#EEF1F5; --dash:#C9CFD8; --hl:#EEF3FF; --apbg:#111111; --aptx:#FFFFFF; color-scheme:light; }
   :root[data-theme="dark"]{ --bg:#0F1216; --tile:#181C22; --edge:#2A3038; --ink:#F3F4F6; --text:#E5E7EB; --mute:#9AA3AE; --chip:#252B33; --chiptx:#C4CAD3;
-         --outflow:#5B8AF0; --link:#6B7683; --warn:#F5B860; --warnbg:#3A2A12; --ok:#4CC58F; --okbg:#12301F; --danger:#F08787; --dangerbg:#3B1717; --dangerbd:#5A2626;
+         --outflow:#5B8AF0; --both:#2DD4BF; --link:#6B7683; --warn:#F5B860; --warnbg:#3A2A12; --ok:#4CC58F; --okbg:#12301F; --danger:#F08787; --dangerbg:#3B1717; --dangerbd:#5A2626;
          --onink:#0F1216; --sep:#232930; --dash:#3A424C; --hl:#1E2A44; --apbg:#E5E7EB; --aptx:#111111; color-scheme:dark; }
   @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]):not([data-theme="dark"]){ --bg:#0F1216; --tile:#181C22; --edge:#2A3038; --ink:#F3F4F6; --text:#E5E7EB; --mute:#9AA3AE; --chip:#252B33; --chiptx:#C4CAD3;
-         --outflow:#5B8AF0; --link:#6B7683; --warn:#F5B860; --warnbg:#3A2A12; --ok:#4CC58F; --okbg:#12301F; --danger:#F08787; --dangerbg:#3B1717; --dangerbd:#5A2626;
+         --outflow:#5B8AF0; --both:#2DD4BF; --link:#6B7683; --warn:#F5B860; --warnbg:#3A2A12; --ok:#4CC58F; --okbg:#12301F; --danger:#F08787; --dangerbg:#3B1717; --dangerbd:#5A2626;
          --onink:#0F1216; --sep:#232930; --dash:#3A424C; --hl:#1E2A44; --apbg:#E5E7EB; --aptx:#111111; color-scheme:dark; } }
   *{ box-sizing:border-box; }
   html,body{ margin:0; height:100%; }
@@ -68,13 +68,14 @@
   .row.child.cont .v{ position:absolute; left:calc(var(--d,0) * 28px - 15px); top:26px; bottom:-1px; width:2px; background:var(--lc); pointer-events:none; }
   .row.child .ah{ position:absolute; left:calc(var(--d,0) * 28px - 6px); top:22px; width:0; height:0; border-left:6px solid var(--lc); border-top:4px solid transparent; border-bottom:4px solid transparent; pointer-events:none; }
   .row.par .pd{ position:absolute; left:calc(var(--d,0) * 28px + 13px); top:40px; bottom:-1px; width:2px; background:var(--outflow); pointer-events:none; }
-  .row.par.pk-link .pd{ background:var(--link); }
+  .row.par.pk-link .pd{ background:var(--both); }
   .row.fold .pd{ display:none; }
   .chip.more{ background:var(--chip); color:var(--ink); font-weight:700; }
   .row.out{ --lc:var(--outflow); } .row.in{ --lc:var(--inflow); }
-  .row.link{ --lc:var(--link); } .row.link .l{ border-left-style:dashed; border-bottom-style:dashed; } .row.link .ah{ display:none; }
+  .row.link{ --lc:var(--both); } .row.link .ah{ display:none; }
+  .row.link .bh{ position:absolute; left:calc(var(--d,0) * 28px - 22px); top:15px; font-size:11px; line-height:1; color:var(--both); font-style:normal; font-weight:700; pointer-events:none; }
   .row .g{ position:absolute; top:0; bottom:-1px; width:2px; background:var(--outflow); pointer-events:none; opacity:.9; }
-  .row.gl .g{ background:var(--link); }
+  .row.gl .g{ background:var(--both); }
   /* 収入 → 起点銀行（緑の短い縦線と下向き矢じり） */
   .row.inc .dn{ position:absolute; left:13px; top:40px; width:2px; height:12px; background:var(--inflow); pointer-events:none; }
   .row.hasin .up{ position:absolute; left:13px; top:0; width:2px; height:6px; background:var(--inflow); pointer-events:none; }
@@ -95,7 +96,7 @@
   .t{ display:flex; flex-direction:column; min-width:0; flex:1; } .t .n{ font-weight:700; color:var(--ink); font-size:13px; line-height:1.3; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; } .t .s{ color:var(--mute); font-size:10.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .chips{ display:flex; gap:4px; flex-wrap:wrap; justify-content:flex-end; max-width:42%; }
   .chip{ background:var(--chip); color:var(--chiptx); font-size:10px; border-radius:999px; padding:2px 7px; white-space:nowrap; }
-  .chip.ap{ background:var(--apbg); color:var(--aptx); font-weight:700; } .chip.ok{ background:var(--okbg); color:var(--ok); } .chip.off{ background:var(--dangerbg); color:var(--danger); } .chip.lk{ background:transparent; color:var(--link); padding-right:0; }
+  .chip.ap{ background:var(--apbg); color:var(--aptx); font-weight:700; } .chip.ok{ background:var(--okbg); color:var(--ok); } .chip.off{ background:var(--dangerbg); color:var(--danger); } .chip.lk{ background:transparent; color:var(--both); font-weight:700; padding-right:0; }
   .row2{ display:grid; grid-template-columns:1fr 1fr; gap:6px; }
   .mini{ background:var(--tile); border:1px dashed var(--dash); border-radius:8px; padding:7px 8px; display:flex; align-items:center; gap:6px; font-size:11.5px; font-weight:700; color:var(--mute); cursor:pointer; text-align:left; font-family:inherit; -webkit-touch-callout:none; user-select:none; -webkit-user-select:none; }
   .mini.off{ opacity:.45; text-decoration:line-through; } .mini.lift{ transform:scale(1.04); box-shadow:0 12px 26px rgba(17,24,39,.25); } .mini.target{ outline:3px solid var(--outflow); }
@@ -170,7 +171,7 @@
   #dragline{ position:fixed; inset:0; width:100vw; height:100vh; pointer-events:none; z-index:25; display:none; } #dragline.on{ display:block; }
   #dropline{ position:fixed; height:3px; border-radius:2px; background:var(--outflow); z-index:26; pointer-events:none; display:none; } #dropline::before{ content:""; position:absolute; left:-5px; top:-3px; width:9px; height:9px; border-radius:50%; background:var(--outflow); } #dropline.on{ display:block; }
   .draghint{ position:fixed; left:50%; top:calc(12px + env(safe-area-inset-top)); transform:translateX(-50%); background:var(--ink); color:var(--onink); font-size:12px; padding:7px 14px; border-radius:999px; z-index:26; display:none; white-space:nowrap; } .draghint.on{ display:block; }
-  @media print{ :root, :root[data-theme="dark"]{ --bg:#fff; --tile:#fff; --edge:#E3E6EA; --ink:#111827; --text:#1F2933; --mute:#6B7280; --chip:#EEF0F3; --chiptx:#4B5563; --onink:#fff; --sep:#EEF1F5; --dash:#C9CFD8; --hl:#EEF3FF; --apbg:#111; --aptx:#fff; --warnbg:#FFF4E5; --warn:#B45309; --okbg:#E8F6EF; --ok:#1F9D6A; --dangerbg:#FDECEC; --danger:#B91C1C; --outflow:#3B6FD8; --link:#94A3B8; } body{ background:#fff; } .tabs, .fab, .banner, .toast, .scrim, .sheet, .review, .appbar, .hint, .chip.up, .chip.more, .seg2{ display:none !important; } #app{ max-width:none; } .body{ padding:0; } .view[hidden]{ display:flex !important; } #v-share{ display:none !important; } .tile, .drow, .row{ break-inside:avoid; }
+  @media print{ :root, :root[data-theme="dark"]{ --bg:#fff; --tile:#fff; --edge:#E3E6EA; --ink:#111827; --text:#1F2933; --mute:#6B7280; --chip:#EEF0F3; --chiptx:#4B5563; --onink:#fff; --sep:#EEF1F5; --dash:#C9CFD8; --hl:#EEF3FF; --apbg:#111; --aptx:#fff; --warnbg:#FFF4E5; --warn:#B45309; --okbg:#E8F6EF; --ok:#1F9D6A; --dangerbg:#FDECEC; --danger:#B91C1C; --outflow:#3B6FD8; --both:#0E9F9F; --link:#94A3B8; } body{ background:#fff; } .tabs, .fab, .banner, .toast, .scrim, .sheet, .review, .appbar, .hint, .chip.up, .chip.more, .seg2{ display:none !important; } #app{ max-width:none; } .body{ padding:0; } .view[hidden]{ display:flex !important; } #v-share{ display:none !important; } .tile, .drow, .row{ break-inside:avoid; }
     #prhead{ display:block; font-size:16px; font-weight:700; color:var(--ink); margin:0 0 8px; } #prhead small{ font-weight:400; color:var(--mute); font-size:11px; margin-left:8px; }
     #v-debit{ break-before:page; } .row{ height:auto; min-height:52px; padding-top:4px; padding-bottom:4px; } .row .nt{ display:block; font-size:9.5px; color:#444; white-space:normal; margin-top:2px; } .row.fold .pd{ display:block; } }
 </style>
@@ -202,8 +203,8 @@
   const KEY = "moneymap.v1";
   const TYPES = { income:"収入", bank:"銀行口座", card:"カード", securities:"証券・取引所", wallet:"ウォレット", pay:"QR・電子マネー", app:"アプリ・サービス", use:"利用先" };
   const TYPE_STYLE = { income:["#1F9D6A",false], bank:["#1F4E79",false], card:["#374151",true], securities:["#0B5AA5",false], wallet:["#F6851B",true], pay:["#BF0000",true], app:["#8B5CF6",true], use:["#4B5563",true] };
-  const APP_VER = "2026-09-10 j";
-  const KINDS = { in:"入金", out:"出金", link:"連携" };
+  const APP_VER = "2026-09-10 k";
+  const KINDS = { in:"入金", out:"出金", link:"入出金" };
   const CATS = { housing:["住居","#5B6B8C"], insurance:["保険","#7A9A7E"], invest:["投資・貯蓄","#1F9D6A"], card:["カード","#C08457"], utility:["通信・光熱","#D9A441"], subs:["サブスク","#9B6BFF"], living:["生活費","#E07A5F"], other:["その他","#A0A7B4"] };
   const catOf = d => CATS[d.cat] ? d.cat : "other";
   const AUTO_KIND = (a,b) => { if(a.type==="income") return "in"; if(a.type==="securities" && b.type==="bank") return "in"; if(a.type==="bank" && b.type==="securities") return "link"; if(a.type==="wallet" && b.type==="app") return "link"; if(a.type===b.type && (a.type==="securities"||a.type==="app")) return "link"; return "out"; };
@@ -333,13 +334,13 @@
     if(n.off) chips.push(`<span class="chip off">解約予定</span>`);
     if(n.note && !r.ghost) chips.push(`<span class="chip">メモ</span>`);
     if(noFeedSet.has(n.id) && !r.ghost) chips.push(`<span class="chip warn">入金経路なし</span>`);
-    if(r.kind==="link") chips.push(`<span class="chip lk">連携</span>`);
+    if(r.kind==="link") chips.push(`<span class="chip lk">⇄ 入出金</span>`);
     if(r.ghost) chips.push(`<span class="chip up" data-goto="${n.id}">${seenIds.has(n.id)?"上にもあり ↑":"下にもあり ↓"}</span>`); else seenIds.add(n.id);
     const fold = UI.mode!=="full" && r.par && !r.ghost && r.depth>=1; const hid = fold ? curRows.filter(o=>o.anc && o.anc.includes(n.id)).length : 0;
     if(fold && hid) chips.push(`<span class="chip more" data-more="${n.id}">＋${hid}</span>`);
     const cls = ["row", `d${r.depth}`, r.kind, r.child?"child":"", r.child&&!r.last?"cont":"", r.hub?"hub":"", r.inc?"inc":"", r.hasin?"hasin":"", n.off?"off":"", r.offb?"offb":"", r.ghost?"ghost":"", r.eid && r.eid===newEid?"new":"", r.par?"par pk-"+r.pk:"", fold&&hid?"fold":""].join(" ");
     const guides = (r.guides||[]).map((g,k)=> g.on ? `<i class="g ${g.kind==='link'?'gl':''}" style="left:${k*28+13}px"></i>` : "").join("");
-    let conn = r.child ? `<i class="l"></i><i class="v"></i><b class="ah"></b>` : (r.inc ? `<i class="dn"></i>` : (r.hasin ? `<i class="up"></i><b class="dh"></b>` : ""));
+    let conn = r.child ? `<i class="l"></i><i class="v"></i><b class="ah"></b>${r.kind==="link"?`<i class="bh">⇅</i>`:""}` : (r.inc ? `<i class="dn"></i>` : (r.hasin ? `<i class="up"></i><b class="dh"></b>` : ""));
     if(r.par) conn += `<i class="pd"></i>`;
     const sub = n.sub || TYPES[n.type];
     const rk = r.child ? (r.ghost ? "ghost" : (r.jump>=0 ? "jump" : r.kind)) : (r.hub ? "hub" : "inc"); const par = r.child && r.anc ? r.anc[r.anc.length-1] : "";
@@ -443,7 +444,7 @@
     S.debits.filter(d=>d.source===n.id).forEach(d=>items.push(`引き落とし「${d.item}」（${dayLabel(d.day)}）の口座を変える`));
     S.debits.filter(d=>d.via===n.id).forEach(d=>items.push(`引き落とし「${d.item}」の支払い方法を変える`));
     outOf(n.id).filter(e=>e.kind!=="link").forEach(e=>items.push(`${byId(e.to)?.name} への${KINDS[e.kind]}を別の手段に移す`));
-    S.edges.filter(e=>e.kind==="link"&&(e.from===n.id||e.to===n.id)).forEach(e=>items.push(`${byId(e.from===n.id?e.to:e.from)?.name} との連携を解除する`));
+    S.edges.filter(e=>e.kind==="link"&&(e.from===n.id||e.to===n.id)).forEach(e=>items.push(`${byId(e.from===n.id?e.to:e.from)?.name} との入出金のつながりを外す`));
     if(n.ap) items.push("Apple Payの登録を外す");
     inTo(n.id).filter(e=>e.kind!=="link").forEach(e=>items.push(`${byId(e.from)?.name} からの${KINDS[e.kind]}が止まる`));
     return items;
