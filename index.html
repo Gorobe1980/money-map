@@ -573,6 +573,13 @@
   let view="map";
   const META = { map:["マップ", ()=>`${S.nodes.length}機関`], debit:["引き落とし", ()=>"毎月の予定"], share:["共有", ()=>"もしもの時のために"] };
   function show(v){ view=v; ["map","debit","share"].forEach(k=>{ document.getElementById("v-"+k).hidden=(k!==v); }); document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on", b.dataset.v===v)); document.getElementById("ttl").textContent=META[v][0]; document.getElementById("sub").textContent=META[v][1](); document.getElementById("sub").hidden=(v==="map"); document.getElementById("seg2").hidden=(v!=="map"); document.getElementById("fab").hidden = (v==="share"); window.scrollTo(0,0); }
+  // ===== 横スワイプで画面切替（マップ ⇄ 引き落とし ⇄ 共有） =====
+  const VIEWS = ["map","debit","share"]; let tsw=null;
+  document.addEventListener("pointerdown", e=>{ if(e.button>0 || sheet.classList.contains("on") || e.target.closest(".dwrap, input, textarea, select, .sheet, .tabs")){ tsw=null; return; } tsw={x:e.clientX, y:e.clientY, done:false}; }, {passive:true});
+  document.addEventListener("pointermove", e=>{ if(!tsw || tsw.done || dragging) return; const dx=e.clientX-tsw.x, dy=e.clientY-tsw.y;
+    if(Math.abs(dy)>30 && Math.abs(dy)>Math.abs(dx)){ tsw.done=true; return; }
+    if(Math.abs(dx)>60 && Math.abs(dx)>Math.abs(dy)*1.5){ tsw.done=true; const i=VIEWS.indexOf(view); const j = dx<0 ? i+1 : i-1; if(j>=0 && j<VIEWS.length){ swClose(); show(VIEWS[j]); suppressClick=true; setTimeout(()=>{ suppressClick=false; }, 80); } } }, {passive:true});
+  document.addEventListener("pointerup", ()=>{ tsw=null; }); document.addEventListener("pointercancel", ()=>{ tsw=null; });
   let tt, ta; function toast(msg){ const el=document.getElementById("toast"); el.classList.remove("act"); el.textContent=msg; el.classList.add("show"); clearTimeout(tt); clearTimeout(ta); tt=setTimeout(()=>el.classList.remove("show"),1800); }
   function toastAction(msg, label, fn){ const el=document.getElementById("toast"); el.classList.add("act"); el.innerHTML=`<span>${esc(msg)}</span><button>${esc(label)}</button>`; el.querySelector("button").addEventListener("click", ()=>{ el.classList.remove("show","act"); fn(); }); el.classList.add("show"); clearTimeout(tt); clearTimeout(ta); ta=setTimeout(()=>{ el.classList.remove("show","act"); }, 5000); }
   function renderBanner(){ document.getElementById("banner").innerHTML = S.settings.sample ? `<div class="banner">架空のサンプルです。編集すると自分のデータになります。<button class="btn sm" id="startEmpty">空にする</button></div>` : ""; const b=document.getElementById("startEmpty"); if(b) b.addEventListener("click", ()=>{ if(!confirm("サンプルを消して空から始めます。")) return; S={version:1,nodes:[],edges:[],debits:[],settings:{sample:false}}; save(); renderAll(); }); }
