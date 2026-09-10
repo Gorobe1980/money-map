@@ -204,7 +204,7 @@
   const KEY = "moneymap.v1";
   const TYPES = { income:"収入", bank:"銀行口座", card:"カード", securities:"証券・取引所", wallet:"ウォレット", pay:"QR・電子マネー", app:"アプリ・サービス", use:"利用先" };
   const TYPE_STYLE = { income:["#1F9D6A",false], bank:["#1F4E79",false], card:["#374151",true], securities:["#0B5AA5",false], wallet:["#F6851B",true], pay:["#BF0000",true], app:["#8B5CF6",true], use:["#4B5563",true] };
-  const APP_VER = "2026-09-10 m";
+  const APP_VER = "2026-09-10 n";
   const KINDS = { in:"入金", out:"出金", link:"入出金" };
   const CATS = { housing:["住居","#5B6B8C"], insurance:["保険","#7A9A7E"], invest:["投資・貯蓄","#1F9D6A"], card:["カード","#C08457"], utility:["通信・光熱","#D9A441"], subs:["サブスク","#9B6BFF"], living:["生活費","#E07A5F"], other:["その他","#A0A7B4"] };
   const catOf = d => CATS[d.cat] ? d.cat : "other";
@@ -278,8 +278,7 @@
         const push = (id, kind, eid) => { const n = byId(id); if(!n || seenC.has(id) || id===parentOf[x]) return; seenC.add(id);
           const isHub = n.hub && n.id!==h.id; const ghost = !isHub && (placed.has(id) || (owner[id]!==h.id && owner[id]!=null));
           out.push({id, kind, eid, ghost, jump: isHub ? hubList.indexOf(n) : -1}); };
-        outOf(x).filter(e=>e.kind!=="link").forEach(e=>push(e.to, e.kind, e.id));
-        S.edges.filter(e=>e.kind==="link" && (e.from===x||e.to===x)).forEach(e=>push(e.from===x?e.to:e.from, "link", e.id));
+        S.edges.forEach(e=>{ if(e.kind==="link"){ if(e.from===x||e.to===x) push(e.from===x?e.to:e.from, "link", e.id); } else if(e.from===x) push(e.to, e.kind, e.id); });
         return out;
       };
       const walk=(x, depth, guides, offb, anc)=>{
@@ -518,7 +517,7 @@
   const clearDrop = () => { drop=null; dropline.classList.remove("on"); };
   const endDrag = () => { dragging=false; asDir=0; clearTimeout(timer); timer=null; document.body.classList.remove("dragging"); svg.classList.remove("on"); hint.classList.remove("on"); if(srcEl) srcEl.classList.remove("lift"); clearTarget(); clearDrop(); };
   const descendants = id => { const s=new Set(); const q=[id]; while(q.length){ const x=q.shift(); outOf(x).filter(e=>e.kind!=="link").forEach(e=>{ if(!s.has(e.to)){ s.add(e.to); q.push(e.to); } }); } return s; };
-  const srcMovable = el => el && el.classList.contains("row") && (el.dataset.rk==="out" || el.dataset.rk==="in");
+  const srcMovable = el => el && el.classList.contains("row") && (el.dataset.rk==="out" || el.dataset.rk==="in" || el.dataset.rk==="link");
   // 隙間の上の行 A から「移動先の親」と「A の直後」を決める
   const gapPlan = (A, B) => {
     if(!A || A.dataset.rk==="inc") return null;
@@ -526,13 +525,7 @@
     if(A.dataset.rk==="hub" || (B && B.dataset.par===A.dataset.edit)){ parent = A.dataset.edit; afterEid = null; }
     else { if(!aPar) return null; parent = aPar; afterEid = A.dataset.eid || null; }
     const pr = document.querySelector(`.row[data-edit="${parent}"]:not(.ghost)`); if(parent===src || (pr && (pr.dataset.anc||"").split(",").includes(src))) return null;
-    let yEl = null;
-    if(A.dataset.rk==="link" && parent===aPar){
-      // 入出金の行は出金・入金の後に並ぶ決まりなので、実際に入る位置（出金・入金の末尾）に線を出す
-      const flows = S.edges.filter(e=>e.from===parent && e.kind!=="link" && e.to!==src); afterEid = flows.length ? flows[flows.length-1].id : null;
-      yEl = document.querySelector(`.row.link[data-par="${parent}"]`);
-    }
-    return {parent, afterEid, yEl};
+    return {parent, afterEid};
   };
   const showDrop = (y, plan, tree) => {
     const pr = document.querySelector(`.row[data-edit="${plan.parent}"]:not(.ghost)`); const pd = pr ? +pr.dataset.depth : 0;
@@ -549,7 +542,7 @@
         const A = side==="before" ? (t.previousElementSibling && t.previousElementSibling.classList.contains("row") ? t.previousElementSibling : null) : t;
         const B = side==="before" ? t : (t.nextElementSibling && t.nextElementSibling.classList.contains("row") ? t.nextElementSibling : null);
         const plan = (t.dataset.edit!==src && !(A && A.dataset.edit===src) && !(B && B.dataset.edit===src)) ? gapPlan(A,B) : null;
-        clearTarget(); drop={row:t, side, plan}; if(plan) showDrop(plan.yEl ? plan.yEl.getBoundingClientRect().top : (side==="before"? r.top : r.bottom), plan, tree); else dropline.classList.remove("on"); return;
+        clearTarget(); drop={row:t, side, plan}; if(plan) showDrop(side==="before"? r.top : r.bottom, plan, tree); else dropline.classList.remove("on"); return;
       }
     }
     clearDrop();
@@ -579,21 +572,21 @@
     if(!srcEl) return;
     if(!dragging){ clearTimeout(timer); timer=null; srcEl=null; return; }
     const to = target ? target.dataset.edit : null; const from = src; const hadDrop = !!drop; const plan = drop ? drop.plan : null; const eid = srcEl.dataset.eid; endDrag(); srcEl=null;
-    if(hadDrop){ if(plan && eid) moveEdge(eid, plan.parent, plan.afterEid); }
+    if(hadDrop){ if(plan && eid) moveEdge(eid, plan.parent, plan.afterEid, from); }
     else if(to && to!==from) connect(from, to);
     setTimeout(()=>{ suppressClick=false; }, 50);
   };
   document.addEventListener("pointerup", finish); document.addEventListener("pointercancel", finish);
   document.addEventListener("click", e=>{ if(suppressClick){ e.stopPropagation(); e.preventDefault(); } }, true);
-  function moveEdge(eid, parent, afterEid){
-    const i = S.edges.findIndex(e=>e.id===eid); if(i<0) return; const e = S.edges[i]; const undo = {from:e.from, index:i};
-    S.edges.splice(i,1); e.from = parent;
+  function moveEdge(eid, parent, afterEid, nodeId){
+    const i = S.edges.findIndex(e=>e.id===eid); if(i<0) return; const e = S.edges[i]; const undo = {from:e.from, to:e.to, index:i};
+    S.edges.splice(i,1); e.from = parent; if(e.kind==="link" && nodeId) e.to = nodeId;
     let at; if(afterEid){ const j = S.edges.findIndex(x=>x.id===afterEid); at = j<0 ? S.edges.length : j+1; }
-    else { const j = S.edges.findIndex(x=>x.from===parent && x.kind!=="link"); at = j<0 ? S.edges.length : j; }
-    if(at===undo.index && e.from===undo.from){ S.edges.splice(at,0,e); return; }
+    else { const j = S.edges.findIndex(x=>x.from===parent || (x.kind==="link" && x.to===parent)); at = j<0 ? S.edges.length : j; }
+    if(at===undo.index && e.from===undo.from && e.to===undo.to){ S.edges.splice(at,0,e); return; }
     S.edges.splice(at,0,e); S.settings.sample=false; save(); newEid=eid; renderAll();
     const p = byId(parent), n = byId(e.to);
-    toastAction(`${n?n.name:""} を ${p?p.name:""} の下へ移動しました`, "元に戻す", ()=>{ const k=S.edges.findIndex(x=>x.id===eid); if(k<0) return; S.edges.splice(k,1); e.from=undo.from; S.edges.splice(Math.min(undo.index,S.edges.length),0,e); save(); renderAll(); });
+    toastAction(`${n?n.name:""} を ${p?p.name:""} の下へ移動しました`, "元に戻す", ()=>{ const k=S.edges.findIndex(x=>x.id===eid); if(k<0) return; S.edges.splice(k,1); e.from=undo.from; e.to=undo.to; S.edges.splice(Math.min(undo.index,S.edges.length),0,e); save(); renderAll(); });
   }
   function connect(from, to){
     const a=byId(from), b=byId(to); if(!a||!b) return;
