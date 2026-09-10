@@ -35,6 +35,7 @@
   .seg2 button{ font-family:inherit; font-size:11px; padding:0 11px; border:0; background:transparent; color:var(--mute); cursor:pointer; }
   .seg2 button.on{ background:var(--ink); color:var(--onink); font-weight:700; }
   .seg2[hidden]{ display:none; }
+  body.kb .tabs, body.kb .fab{ display:none; }
   .seg3{ display:flex; width:100%; } .seg3 button{ flex:1; padding:6px 0; }
   .body{ flex:1; padding:0 12px 96px; display:flex; flex-direction:column; gap:10px; position:relative; }
   .body.sliding{ overflow-x:clip; min-height:100dvh; } .body.sliding .view{ will-change:transform; }
@@ -203,7 +204,7 @@
   const KEY = "moneymap.v1";
   const TYPES = { income:"収入", bank:"銀行口座", card:"カード", securities:"証券・取引所", wallet:"ウォレット", pay:"QR・電子マネー", app:"アプリ・サービス", use:"利用先" };
   const TYPE_STYLE = { income:["#1F9D6A",false], bank:["#1F4E79",false], card:["#374151",true], securities:["#0B5AA5",false], wallet:["#F6851B",true], pay:["#BF0000",true], app:["#8B5CF6",true], use:["#4B5563",true] };
-  const APP_VER = "2026-09-10 k";
+  const APP_VER = "2026-09-10 l";
   const KINDS = { in:"入金", out:"出金", link:"入出金" };
   const CATS = { housing:["住居","#5B6B8C"], insurance:["保険","#7A9A7E"], invest:["投資・貯蓄","#1F9D6A"], card:["カード","#C08457"], utility:["通信・光熱","#D9A441"], subs:["サブスク","#9B6BFF"], living:["生活費","#E07A5F"], other:["その他","#A0A7B4"] };
   const catOf = d => CATS[d.cat] ? d.cat : "other";
@@ -427,7 +428,7 @@
   const sheet=document.getElementById("sheet"), scrim=document.getElementById("scrim");
   let sheetTimer=null;
   function openSheet(html){ clearTimeout(sheetTimer); sheet.innerHTML=html; sheet.scrollTop=0; sheet.style.transform=""; sheet.classList.remove("drag"); sheet.classList.add("on"); scrim.classList.add("on"); }
-  function closeSheet(){ sheet.classList.remove("on","drag"); sheet.style.transform=""; scrim.classList.remove("on"); clearTimeout(sheetTimer); sheetTimer=setTimeout(()=>{ if(!sheet.classList.contains("on")) sheet.innerHTML=""; }, 240); }
+  function closeSheet(){ if(document.activeElement && document.activeElement.blur) document.activeElement.blur(); setTimeout(()=>window.scrollTo(window.scrollX, window.scrollY), 80); sheet.classList.remove("on","drag"); sheet.style.transform=""; scrim.classList.remove("on"); clearTimeout(sheetTimer); sheetTimer=setTimeout(()=>{ if(!sheet.classList.contains("on")) sheet.innerHTML=""; }, 240); }
   let shd=null;
   sheet.addEventListener("pointerdown", e=>{ if(e.button>0 || e.target.closest("input, textarea, select, button, .sw")) { shd=null; return; } shd={y:e.clientY, dy:0, go:false}; }, {passive:true});
   sheet.addEventListener("pointermove", e=>{ if(!shd) return; const dy=e.clientY-shd.y; if(!shd.go){ if(dy>8 && sheet.scrollTop<=0){ shd.go=true; sheet.classList.add("drag"); } else if(dy<-8 || sheet.scrollTop>0){ shd=null; } return; } shd.dy=Math.max(0,dy); sheet.style.transform=`translate(-50%,${shd.dy}px)`; }, {passive:true});
@@ -667,6 +668,10 @@
     }catch(e){ if(manual) toast("確認できませんでした（オフライン？）"); }
   }
   if("serviceWorker" in navigator){ navigator.serviceWorker.register("sw.js").catch(()=>{}); }
+  // キーボード表示中はタブバーとFABを隠し、閉じた後に固定要素の位置を同期し直す（iOS対策）
+  const vv = window.visualViewport;
+  function kbSync(){ if(!vv) return; const open = vv.height < window.innerHeight*0.8; const was = document.body.classList.contains("kb"); document.body.classList.toggle("kb", open); if(was && !open) setTimeout(()=>window.scrollTo(window.scrollX, window.scrollY), 50); }
+  if(vv){ vv.addEventListener("resize", kbSync); vv.addEventListener("scroll", kbSync); }
   load(); applyTheme(); setMode(UI.mode, false); renderAll(); show("map"); checkUpdate(false);
 })();
 </script>
