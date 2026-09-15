@@ -173,6 +173,7 @@
   .sheet.on{ visibility:visible; transform:translate(-50%,0); transition:transform .22s cubic-bezier(.2,.8,.2,1); }
   .sheet h2{ margin:0; font-size:0.941rem; color:var(--ink); display:flex; align-items:center; justify-content:space-between; } .sheet h2 button{ background:none; border:0; font-size:1.294rem; color:var(--mute); cursor:pointer; padding:8px 14px; margin:-8px -14px -8px 0; line-height:1; }
   .f{ display:flex; flex-direction:column; gap:4px; } .f label{ font-size:0.765rem; color:var(--mute); } .f2{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .sw.busy{ opacity:.5; pointer-events:none; }
   .sw{ display:flex; align-items:center; justify-content:space-between; background:var(--bg); border-radius:10px; padding:9px 10px; font-size:0.824rem; color:var(--ink); cursor:pointer; }
   .sw i{ width:38px; height:22px; border-radius:999px; background:var(--dash); position:relative; flex:none; } .sw i::after{ content:""; position:absolute; top:2px; left:2px; width:18px; height:18px; border-radius:50%; background:#fff; }
   .sw.on i{ background:var(--outflow); } .sw.on i::after{ left:18px; }
@@ -216,7 +217,7 @@
   const KEY = "moneymap.v1";
   const TYPES = { income:"収入", bank:"銀行口座", card:"カード", securities:"証券・取引所", wallet:"ウォレット", pay:"QR・電子マネー", app:"アプリ・サービス", use:"利用先" };
   const TYPE_STYLE = { income:["#1F9D6A",false], bank:["#1F4E79",false], card:["#374151",true], securities:["#0B5AA5",false], wallet:["#F6851B",true], pay:["#BF0000",true], app:["#8B5CF6",true], use:["#4B5563",true] };
-  const APP_VER = "2026-09-15 a";
+  const APP_VER = "2026-09-15 b";
   const KINDS = { in:"入金", out:"出金", link:"入出金" };
   const CATS = { housing:["住居","#5B6B8C"], insurance:["保険","#7A9A7E"], invest:["投資・貯蓄","#1F9D6A"], card:["カード","#C08457"], utility:["通信・光熱","#D9A441"], subs:["サブスク","#9B6BFF"], living:["生活費","#E07A5F"], tax:["税金","#8C6D3F"], social:["社会保険料","#4A8FB8"], other:["その他","#A0A7B4"] };
   const catOf = d => CATS[d.cat] ? d.cat : "other";
@@ -679,17 +680,19 @@
   const pushSupported = () => pushHost() && "serviceWorker" in navigator && "PushManager" in window && "Notification" in window;
   const isIOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
   const isStandalone = () => navigator.standalone === true || (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches);
+  const newDeviceId = () => { const a = new Uint8Array(32); crypto.getRandomValues(a); return Array.from(a, x => "abcdefghijklmnopqrstuvwxyz0123456789"[x % 36]).join(""); };
   const b64ToU8 = s => { const p = "=".repeat((4 - s.length % 4) % 4); const r = atob((s + p).replace(/-/g, "+").replace(/_/g, "/")); return Uint8Array.from(r, c => c.charCodeAt(0)); };
   function pushRules(){
     const live = S.debits.filter(d=>!viaOff(d));
     const mk = () => ({ n:0, sum:0, approx:false, unset:0, xfer:0 });
-    const add = (o, d) => { if(d.transfer){ if(d.amt!=null) o.xfer += Number(d.amt); return; } if(d.amt==null){ o.unset++; return; } o.n++; o.sum += Number(d.amt); if(d.approx) o.approx = true; };
+    const add = (o, d) => { if(d.amt==null){ o.unset++; return; } if(d.transfer){ o.xfer += Number(d.amt); return; } o.n++; o.sum += Number(d.amt); if(d.approx) o.approx = true; };
     const mon = {}; const yr = {};
     live.forEach(d=>{ const day = Math.min(31, Math.max(1, Number(d.day)||1));
       if(isYearly(d)){ (d.months||[]).forEach(m=>{ const k=m+"-"+day; yr[k] = yr[k] || Object.assign({month:m, day}, mk()); add(yr[k], d); }); }
       else { mon[day] = mon[day] || Object.assign({day}, mk()); add(mon[day], d); } });
     const clean = o => Object.fromEntries(Object.entries(o).filter(([k,v])=>k==="day"||k==="month"||k==="approx"||v));
-    return { monthly: Object.values(mon).map(clean), yearly: Object.values(yr).map(clean) };
+    const nonEmpty = o => (o.n||0) + (o.unset||0) + (o.xfer||0) > 0;
+    return { monthly: Object.values(mon).filter(nonEmpty).map(clean), yearly: Object.values(yr).filter(nonEmpty).map(clean) };
   }
   async function pushApi(path, method, body){
     const r = await fetch(path, { method, headers:{ "Content-Type":"application/json" }, body: JSON.stringify(Object.assign({ key: PUSH_KEY }, body)) });
@@ -697,10 +700,13 @@
     if(!r.ok || !j.ok) throw new Error(j.error || ("HTTP " + r.status));
     return j;
   }
-  let pushTimer = null;
+  let pushTimer = null, pushBusy = false;
+  const swReady = () => Promise.race([navigator.serviceWorker.ready, new Promise((_, rej)=>setTimeout(()=>rej(new Error("sw timeout")), 8000))]);
   async function pushSync(force){
-    const p = UI.push; if(!p || !p.on || !p.sub || !pushSupported()) return;
-    const rules = pushRules(); const sig = JSON.stringify(rules);
+    const p = UI.push; if(!p || !p.on || !pushSupported()) return;
+    try{ const reg = await swReady(); const cur = reg && await reg.pushManager.getSubscription(); if(!cur){ p.on=false; p.err="通知の宛先が無効になりました。もう一度 ON にしてください"; saveUI(); if(view==="share") renderShare(); return; } const j = cur.toJSON(); if(JSON.stringify(j)!==JSON.stringify(p.sub)){ p.sub = j; p.last = ""; } }catch(e){}
+    if(!p.sub) return;
+    const rules = pushRules(); const sig = JSON.stringify(rules) + "|" + p.sub.endpoint;
     if(!force && p.last === sig) return;
     try{ await pushApi("/api/register", "POST", { deviceId: p.deviceId, sub: p.sub, hour: 20, monthly: rules.monthly, yearly: rules.yearly, ver: APP_VER });
       p.last = sig; p.sentAt = new Date().toISOString(); p.err = ""; saveUI(); if(view==="share") renderShare(); }
@@ -708,40 +714,49 @@
   }
   const pushSyncSoon = () => { clearTimeout(pushTimer); pushTimer = setTimeout(()=>pushSync(false), 1500); };
   async function pushEnable(){
-    if(!pushSupported()){ toast("この配信先では通知を使えません"); return; }
+    if(pushBusy) return;
     if(isIOS && !isStandalone()){ toast("ホーム画面に追加したアプリから ON にしてください"); return; }
+    if(!pushSupported()){ toast("この配信先では通知を使えません"); return; }
+    pushBusy = true; renderShare(); try{ await pushEnableInner(); } finally { pushBusy = false; renderShare(); }
+  }
+  async function pushEnableInner(){
     const perm = await Notification.requestPermission();
     if(perm !== "granted"){ toast("通知が許可されませんでした"); renderShare(); return; }
     try{
-      const reg = await navigator.serviceWorker.ready;
+      const reg = await swReady();
       const sub = await reg.pushManager.subscribe({ userVisibleOnly:true, applicationServerKey: b64ToU8(PUSH_PUB) });
       const prev = UI.push || {};
-      UI.push = { on:true, deviceId: prev.deviceId || (uid("") + Math.random().toString(36).slice(2,10) + Math.random().toString(36).slice(2,10)).replace(/[^a-z0-9]/g,"").slice(0,32), sub: sub.toJSON(), last:"", sentAt:"", err:"" };
+      UI.push = { on:true, deviceId: (prev.deviceId && /^[a-z0-9]{16,64}$/.test(prev.deviceId)) ? prev.deviceId : newDeviceId(), sub: sub.toJSON(), last:"", sentAt:"", err:"" };
       saveUI(); await pushSync(true); renderShare();
       toast(UI.push.err ? "登録できませんでした: " + UI.push.err : "通知を ON にしました");
     }catch(e){ toast("通知の登録に失敗しました"); console.error(e); renderShare(); }
   }
   async function pushDisable(){
+    if(pushBusy) return; pushBusy = true; renderShare(); try{ await pushDisableInner(); } finally { pushBusy = false; renderShare(); }
+  }
+  async function pushDisableInner(){
     const p = UI.push || {};
     try{ if(p.deviceId) await pushApi("/api/register", "DELETE", { deviceId: p.deviceId }); }catch(e){}
-    try{ const reg = await navigator.serviceWorker.ready; const sub = await reg.pushManager.getSubscription(); if(sub) await sub.unsubscribe(); }catch(e){}
+    try{ const reg = await swReady(); const sub = await reg.pushManager.getSubscription(); if(sub) await sub.unsubscribe(); }catch(e){}
     UI.push = { on:false, deviceId: p.deviceId || "" }; saveUI(); renderShare(); toast("通知を OFF にしました");
   }
   async function pushTest(){
-    const p = UI.push; if(!p || !p.on) return;
+    const p = UI.push; if(!p || !p.on || pushBusy) return; pushBusy = true; try{ await pushTestInner(p); } finally { pushBusy = false; }
+  }
+  async function pushTestInner(p){
     try{ await pushSync(true); await pushApi("/api/test", "POST", { deviceId: p.deviceId }); toast("テスト通知を送りました。数秒後に届きます"); }
     catch(e){ toast("送れませんでした: " + (e.message || e)); }
   }
   function pushCardHtml(){
     const p = UI.push || {}; const on = !!p.on;
     if(!pushHost()) return `<div class="card"><h4>通知</h4><p>支払いの前日に通知する機能は、この配信先（GitHub Pages）では使えません。新しい配信先のアプリでご利用ください。</p></div>`;
+    if(isIOS && !isStandalone()) return `<div class="card"><h4>通知</h4><p>iPhone では、Safari の共有ボタンから「ホーム画面に追加」したアプリで、支払いの前日通知を ON にできます。</p></div>`;
     if(!pushSupported()) return `<div class="card"><h4>通知</h4><p>このブラウザは通知に対応していません。</p></div>`;
     let note = "";
-    if(isIOS && !isStandalone()) note = `<p>iPhone では、Safari の共有ボタンから「ホーム画面に追加」したアプリで ON にできます。</p>`;
-    else if("Notification" in window && Notification.permission === "denied") note = `<p>通知が拒否されています。端末の「設定 → 通知」でこのアプリを許可してください。</p>`;
+    if("Notification" in window && Notification.permission === "denied") note = `<p>通知が拒否されています。端末の「設定 → 通知」でこのアプリを許可してください。</p>`;
     const when = p.sentAt ? new Date(p.sentAt).toLocaleString("ja-JP", {month:"numeric", day:"numeric", hour:"2-digit", minute:"2-digit"}) : "";
     const st = on ? (p.err ? `<p class="hint">送れていません: ${esc(p.err)}。次に開いたときに再送します。</p>` : (when ? `<p class="hint">最終送信 ${esc(when)}。支払いを変えると自動で送り直します。</p>` : "")) : "";
-    return `<div class="card"><h4>通知</h4><div class="sw ${on?'on':''}" id="pushSw">支払いの前日に通知（20時ごろ）<i></i></div>${note}` +
+    return `<div class="card"><h4>通知</h4><div class="sw ${on?'on':''} ${pushBusy?'busy':''}" id="pushSw">支払いの前日に通知（20時ごろ）<i></i></div>${note}` +
       `<p class="hint">預けるのは通知の宛先と「日・件数・合計」だけです。項目名や口座名は送りません。</p>` +
       (on ? `<div class="actions"><button class="btn" id="pushTest">テスト通知を送る</button></div>` : "") + st + `</div>`;
   }

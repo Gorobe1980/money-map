@@ -11,7 +11,7 @@ self.addEventListener("fetch", e => {
   if (!isDoc) return;
   e.respondWith(
     fetch(req, { cache: "no-store" })
-      .then(res => { const copy = res.clone(); caches.open(CACHE).then(c => c.put("shell", copy)); return res; })
+      .then(res => { if (res.ok) { const copy = res.clone(); caches.open(CACHE).then(c => c.put("shell", copy)); } return res; })
       .catch(() => caches.match("shell"))
   );
 });
