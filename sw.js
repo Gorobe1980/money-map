@@ -19,7 +19,7 @@ self.addEventListener("push", e => {
   let d = {};
   try { d = e.data ? e.data.json() : {}; } catch (err) { d = { body: e.data ? e.data.text() : "" }; }
   const title = d.title || "お金の流れマップ";
-  e.waitUntil(self.registration.showNotification(title, { body: d.body || "", tag: "moneymap-" + (d.tag || "day"), renotify: false, data: { url: d.url || "/" } }));
+  e.waitUntil(self.registration.showNotification(title, { body: d.body || "", tag: "moneymap-" + (d.tag || "day"), renotify: false, silent: true, data: { url: d.url || "/" } }));
 });
 self.addEventListener("notificationclick", e => {
   e.notification.close();
