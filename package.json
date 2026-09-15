@@ -1,0 +1,11 @@
+{
+  "name": "money-map",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "お金の流れマップ（画面）と支払い前日通知（Vercel Functions）",
+  "dependencies": {
+    "@vercel/blob": "^1.1.1",
+    "web-push": "^3.6.7"
+  }
+}
